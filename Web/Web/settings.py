@@ -84,8 +84,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'Core-Sample-Analysis',
         'USER': 'postgres',
-        'PASSWORD': 'lbvf12101',
-        'HOST': 'localhost',
+        'PASSWORD': 'Flvby66!',
+        'HOST': 'aws-rds-postgresql.cfxoin7bynly.us-east-1.rds.amazonaws.com',
         'PORT': '5432',
     }
 }
