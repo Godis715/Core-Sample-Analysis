@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Core-Sample-Analysis APIs</title>
+
+{#    <script src="https://unpkg.com/vue"></script>#}
+{#    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.4"></script>#}
+</head>
+<body>
+    <h1>Core-Sample-Analysis APIs:</h1>
+    <ol>
+        <li>GET 'api/workstation' - get the list of information about all workstations</li>
+    </ol>
+
+
+{#    <div id="app">#}
+{#    <ul>#}
+{#        <li v-for="workstation in workstations">#}
+{#            <h1>${ workstation.title }$</h1>#}
+{#            <p> ${ workstation.description }$ </p>#}
+{#        </li>#}
+{#    </ul>#}
+{#    </div>#}
+{##}
+{#    <script>#}
+{#        new Vue({#}
+{#          delimiters: ['${', '}$'],#}
+{#          el: '#app',#}
+{#          data: {#}
+{#            workstations: []#}
+{#          },#}
+{#          http: {#}
+{#            root: 'http://localhost:8000',#}
+{#            headers: {#}
+{#              Authorization: <TOKEN>#}
+{#            }#}
+{#          },#}
+{#          methods: {#}
+{#            getWorkstations: function () {#}
+{#                this.$http.get('/api/workstation').then(function (data,status,request) {#}
+{#                if (status == 200) {#}
+{#                    this.workstations = data.body.results;#}
+{#                 }#}
+{#                })#}
+{#            }#}
+{#          },#}
+{#          mounted: function () {#}
+{#            this.getWorkstations();#}
+{#          }#}
+{#        })#}
+{#    </script>#}
+</body>
+</html>
