@@ -27,9 +27,9 @@ def data_analysis():
     file = request.files['archive']
     if allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        pathfile_load = os.path.join(app.config['UPLOAD_FOLDER'], generate_filename(filename))
-        file.save(pathfile_load)
-        #decoder_zip(pathfile_load)
+        path_file_load = os.path.join(app.config['UPLOAD_FOLDER'], generate_filename(filename))
+        file.save(path_file_load)
+        #decoder_zip(path_file_load)
         return 'File load!'
-    return f'Error load!'
+    return 'Error load!'
 
