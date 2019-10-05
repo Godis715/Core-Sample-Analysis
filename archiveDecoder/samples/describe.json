@@ -1,0 +1,46 @@
+[
+	{
+
+		"nameImg_DL": "sample1_DL.jpg",
+
+		"nameImg_UV": "sample1_UV.jpg",
+
+		"deposits": 1,
+
+		"hole": 2
+	},
+
+	{
+
+		"nameImg_DL": "sample2_DL.jpg",
+
+		"nameImg_UV": "sample2_UV.jpg",
+
+		"deposits": 4,
+
+		"hole": 1
+	},
+
+	{
+
+		"nameImg_DL": "sample3_DL.jpg",
+
+		"nameImg_UV": "sample3_UV.jpg",
+
+		"deposits": 2,
+
+		"hole": 4
+	},
+
+	{
+
+		"nameImg_DL": "sample4_DL.jpg",
+
+		"nameImg_UV": "sample4_UV.jpg",
+
+		"deposits": 1,
+
+		"hole": 1
+	}
+
+]
