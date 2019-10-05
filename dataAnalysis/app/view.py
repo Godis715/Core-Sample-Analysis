@@ -16,7 +16,6 @@ def allowed_file(filename):
 @app.route('/api/data_analysis/', methods=['POST'])
 def data_analysis():
     """Decoding archive -> analysis data -> result(json)"""
-    '''Request: (POST: http://127.0.0.1:5050/api/data_analysis/)'''
     """result:
         {'Type': 'Error', 'Message:': '...'}
         or
@@ -36,6 +35,6 @@ def data_analysis():
         #         return jsonify({'Type': 'Error', 'Message:': result_analysis['Message']})
         # else:
         #     return jsonify({'Type': 'Error', 'Message:': result_decode['Message']})
-        return 'File load!' #Temp
+        return f'File load! type {request.mimetype}' #Temp
     return jsonify({'Type': 'Error', 'Message:': 'Error format file (Expected .zip)'})
 
