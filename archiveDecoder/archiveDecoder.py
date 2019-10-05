@@ -8,7 +8,7 @@ from zipfile import ZipFile
 from PIL import Image
 
 
-ALLOWED_PARAMS = {'nameImg_DL', 'nameImg_UV', 'begin_layer', 'end_layer'}
+ALLOWED_PARAMS = {'nameImg_DL', 'nameImg_UV', 'begin_part', 'end_part'}
 
 ERROR_FORMAT = 'Error format file (Expected {})'
 NOT_EXIST_FILE = '{} file not exist!'
