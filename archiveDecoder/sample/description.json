@@ -5,9 +5,9 @@
 
 		"nameImg_UV": "sample1_UV.jpg",
 
-		"deposits": 1,
+		"begin_layer": 0.0,
 
-		"hole": 2
+		"end_layer": 1.45
 	},
 
 	{
@@ -16,9 +16,9 @@
 
 		"nameImg_UV": "sample2_UV.jpg",
 
-		"deposits": 4,
+		"begin_layer": 1.45,
 
-		"hole": 1
+		"end_layer": 3.54
 	},
 
 	{
@@ -27,9 +27,9 @@
 
 		"nameImg_UV": "sample3_UV.jpg",
 
-		"deposits": 2,
+		"begin_layer": 3.54,
 
-		"hole": 4
+		"end_layer": 5.85
 	},
 
 	{
@@ -38,9 +38,9 @@
 
 		"nameImg_UV": "sample4_UV.jpg",
 
-		"deposits": 1,
+		"begin_layer": 5.85,
 
-		"hole": 1
+		"end_layer": 5.93
 	}
 
 ]
