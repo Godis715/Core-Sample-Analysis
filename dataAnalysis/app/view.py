@@ -15,6 +15,15 @@ def allowed_file(filename):
 
 @app.route('/api/data_analysis/', methods=['POST'])
 def data_analysis():
+    """Decoding archive -> analysis data -> result(json)"""
+    '''Request: (POST: http://127.0.0.1:5050/api/data_analysis/)'''
+    """result:
+        {'Type': 'Error', 'Message:': '...'}
+        or
+        {'Type': 'Success', 'Data:': result_analysis} 
+    """
+    '''result_analysis ?'''
+
     file = request.files['archive']
     if allowed_file(file.filename):
         zip_file = ZipFile(file, 'r')
