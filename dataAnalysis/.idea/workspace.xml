@@ -2,27 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3e4b4605-4dcc-4cb2-8a9c-3cad09881088" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../archiveDecoder/LICENSE.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../archiveDecoder/MANIFEST.in" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../archiveDecoder/README.rst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../archiveDecoder/archiveDecoder-package/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../archiveDecoder/setup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../archiveDecoder/archiveDecoder.py" beforeDir="false" afterPath="$PROJECT_DIR$/../archiveDecoder/archiveDecoder-package/archiveDecoder.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../archiveDecoder/sample.zip" beforeDir="false" afterPath="$PROJECT_DIR$/../archiveDecoder/tests/sample.zip" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../archiveDecoder/sample/description.json" beforeDir="false" afterPath="$PROJECT_DIR$/../archiveDecoder/tests/sample/description.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../archiveDecoder/sample/description.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/../archiveDecoder/tests/sample/description.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../archiveDecoder/sample/part1_DL.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/../archiveDecoder/tests/sample/part1_DL.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../archiveDecoder/sample/part1_UV.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/../archiveDecoder/tests/sample/part1_UV.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../archiveDecoder/sample/part2_DL.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/../archiveDecoder/tests/sample/part2_DL.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../archiveDecoder/sample/part2_UV.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/../archiveDecoder/tests/sample/part2_UV.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../archiveDecoder/sample/part3_DL.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/../archiveDecoder/tests/sample/part3_DL.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../archiveDecoder/sample/part3_UV.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/../archiveDecoder/tests/sample/part3_UV.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../archiveDecoder/sample/part4_DL.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/../archiveDecoder/tests/sample/part4_DL.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../archiveDecoder/sample/part4_UV.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/../archiveDecoder/tests/sample/part4_UV.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../archiveDecoder/LICENSE.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../archiveDecoder/MANIFEST.in" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../archiveDecoder/README.rst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../archiveDecoder/archiveDecoder-package/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../archiveDecoder/archiveDecoder-package/archiveDecoder.py" beforeDir="false" afterPath="$PROJECT_DIR$/../archiveDecoder/archiveDecoder.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../archiveDecoder/setup.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/view.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/view.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/testApi.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/testApi.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/testZip.zip" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -51,6 +42,11 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\I\Desktop\Core-Sample-Analysis\Core-Sample-Analysis\dataAnalysis\app\test" />
+    </key>
+  </component>
   <component name="RunDashboard">
     <option name="ruleStates">
       <list>
@@ -63,7 +59,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.main">
+  <component name="RunManager" selected="Python.testApi">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="dataAnalysis" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -94,12 +90,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/testApi.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tests/testApi.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -108,10 +104,14 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Python.main" />
+      <item itemvalue="Python.testApi" />
+    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.main" />
         <item itemvalue="Python.testApi" />
+        <item itemvalue="Python.main" />
       </list>
     </recent_temporary>
   </component>
@@ -129,7 +129,7 @@
       <workItem from="1570475967778" duration="239000" />
       <workItem from="1570476602714" duration="3339000" />
       <workItem from="1570483947441" duration="1281000" />
-      <workItem from="1570559834956" duration="1163000" />
+      <workItem from="1570559834956" duration="2924000" />
     </task>
     <servers />
   </component>
@@ -150,7 +150,8 @@
     </option>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/dataAnalysis$main.coverage" NAME="main Coverage Results" MODIFIED="1570559916490" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
-    <SUITE FILE_PATH="coverage/dataAnalysis$testApi.coverage" NAME="testApi Coverage Results" MODIFIED="1570295154893" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/dataAnalysis$testApi__1_.coverage" NAME="testApi (1) Coverage Results" MODIFIED="1570562531310" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
+    <SUITE FILE_PATH="coverage/dataAnalysis$main.coverage" NAME="main Coverage Results" MODIFIED="1570562624055" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
+    <SUITE FILE_PATH="coverage/dataAnalysis$testApi.coverage" NAME="testApi Coverage Results" MODIFIED="1570562988186" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
   </component>
 </project>
