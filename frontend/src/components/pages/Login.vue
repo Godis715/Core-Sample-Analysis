@@ -39,12 +39,18 @@ export default {
             console.log('Try login:');
             console.log('username: ' + user.username + ', password: ' + user.password);
             
-            this.$store.dispatch('AUTH_REQUEST', user).then(result => {
+            var authRequest = this.$store.dispatch('AUTH_REQUEST', user).then(result => {
                 if (result.ok) this.$router.push('/');
                 else this.message = result.message;
             }).catch(err => {
                 console.log(err);
             });
+
+            this.load(authRequest);
+        },
+
+        load(somePromise) {
+            this.$root.$emit('start-loading', somePromise);
         }
     }
 };

@@ -1,13 +1,17 @@
 <template>
   <div id="app">
+    <progress-bar></progress-bar>
     <router-view/>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
+import ProgressBar from './components/fragments/ProgressBar.vue';
+
 export default {
   name: 'App',
+  components: { ProgressBar }, 
   created() {
     // checking, if server didn't accept the token
     axios.interceptors.response.use(undefined, async err => {
