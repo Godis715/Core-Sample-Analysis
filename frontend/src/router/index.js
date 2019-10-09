@@ -8,15 +8,14 @@ import Login from '@/components/pages/Login'
 import Search from '@/components/pages/Search'
 import Upload from '@/components/pages/Upload'
 import View from '@/components/pages/View'
+import { store } from '@/../store'
 
 Vue.use(Router)
 
-// this variable should be replaced by function, which checks token
-const tempHasAuthToken = true;
-
 const ifNotAuthenticated = (to, from, next) => {
+  console.log('Check if not authenticated');
   // cheking if has NOT auth token
-  if (!tempHasAuthToken) {
+  if (!store.getters.isAuthenticated) {
     next();
     return;
   }
@@ -24,15 +23,18 @@ const ifNotAuthenticated = (to, from, next) => {
 };
 
 const ifAuthenticated = (to, from, next) => {
+  console.log('Check if authenticated');
+  console.log(store);
   // checking if has auth token
-  if (tempHasAuthToken) {
-    next()
-    return
+  if (store.getters.isAuthenticated) {
+    next();
+    return;
   }
-  next('/login')
+  next('/login');
 }
 
 export default new Router({
+  mode: 'history',
   routes: [
     {
       // there are button "upload core sample"

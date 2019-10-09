@@ -13,6 +13,8 @@
         </div>
 
         <button type="submit">Login</button>
+
+        <div>{{message}}</div>
     </form>
 </div>
 </template>
@@ -23,21 +25,25 @@ export default {
     data() {
         return {
             username: '',
-            password: ''
+            password: '',
+            message: ''
         }
     },
     methods: {
         login() {
             const user = {
-                name: this.username,
+                username: this.username,
                 password: this.password 
             };
 
             console.log('Try login:');
-            console.log('username: ' + info.name + ', password: ' + info.password);
+            console.log('username: ' + user.username + ', password: ' + user.password);
             
-            this.$store.dispatch('AUTH_REQUEST', user).then(() => {
-                this.$router.push('/');
+            this.$store.dispatch('AUTH_REQUEST', user).then(result => {
+                if (result.ok) this.$router.push('/');
+                else this.message = result.message;
+            }).catch(err => {
+                console.log(err);
             });
         }
     }
