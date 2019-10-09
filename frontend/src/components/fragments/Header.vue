@@ -16,6 +16,8 @@
             logout() {
                 this.$store.dispatch('AUTH_LOGOUT').then(() => {
                     this.$router.push('/login');
+                }).catch(err => {
+                    console.log(err);
                 });
             }
         }

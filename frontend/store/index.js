@@ -28,21 +28,25 @@ export const store = new Vuex.Store({
     },
 
     AUTH_ERROR: (state, err) => {
+        console.log('Error: ' + err);
         localStorage.removeItem('user-token');
         state.status = 'error';
     },
 
     AUTH_LOGOUT: state => {
+        state.token = undefined;
         localStorage.removeItem('user-token');
     }
   },
   actions: {
     AUTH_REQUEST: async (context, user) => {
         context.commit('AUTH_REQUEST');
-        return await axios({ url: '/login', data: user, method: 'POST' }).then(resp => {
-            context.commit('AUTH_SUCCESS', resp.data.token);
+        return await axios({ url: 'http://localhost:8000/api/login', data: user, method: 'POST' }).then(resp => {
+          context.commit('AUTH_SUCCESS', resp.data.token);
+          return { ok: true };
         }).catch(err => {
-            context.commit('AUTH_ERROR', err);
+          context.commit('AUTH_ERROR', err);
+          return { ok: false, message: err.message }
         });
     },
 
