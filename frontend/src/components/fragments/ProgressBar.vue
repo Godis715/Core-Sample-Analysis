@@ -10,7 +10,7 @@
         animation-name: movement;
         height: 2px;
         position: fixed;
-        background-color: gray;
+        background-color:rgb(36, 170, 54);
         top: 0;
         left: 0;
     }
