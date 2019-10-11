@@ -101,7 +101,7 @@ def decode_archive(archive):
 
 
 if __name__ == "__main__":
-    zip_archive = ZipFile(os.path.join(os.path.dirname(__file__), 'sample.zip'))
+    zip_archive = ZipFile(os.path.join(os.path.dirname(__file__), 'tests/sample.zip'))
     data = decode_archive(zip_archive)
     zip_archive.close()
     print(data)

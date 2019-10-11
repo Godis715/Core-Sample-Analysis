@@ -1,0 +1,46 @@
+[
+	{
+
+		"nameImg_DL": "sample1_DL.jpg",
+
+		"nameImg_UV": "sample1_UV.jpg",
+
+		"begin_layer": 0.0,
+
+		"end_layer": 1.45
+	},
+
+	{
+
+		"nameImg_DL": "sample2_DL.jpg",
+
+		"nameImg_UV": "sample2_UV.jpg",
+
+		"begin_layer": 1.45,
+
+		"end_layer": 3.54
+	},
+
+	{
+
+		"nameImg_DL": "sample3_DL.jpg",
+
+		"nameImg_UV": "sample3_UV.jpg",
+
+		"begin_layer": 3.54,
+
+		"end_layer": 5.85
+	},
+
+	{
+
+		"nameImg_DL": "sample4_DL.jpg",
+
+		"nameImg_UV": "sample4_UV.jpg",
+
+		"begin_layer": 5.85,
+
+		"end_layer": 5.93
+	}
+
+]
