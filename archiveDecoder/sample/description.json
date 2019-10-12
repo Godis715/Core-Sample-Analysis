@@ -1,49 +1,49 @@
 {
 	"deposit": 1,
 	"hole": 2,
-	"parts": [
+	"fragments": [
 				{
 
-					"nameImg_DL": "part1_DL.jpg",
+					"dlImg": "fragment1_DL.jpg",
 
-					"nameImg_UV": "part1_UV.jpg",
+					"uvImg": "fragment1_UV.jpg",
 
-					"begin_part": 0.0,
+					"top": 0.0,
 
-					"end_part": 1.45
+					"bottom": 1.45
 				},
 
 				{
 
-					"nameImg_DL": "part2_DL.jpg",
+					"dlImg": "fragment2_DL.jpg",
 
-					"nameImg_UV": "part2_UV.jpg",
+					"uvImg": "fragment2_UV.jpg",
 
-					"begin_part": 1.45,
+					"top": 1.45,
 
-					"end_part": 3.54
+					"bottom": 3.54
 				},
 
 				{
 
-					"nameImg_DL": "part3_DL.jpg",
+					"dlImg": "fragment3_DL.jpg",
 
-					"nameImg_UV": "part3_UV.jpg",
+					"uvImg": "fragment3_UV.jpg",
 
-					"begin_part": 3.54,
+					"top": 3.54,
 
-					"end_part": 5.85
+					"bottom": 5.85
 				},
 
 				{
 
-					"nameImg_DL": "part4_DL.jpg",
+					"dlImg": "fragment4_DL.jpg",
 
-					"nameImg_UV": "part4_UV.jpg",
+					"uvImg": "fragment4_UV.jpg",
 
-					"begin_part": 5.85,
+					"top": 5.85,
 
-					"end_part": 5.93
+					"bottom": 5.93
 				}
 
 	]

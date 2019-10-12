@@ -8,8 +8,8 @@ from zipfile import ZipFile
 from PIL import Image
 
 
-ALLOWED_PARAMS_SAMPLE = {'deposit', 'hole', 'parts'}
-ALLOWED_PARAMS_PART = {'nameImg_DL', 'nameImg_UV', 'begin_part', 'end_part'}
+ALLOWED_PARAMS_SAMPLE = {'deposit', 'hole', 'fragments'}
+ALLOWED_PARAMS_PART = {'dlImg', 'uvImg', 'top', 'bottom'}
 
 ERROR_FORMAT = 'Error format file (Expected {})'
 NOT_EXIST_FILE = '{} file not exist!'
@@ -46,7 +46,7 @@ def decode_archive(archive):
     """sample_data = 
     {   
         sample params ...
-        parts:
+        fragments:
         [
             {
                 'image_DL': PIL_image,
@@ -59,30 +59,30 @@ def decode_archive(archive):
     """
     root_folder = archive.namelist()[0]
     path_file_description = f'{root_folder}description'
-    if f'{path_file_description}.json' in archive.namelist():
+    if f'{path_file_description}.json' not in archive.namelist():
         with archive.open(f'{path_file_description}.json') as file_description_json:
             file_bytes = file_description_json.read()
             sample_data = json.loads(file_bytes.decode("utf-8"))
-            if not _description_sample_params_isCorrect(data.keys()):
+            if not _description_sample_params_isCorrect(sample_data.keys()):
                 return {'Type': 'Error', 'Message': NOT_CORRECT_SAMPLE_PARAMS}  # <--- Error
             parts = []
-            for description_part in sample_data.pop('parts'):
+            for description_part in sample_data.pop('fragments'):
                 if not _description_part_params_isCorrect(description_part.keys()):
                     return {'Type': 'Error', 'Message': NOT_CORRECT_PART_PARAMS}  # <--- Error
                 part = {}
                 for param, value in description_part.items():
-                    if param == 'nameImg_DL' or param == 'nameImg_UV':
+                    if param == 'dlImg' or param == 'uvImg':
                         if f'{root_folder}{value}' not in archive.namelist():
                             return {'Type': 'Error',
                                     'Message': NOT_FOUND_FILE_BY_LINK.format('image')}  # <--- Error
-                        type_image = param.split('_')[1]  # DL or UV
+                        type_image = param[:2]  # DL or UV
                         with archive.open(f'{root_folder}{value}') as image:
                             stream = io.BytesIO(image.read())
-                            part[f'image_{type_image}'] = Image.open(stream)
+                            part[f'{type_image}Img'] = Image.open(stream)
                     else:
                         part[param] = value
                 parts.append(part)
-            sample_data['parts'] = parts
+            sample_data['fragments'] = parts
         return {'Type': 'Success', 'Data': sample_data}  # <--- result
     elif f'{path_file_description}.xlsx' in archive.namelist():
         sample_data = {}
@@ -97,10 +97,10 @@ def decode_archive(archive):
             if not _description_sample_params_isCorrect(sample_header):
                 return {'Type': 'Error', 'Message': NOT_CORRECT_SAMPLE_PARAMS}  # <--- Error
             for col_num in range(len(sample_header)):
-                if sample_header[col_num] != 'parts':
+                if sample_header[col_num] != 'fragments':
                     sample_data[sample_header[col_num]] = sheet.cell(1, col_num).value
                 else:
-                    sample_data['parts'] = []
+                    sample_data['fragments'] = []
             col_num_parts = len(sample_header) - 1
 
             parts_header = sheet.row_values(rowx=1, start_colx=col_num_parts)
@@ -110,17 +110,17 @@ def decode_archive(archive):
             for row_num in range(2, sheet.nrows):
                 part = {}
                 for col_num in range(col_num_parts, sheet.ncols):
-                    if parts_header[col_num - col_num_parts] == 'nameImg_DL' or parts_header[col_num - col_num_parts] == 'nameImg_UV':
+                    if parts_header[col_num - col_num_parts] == 'dlImg' or parts_header[col_num - col_num_parts] == 'uvImg':
                         if f'{root_folder}{sheet.cell(row_num, col_num).value}' not in archive.namelist():
                             return {'Type': 'Error',
                                     'Message': NOT_FOUND_FILE_BY_LINK.format('image')}  # <--- Error
-                        type_image = parts_header[col_num - col_num_parts].split('_')[1]  # DL or UV
+                        type_image = parts_header[col_num - col_num_parts][:2]  # DL or UV
                         with archive.open(f'{root_folder}{sheet.cell(row_num, col_num).value}') as image:
                             stream = io.BytesIO(image.read())
-                            part[f'image_{type_image}'] = Image.open(stream)
+                            part[f'{type_image}Img'] = Image.open(stream)
                     else:
                         part[parts_header[col_num - col_num_parts]] = sheet.cell(row_num, col_num).value
-                sample_data['parts'].append(part)
+                sample_data['fragments'].append(part)
 
         return {'Type': 'Success', 'Data': sample_data}  # <--- result
     else:
