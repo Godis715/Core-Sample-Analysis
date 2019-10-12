@@ -1,46 +1,52 @@
-[
-	{
+{
+	"deposit": 1,
+	"hole": 2,
+	"parts": [
+				{
 
-		"nameImg_DL": "sample1_DL.jpg",
+					"nameImg_DL": "part1_DL.jpg",
 
-		"nameImg_UV": "sample1_UV.jpg",
+					"nameImg_UV": "part1_UV.jpg",
 
-		"begin_layer": 0.0,
+					"begin_part": 0.0,
 
-		"end_layer": 1.45
-	},
+					"end_part": 1.45
+				},
 
-	{
+				{
 
-		"nameImg_DL": "sample2_DL.jpg",
+					"nameImg_DL": "part2_DL.jpg",
 
-		"nameImg_UV": "sample2_UV.jpg",
+					"nameImg_UV": "part2_UV.jpg",
 
-		"begin_layer": 1.45,
+					"begin_part": 1.45,
 
-		"end_layer": 3.54
-	},
+					"end_part": 3.54
+				},
 
-	{
+				{
 
-		"nameImg_DL": "sample3_DL.jpg",
+					"nameImg_DL": "part3_DL.jpg",
 
-		"nameImg_UV": "sample3_UV.jpg",
+					"nameImg_UV": "part3_UV.jpg",
 
-		"begin_layer": 3.54,
+					"begin_part": 3.54,
 
-		"end_layer": 5.85
-	},
+					"end_part": 5.85
+				},
 
-	{
+				{
 
-		"nameImg_DL": "sample4_DL.jpg",
+					"nameImg_DL": "part4_DL.jpg",
 
-		"nameImg_UV": "sample4_UV.jpg",
+					"nameImg_UV": "part4_UV.jpg",
 
-		"begin_layer": 5.85,
+					"begin_part": 5.85,
 
-		"end_layer": 5.93
-	}
+					"end_part": 5.93
+				}
 
-]
+	]
+}
+
+
