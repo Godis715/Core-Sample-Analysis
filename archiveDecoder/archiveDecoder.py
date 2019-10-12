@@ -48,6 +48,8 @@ def decode_archive(archive):
     {'Type': 'Error', 'Message': '...'}
     or
     {'Type': 'Success', 'Data': sample_data}
+    or 
+    {'Type': 'Warning', 'Warnings': warnings 'Data': sample_data}
     """
 
     """sample_data = 
