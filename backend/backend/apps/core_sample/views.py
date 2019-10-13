@@ -30,7 +30,7 @@ def _upload_server(csName, data, user):
     cs_top, cs_bottom = _cs_count_top_bottom(data['fragments'])
     core_sample_db = models.Core_sample(
         name=csName,
-        user_id=user,
+        user=user,
         deposit=data['deposit'],
         hole=data['hole'],
         top=cs_top,
@@ -39,7 +39,7 @@ def _upload_server(csName, data, user):
     core_sample_db.save()
 
     ROOT_STATIC_APP = f'{settings.PROJECT_ROOT}\\static\\core_sample'
-    src_rel = f'user_{user.id}\\cs_{core_sample_db.id}'
+    src_rel = f'user_{user.id}\\cs_{core_sample_db.global_id}'
     src_abs = f'{ROOT_STATIC_APP}\\{src_rel}'
     os.makedirs(src_abs)
     for fragment in data['fragments']:
@@ -48,14 +48,14 @@ def _upload_server(csName, data, user):
         uvImg_name = fragment['uvImg'].filename
         fragment['uvImg'].save(f'{src_abs}\\{uvImg_name}')
         fragment_db = models.Fragment(
-            cs_id=core_sample_db,
+            cs=core_sample_db,
             dl_src=f'{src_rel}\\{dlImg_name}',
             uv_src=f'{src_rel}\\{uvImg_name}',
             top=fragment['top'],
             bottom=fragment['bottom']
         )
         fragment_db.save()
-    return core_sample_db.id
+    return core_sample_db.global_id
 
 
 def _allowed_file(filename):

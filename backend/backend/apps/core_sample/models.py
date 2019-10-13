@@ -1,12 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
+import uuid
 
 
 class Core_sample(models.Model):
     """Основаня модель керна"""
 
+    global_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(verbose_name='Название', max_length=50)
-    user_id = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
     deposit = models.PositiveIntegerField(verbose_name='Месторождение')
     hole = models.PositiveIntegerField(verbose_name='Скважина')
     top = models.FloatField(verbose_name='Вверх')
@@ -35,7 +37,7 @@ class Core_sample(models.Model):
 class Fragment(models.Model):
     """Модель фрагмента керна"""
 
-    cs_id = models.ForeignKey(Core_sample, verbose_name='Керн', on_delete=models.CASCADE)
+    cs = models.ForeignKey(Core_sample, verbose_name='Керн', on_delete=models.CASCADE)
     dl_src = models.FilePathField(verbose_name='ДС изображение')
     uv_src = models.FilePathField(verbose_name='УФ изображение')
     top = models.FloatField(verbose_name='Вверх')
