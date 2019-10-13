@@ -24,8 +24,10 @@ if token:
     headers = {"Authorization": token}
 
     file_obj = open(os.path.join(os.path.dirname(__file__), 'sample.zip'), 'rb')
-    response = requests.post(f"{url}core_sample/upload", files={"archive": ("sample.zip", file_obj)}, headers=headers)
-
+    response = requests.post(f"{url}core_sample/upload",
+                             files={"archive": ("sample.zip", file_obj)},
+                             data={'csName': 'Тест'},
+                             headers=headers)
     print(response.status_code)
     print(response.text)
 else:
