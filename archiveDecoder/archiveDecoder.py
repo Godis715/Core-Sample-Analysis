@@ -47,9 +47,7 @@ def decode_archive(archive):
     """Result: 
     {'Type': 'Error', 'Message': '...'}
     or
-    {'Type': 'Success', 'Data': sample_data}
-    or 
-    {'Type': 'Warning', 'Warnings': warnings 'Data': sample_data}
+    {'Type': 'Success', 'Data': sample_data, 'Warnings': warnings}
     """
 
     """sample_data = 
@@ -162,10 +160,7 @@ def decode_archive(archive):
     if not _use_all_images(all_path_images, use_path_images):
         warnings.append(WARN_NOT_USE_ALL_IMAGES)
 
-    if len(warnings) != 0:
-        return {'Type': 'Warning', 'Warnings': warnings, 'Data': sample_data}  # <--- result with warnings
-    else:
-        return {'Type': 'Success', 'Data': sample_data}  # <--- result
+    return {'Type': 'Success', 'Data': sample_data, 'Warnings': warnings}  # <--- result
 
 
 if __name__ == "__main__":

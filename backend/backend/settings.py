@@ -10,7 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
-import os, sys
+import os
+import sys
+
+sys.path.append(r'.\..\archiveDecoder') #path for import
 
 # Build paths inside the workstation like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -41,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'workstation',
+    'core_sample',
 
     'rest_framework',
     'rest_framework.authtoken',
