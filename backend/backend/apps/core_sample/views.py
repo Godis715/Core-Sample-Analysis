@@ -68,13 +68,12 @@ def upload(request):
     """Decoding archive -> load data -> response(json)"""
 
     file = request.FILES['archive']
-    csName = request.POST['csName']
 
     if _allowed_file(file.name):
         zip_file = ZipFile(file, 'r')
         result_decode = decode_archive(zip_file)
         if result_decode['Type'] == 'Success':
-            csId = _upload_server(csName, result_decode['Data'], request.user)
+            csId = _upload_server(request.POST['csName'], result_decode['Data'], request.user)
             return Response({'csId:': csId, 'warnings': result_decode['Warnings']}, status=HTTP_200_OK)
         elif result_decode['Type'] == 'Error':
             return Response({'message:': result_decode['Message']}, status=HTTP_400_BAD_REQUEST)
