@@ -39,7 +39,7 @@ def _upload_server(csName, data, user):
     core_sample_db.save()
 
     ROOT_STATIC_APP = f'{settings.PROJECT_ROOT}\\static\\core_sample'
-    src_rel = f'user_{user.id}\\cs_{core_sample_db.global_id}'
+    src_rel = f'user_{user.username}\\cs_{core_sample_db.global_id}'
     src_abs = f'{ROOT_STATIC_APP}\\{src_rel}'
     os.makedirs(src_abs)
     for fragment in data['fragments']:
