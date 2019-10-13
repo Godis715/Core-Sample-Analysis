@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ArchiveDecoder.iml" filepath="$PROJECT_DIR$/.idea/ArchiveDecoder.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/dataAnalysis.iml" filepath="$PROJECT_DIR$/.idea/dataAnalysis.iml" />
     </modules>
   </component>
 </project>
