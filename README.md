@@ -10,3 +10,5 @@ This project is developing as a part of educational practice by students from AM
 - _oil-carbon-detection_, _rock-classification_ - notebooks with experiments about drill core analysis
 
 - _dataAnalisys_ - rest API application for analizing core samples
+
+- _backend_ - a backend of the web-application for the work with core samples, also see branch _"frontend"_
