@@ -22,6 +22,14 @@ import hashlib
 
 ROOT_STATIC_APP = f'{settings.PROJECT_ROOT}\\static\\core_sample'
 
+ERROR_FILE_IS_NOT_ATTACHED = "File is not attached!"
+ERROR_FORMAT_FILE = "File format error (Expected .zip)!"
+ERROR_INVALID_ID = "Invalid id: {} not found!"
+ERROR_NOT_AUTHOR = "The user is not author of this {}!"
+ERROR_NOT_FOUND_FOLDER = "Not found {} folder!"
+
+WARN_FILE_UPLOADED_BEFORE = "This file has been uploaded before"
+
 
 def _cs_count_top_bottom(fragments):
     cs_top, cs_bottom = 1e10, 0
@@ -74,12 +82,12 @@ def upload(request):
     try:
         file = request.FILES['archive']
     except:
-        return Response({'message': "File not attached"}, status=HTTP_400_BAD_REQUEST)
+        return Response({'message': ERROR_FILE_IS_NOT_ATTACHED}, status=HTTP_400_BAD_REQUEST)
 
     control_sum = hashlib.md5(file.read()).hexdigest()
     try:
         core_sample = models.Core_sample.objects.filter(control_sum=control_sum)[0]
-        return Response({'csId': core_sample.global_id, 'message': "This file has been uploaded before"},
+        return Response({'csId': core_sample.global_id, 'message': WARN_FILE_UPLOADED_BEFORE},
                         status=HTTP_200_OK)
     except:
         ...
@@ -96,7 +104,7 @@ def upload(request):
         else:
             raise Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
 
-    return Response({'message': 'Error format file (Expected .zip)'}, status=HTTP_400_BAD_REQUEST)
+    return Response({'message': ERROR_FORMAT_FILE}, status=HTTP_400_BAD_REQUEST)
 
 
 @csrf_exempt
@@ -105,11 +113,11 @@ def delete(request, csId):
     try:
         core_sample = models.Core_sample.objects.get(global_id=csId)
     except:
-        return Response({'message': 'Bad id! Not found core_sample object on server'},
+        return Response({'message': ERROR_INVALID_ID.format('core sample')},
                         status=HTTP_400_BAD_REQUEST)
 
     if request.user != core_sample.user:
-        return Response({'message': 'The user is not author of this core_sample'},
+        return Response({'message': ERROR_NOT_AUTHOR.format('core sample')},
                         status=HTTP_400_BAD_REQUEST)
 
     if f'user_{request.user.username}' in os.listdir(ROOT_STATIC_APP):
@@ -118,10 +126,10 @@ def delete(request, csId):
             core_sample.delete()
             return Response(status=HTTP_200_OK)
         else:
-            return Response({'message': 'Not found core_sample folder in user folder on server'},
+            return Response({'message': ERROR_NOT_FOUND_FOLDER.format('core sample')},
                             status=HTTP_500_INTERNAL_SERVER_ERROR)
     else:
-        return Response({'message': 'Not found user folder on server'},
+        return Response({'message': ERROR_NOT_FOUND_FOLDER.format('user')},
                         status=HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -131,11 +139,11 @@ def get(request, csId):
     try:
         core_sample = models.Core_sample.objects.get(global_id=csId)
     except:
-        return Response({'message': 'Bad id! Not found core_sample object on server'},
+        return Response({'message': ERROR_INVALID_ID.format('core sample')},
                         status=HTTP_400_BAD_REQUEST)
 
     if request.user != core_sample.user:
-        return Response({'message': 'The user is not author of this core_sample'},
+        return Response({'message': ERROR_NOT_AUTHOR.format('core sample')},
                         status=HTTP_400_BAD_REQUEST)
 
     return Response({
