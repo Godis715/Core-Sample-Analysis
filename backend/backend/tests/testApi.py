@@ -54,7 +54,7 @@ if token:
 
     file_obj = open(os.path.join(os.path.dirname(__file__), 'sample.zip'), 'rb')
     response = requests.post(f"{url}core_sample/upload",
-                             files={"archive": ("sample.zip", file_obj)},
+                             files={"archive": file_obj},
                              data={'csName': 'Тест'},
                              headers=headers)
     # response = requests.post(f"{url}logout", headers=headers)
