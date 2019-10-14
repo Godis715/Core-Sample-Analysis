@@ -5,6 +5,11 @@ import App from './App'
 import router from './router'
 import {store} from '../store'
 
+import axios from 'axios';
+Vue.prototype.$axios = axios.create({
+  baseURL: 'http://localhost:8000/'
+});
+
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
@@ -12,6 +17,7 @@ new Vue({
   el: '#app',
   store,
   router,
+  axios,
   components: { App },
   template: '<App/>'
 })

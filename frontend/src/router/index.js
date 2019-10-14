@@ -24,7 +24,6 @@ const ifNotAuthenticated = (to, from, next) => {
 
 const ifAuthenticated = (to, from, next) => {
   console.log('Check if authenticated');
-  console.log(store);
   // checking if has auth token
   if (store.getters.isAuthenticated) {
     next();

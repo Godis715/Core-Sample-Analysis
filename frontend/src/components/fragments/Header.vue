@@ -1,7 +1,7 @@
 <template>
 <header>
     <div><router-link :to="{name:'Account'}">Account</router-link></div>
-    <div><router-link :to="{name:'Search'}">Upload</router-link></div>
+    <div><router-link :to="{name:'Upload'}">Upload</router-link></div>
     <div><router-link :to="{name:'Search'}">Search</router-link></div>
     <div><router-link :to="{name:'FAQ'}">FAQ</router-link></div>
     <div><router-link :to="{name:'Search'}">About</router-link></div>
