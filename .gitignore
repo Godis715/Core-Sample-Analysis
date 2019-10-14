@@ -168,3 +168,5 @@ typings/
 # next.js build output
 .next
 
+# static files
+backend/backend/static/
