@@ -52,12 +52,16 @@ if token:
     token = f"Token {token}"
     headers = {"Authorization": token}
 
-    file_obj = open(os.path.join(os.path.dirname(__file__), 'sample.zip'), 'rb')
-    response = requests.post(f"{url}core_sample/upload",
-                             files={"archive": file_obj},
-                             data={'csName': 'Тест'},
-                             headers=headers)
+    # file_obj = open(os.path.join(os.path.dirname(__file__), 'sample.zip'), 'rb')
+    # response = requests.post(f"{url}core_sample/upload",
+    #                          files={"archive": file_obj},
+    #                          data={'csName': 'Тест'},
+    #                          headers=headers)
     # response = requests.post(f"{url}logout", headers=headers)
+
+    csId = '00e1bbd6-80af-4c9b-b90d-bc5e65d4a9ed'
+    response = requests.delete(f"{url}core_sample/{csId}", headers=headers)
+
     print(response.status_code)
     print(response.text)
 else:

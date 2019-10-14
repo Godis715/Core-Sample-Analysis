@@ -17,7 +17,11 @@ from django.conf import settings
 from . import models
 
 import os
+import shutil
 import hashlib
+
+
+ROOT_STATIC_APP = f'{settings.PROJECT_ROOT}\\static\\core_sample'
 
 
 def _cs_count_top_bottom(fragments):
@@ -28,7 +32,7 @@ def _cs_count_top_bottom(fragments):
     return cs_top, cs_bottom
 
 
-def _upload_server(csName, data, control_sum, user):
+def _upload_on_server(csName, data, control_sum, user):
     cs_top, cs_bottom = _cs_count_top_bottom(data['fragments'])
     core_sample_db = models.Core_sample(
         name=csName,
@@ -41,7 +45,6 @@ def _upload_server(csName, data, control_sum, user):
     )
     core_sample_db.save()
 
-    ROOT_STATIC_APP = f'{settings.PROJECT_ROOT}\\static\\core_sample'
     src_rel = f'user_{user.username}\\cs_{core_sample_db.global_id}'
     src_abs = f'{ROOT_STATIC_APP}\\{src_rel}'
     os.makedirs(src_abs)
@@ -79,7 +82,7 @@ def upload(request):
         zip_file = ZipFile(file, 'r')
         result_decode = decode_archive(zip_file)
         if result_decode['Type'] == 'Success':
-            csId = _upload_server(request.POST['csName'], result_decode['Data'], control_sum, request.user)
+            csId = _upload_on_server(request.POST['csName'], result_decode['Data'], control_sum, request.user)
 
             control_sum_warning = []
             if len(models.Core_sample.objects.filter(control_sum=control_sum)) >= 2:
@@ -92,3 +95,33 @@ def upload(request):
             raise Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response({'message': 'Error format file (Expected .zip)'}, status=HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+@csrf_exempt
+@api_view(["DELETE"])
+def delete(request, csId):
+    try:
+        core_sample = models.Core_sample.objects.get(global_id=csId)
+    except:
+        return Response({'message': 'Bad id! Not found core_sample object on server'},
+                        status=HTTP_400_BAD_REQUEST)
+
+    if request.user != core_sample.user:
+        return Response({'message': 'The user is not author of this core_sample'},
+                        status=HTTP_400_BAD_REQUEST)
+
+    if f'user_{request.user.username}' in os.listdir(ROOT_STATIC_APP):
+        if f'cs_{csId}' in os.listdir(f'{ROOT_STATIC_APP}\\user_{request.user.username}'):
+            shutil.rmtree(f'{ROOT_STATIC_APP}\\user_{request.user.username}\\cs_{csId}')
+            core_sample.delete()
+            return Response(status=HTTP_200_OK)
+        else:
+            return Response({'message': 'Not found core_sample folder in user folder on server'},
+                            status=HTTP_500_INTERNAL_SERVER_ERROR)
+    else:
+        return Response({'message': 'Not found user folder on server'},
+                        status=HTTP_500_INTERNAL_SERVER_ERROR)
