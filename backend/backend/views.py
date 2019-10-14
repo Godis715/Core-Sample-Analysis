@@ -24,13 +24,16 @@ def login(request):
     if not user:
         return Response({'error': 'Invalid Credentials'},
                         status=HTTP_401_UNAUTHORIZED)
+
     token, _ = Token.objects.get_or_create(user=user)
     return Response({'token': token.key},
                     status=HTTP_200_OK)
 
 
 @csrf_exempt
-@api_view(["GET"])
-def test_login(request):
-    data = {'sample_data': 123}
-    return Response(data, status=HTTP_200_OK)
+@api_view(["POST"])
+def logout(request):
+    token = Token.objects.get(user=request.user)
+    token.delete()
+    return Response(status=HTTP_200_OK)
+

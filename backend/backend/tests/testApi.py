@@ -57,6 +57,7 @@ if token:
                              files={"archive": ("sample.zip", file_obj)},
                              data={'csName': 'Тест'},
                              headers=headers)
+    # response = requests.post(f"{url}logout", headers=headers)
     print(response.status_code)
     print(response.text)
 else:
