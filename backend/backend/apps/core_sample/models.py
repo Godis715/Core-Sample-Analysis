@@ -27,6 +27,8 @@ class Core_sample(models.Model):
     )
     status = models.IntegerField(verbose_name='Статус', choices=STATUS_TYPES, default=NOT_ANALYSED)
 
+    date = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True, null=True)
+
     class Meta:
         verbose_name = 'Керн'
         verbose_name_plural = 'Керны'

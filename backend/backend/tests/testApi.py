@@ -57,10 +57,17 @@ if token:
     #                          files={"archive": file_obj},
     #                          data={'csName': 'Тест'},
     #                          headers=headers)
+
     # response = requests.post(f"{url}logout", headers=headers)
 
-    csId = '00e1bbd6-80af-4c9b-b90d-bc5e65d4a9ed'
-    response = requests.delete(f"{url}core_sample/{csId}", headers=headers)
+    # csId = '00e1bbd6-80af-4c9b-b90d-bc5e65d4a9ed'
+    # response = requests.delete(f"{url}core_sample/{csId}", headers=headers)
+
+    # response = requests.get(f"{url}core_sample/", headers=headers)
+
+    # csId = 'b664248e-09a2-4e2e-8934-dade9cf31946'
+    # csId = '00e81d72-c8de-4a1e-bf3b-d46a6a6fe93c'
+    # response = requests.get(f"{url}core_sample/{csId}", headers=headers)
 
     print(response.status_code)
     print(response.text)

@@ -20,7 +20,6 @@ import os
 import shutil
 import hashlib
 
-
 ROOT_STATIC_APP = f'{settings.PROJECT_ROOT}\\static\\core_sample'
 
 
@@ -78,27 +77,26 @@ def upload(request):
         return Response({'message': "File not attached"}, status=HTTP_400_BAD_REQUEST)
 
     control_sum = hashlib.md5(file.read()).hexdigest()
+    try:
+        core_sample = models.Core_sample.objects.filter(control_sum=control_sum)[0]
+        return Response({'csId': core_sample.global_id, 'message': "This file has been uploaded before"},
+                        status=HTTP_200_OK)
+    except:
+        ...
+
     if _allowed_file(file.name):
         zip_file = ZipFile(file, 'r')
         result_decode = decode_archive(zip_file)
         if result_decode['Type'] == 'Success':
             csId = _upload_on_server(request.POST['csName'], result_decode['Data'], control_sum, request.user)
 
-            control_sum_warning = []
-            if len(models.Core_sample.objects.filter(control_sum=control_sum)) >= 2:
-                control_sum_warning = ['This file has been uploaded before']
-
-            return Response({'csId': csId, 'warnings': control_sum_warning + result_decode['Warnings']}, status=HTTP_200_OK)
+            return Response({'csId': csId, 'warnings': result_decode['Warnings']}, status=HTTP_200_OK)
         elif result_decode['Type'] == 'Error':
             return Response({'message': result_decode['Message']}, status=HTTP_400_BAD_REQUEST)
         else:
             raise Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response({'message': 'Error format file (Expected .zip)'}, status=HTTP_400_BAD_REQUEST)
-
-
-
-
 
 
 @csrf_exempt
@@ -125,3 +123,38 @@ def delete(request, csId):
     else:
         return Response({'message': 'Not found user folder on server'},
                         status=HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@csrf_exempt
+@api_view(["GET"])
+def get(request, csId):
+    try:
+        core_sample = models.Core_sample.objects.get(global_id=csId)
+    except:
+        return Response({'message': 'Bad id! Not found core_sample object on server'},
+                        status=HTTP_400_BAD_REQUEST)
+
+    if request.user != core_sample.user:
+        return Response({'message': 'The user is not author of this core_sample'},
+                        status=HTTP_400_BAD_REQUEST)
+
+    return Response({
+        'csName': core_sample.name,
+        'date': core_sample.date,
+        'status': core_sample.status
+    }, status=HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(["GET"])
+def getAll(request):
+    core_sample_all = models.Core_sample.objects.filter(user=request.user)
+    data = []
+    for core_sample in core_sample_all:
+        data.append({
+            'csId': core_sample.global_id,
+            'csName': core_sample.name,
+            'date': core_sample.date,
+            'status': core_sample.status
+        })
+    return Response({'data': data}, status=HTTP_200_OK)
