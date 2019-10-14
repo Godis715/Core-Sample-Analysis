@@ -11,20 +11,20 @@ export const store = new Vuex.Store({
   },
 
   getters: {
-    isAuthenticated: state => !!state.token,
+    isAuthenticated: state => state.token,
     authStatus: state => state.status
   },
 
   mutations: {
     AUTH_REQUEST: state => {
-        state.status = 'loading';
+      state.status = 'loading';
     },
 
     AUTH_SUCCESS: (state, token) => {
         localStorage.setItem('user-token', token); //sync
-        axios.defaults.headers.common['Authorization'] = token;
-        state.status = 'success';
         state.token = token;
+
+        state.status = 'success';
     },
 
     AUTH_ERROR: (state, err) => {
@@ -34,8 +34,8 @@ export const store = new Vuex.Store({
     },
 
     AUTH_LOGOUT: state => {
-        state.token = undefined;
-        localStorage.removeItem('user-token');
+      state.token = undefined;
+      localStorage.removeItem('user-token');
     }
   },
   actions: {
@@ -51,7 +51,18 @@ export const store = new Vuex.Store({
     },
 
     AUTH_LOGOUT: async context => {
-        context.commit('AUTH_LOGOUT');
+        if (context.state.token) {
+          let headers = {};
+          if (context.state.token) 
+            headers['Authorization'] = `Token ${context.state.token}`;
+          
+          await axios({ url: 'http://localhost:8000/api/logout', method: 'POST', headers }).then(resp => {
+            context.commit('AUTH_LOGOUT');
+          }).catch(err => {
+            console.error(err);
+            context.commit('AUTH_LOGOUT');
+          });
+        }
     }
   }
 });

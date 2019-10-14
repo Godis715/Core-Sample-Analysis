@@ -42,11 +42,13 @@
         name: 'site-header',
         methods: {
             logout() {
-                this.$store.dispatch('AUTH_LOGOUT').then(() => {
+                let logoutProm = this.$store.dispatch('AUTH_LOGOUT').then(() => {
                     this.$router.push('/login');
                 }).catch(err => {
                     console.log(err);
                 });
+
+                this.$root.$emit('start-loading', logoutProm);
             }
         }
     };

@@ -23,11 +23,12 @@ export default {
       throw err;
     });
 
-    // append token to all headers
-    const token = localStorage.getItem('user-token');
-    if (token) {
-      this.$axios.defaults.headers['Authorization'] = `Token ${token}`;
-    }
+    this.$axios.interceptors.request.use(request => {
+      const token = localStorage.getItem('user-token');
+      if (token)
+        request.headers['Authorization'] = `Token ${token}`;
+      return request;
+    });
   }
 }
 </script>

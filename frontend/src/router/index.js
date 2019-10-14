@@ -13,7 +13,6 @@ import { store } from '@/../store'
 Vue.use(Router)
 
 const ifNotAuthenticated = (to, from, next) => {
-  console.log('Check if not authenticated');
   // cheking if has NOT auth token
   if (!store.getters.isAuthenticated) {
     next();
@@ -23,7 +22,6 @@ const ifNotAuthenticated = (to, from, next) => {
 };
 
 const ifAuthenticated = (to, from, next) => {
-  console.log('Check if authenticated');
   // checking if has auth token
   if (store.getters.isAuthenticated) {
     next();
