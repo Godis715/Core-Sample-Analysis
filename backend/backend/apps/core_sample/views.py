@@ -85,10 +85,10 @@ def upload(request):
             if len(models.Core_sample.objects.filter(control_sum=control_sum)) >= 2:
                 control_sum_warning = ['This file has been uploaded before']
 
-            return Response({'csId:': csId, 'warnings': control_sum_warning + result_decode['Warnings']}, status=HTTP_200_OK)
+            return Response({'csId': csId, 'warnings': control_sum_warning + result_decode['Warnings']}, status=HTTP_200_OK)
         elif result_decode['Type'] == 'Error':
-            return Response({'message:': result_decode['Message']}, status=HTTP_400_BAD_REQUEST)
+            return Response({'message': result_decode['Message']}, status=HTTP_400_BAD_REQUEST)
         else:
             raise Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
 
-    return Response({'Message:': 'Error format file (Expected .zip)'}, status=HTTP_400_BAD_REQUEST)
+    return Response({'message': 'Error format file (Expected .zip)'}, status=HTTP_400_BAD_REQUEST)
