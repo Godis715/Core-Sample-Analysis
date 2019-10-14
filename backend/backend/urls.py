@@ -22,7 +22,8 @@ from .views import test_login
 urlpatterns = [
     path('', TemplateView.as_view(template_name='index.html')),
     path('api/login', login),
-    path('api/testLogin', test_login),
+    # path('api/testLogin', test_login),
+    path('api/core_sample/', include('core_sample.urls')),
     path('api/workstation/', include('workstation.urls')),
     path('admin/', admin.site.urls),
 ]
