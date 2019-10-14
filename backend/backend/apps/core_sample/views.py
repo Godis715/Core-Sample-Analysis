@@ -3,6 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
 from rest_framework.status import (
+    HTTP_500_INTERNAL_SERVER_ERROR,
     HTTP_400_BAD_REQUEST,
     HTTP_401_UNAUTHORIZED,
     HTTP_200_OK
@@ -16,6 +17,7 @@ from django.conf import settings
 from . import models
 
 import os
+import hashlib
 
 
 def _cs_count_top_bottom(fragments):
@@ -26,11 +28,12 @@ def _cs_count_top_bottom(fragments):
     return cs_top, cs_bottom
 
 
-def _upload_server(csName, data, user):
+def _upload_server(csName, data, control_sum, user):
     cs_top, cs_bottom = _cs_count_top_bottom(data['fragments'])
     core_sample_db = models.Core_sample(
         name=csName,
         user=user,
+        control_sum=control_sum,
         deposit=data['deposit'],
         hole=data['hole'],
         top=cs_top,
@@ -66,19 +69,26 @@ def _allowed_file(filename):
 @api_view(["POST"])
 def upload(request):
     """Decoding archive -> load data -> response(json)"""
+    try:
+        file = request.FILES['archive']
+    except:
+        return Response({'message': "File not attached"}, status=HTTP_400_BAD_REQUEST)
 
-    file = request.FILES['archive']
-
+    control_sum = hashlib.md5(file.read()).hexdigest()
     if _allowed_file(file.name):
         zip_file = ZipFile(file, 'r')
         result_decode = decode_archive(zip_file)
         if result_decode['Type'] == 'Success':
-            csId = _upload_server(request.POST['csName'], result_decode['Data'], request.user)
-            return Response({'csId:': csId, 'warnings': result_decode['Warnings']}, status=HTTP_200_OK)
+            csId = _upload_server(request.POST['csName'], result_decode['Data'], control_sum, request.user)
+
+            control_sum_warning = []
+            if len(models.Core_sample.objects.filter(control_sum=control_sum)) >= 2:
+                control_sum_warning = ['This file has been uploaded before']
+
+            return Response({'csId:': csId, 'warnings': control_sum_warning + result_decode['Warnings']}, status=HTTP_200_OK)
         elif result_decode['Type'] == 'Error':
             return Response({'message:': result_decode['Message']}, status=HTTP_400_BAD_REQUEST)
         else:
-            raise Exception('Not correct result of decode')
+            raise Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response({'Message:': 'Error format file (Expected .zip)'}, status=HTTP_400_BAD_REQUEST)
-

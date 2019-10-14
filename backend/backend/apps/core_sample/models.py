@@ -7,6 +7,7 @@ class Core_sample(models.Model):
     """Основаня модель керна"""
 
     global_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    control_sum = models.CharField(verbose_name='Контрольная сумма', max_length=100)
     name = models.CharField(verbose_name='Название', max_length=50)
     user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
     deposit = models.PositiveIntegerField(verbose_name='Месторождение')
