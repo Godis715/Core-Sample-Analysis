@@ -4,6 +4,7 @@
     <div>
         <label for="cs-uploader">Upload core sample</label>
         <input required type="file" id="cs-uploader" ref="csFile" @change="onChanged">
+        <div v-if="status==='warnings'">Continue</div>
         <div id="err-block" v-if="errors.length>0">
             <div>Errors: </div>
             <div class="block-item" v-for="err in errors">{{err}}</div>
@@ -49,39 +50,59 @@
         data() {
             return {
                 warnings: [],
-                errors: []
+                errors: [],
+                status: 'no-file'
             }
         },
         methods: {
             onChanged() {
-                this.warnings = [];
-                this.errors = [];
-
                 let file = this.$refs.csFile.files[0];
                 if (!file) return;
 
-                this.upload(file);
+                console.log(this.status);
+                if (this.status === 'warnings' || this.status === 'success') {
+                    console.log('Deleteing previous core sample before uploading..');
+                    this.$axios.delete(`api/core_sample/${this.csId}`).then(resp => {
+                        console.log('Successfully deleted');
+                        this.upload(file);
+                    }).catch(err => {
+                        console.log(err);
+                    });
+                } else {
+                    this.upload(file);
+                }
+
+                this.warnings = [];
+                this.errors = [];
+                this.status = "no-file";
             },
             upload(file) {
                 let formData = new FormData();
                 formData.append('archive', file);
                 formData.append('csName', 'core-sample');
 
+                console.log('Uploading photo...');
                 this.$axios.post('api/core_sample/upload', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
                 }).then(resp => {
-                    console.log(resp.status);
+                    console.log('status ' + resp.status);
                     console.log(resp.data);
 
                     this.warnings = resp.data.warnings;
+                    this.csId = resp.data.csId;
+                    console.log(this.csId);
+
+                    if (this.warnings.length > 0) this.status = "warnings";
+                    else this.status = "success";
                     
                 }).catch(err => {
-                    console.error(err.response.status);
-                    console.error(err.response.data.message);
+                    console.log('status ' + err.response.status);
+                    console.log(err.response.data.message);
 
                     this.errors = [err.response.data.message];
+                    this.status = "errors";
                 });
             }
         }
