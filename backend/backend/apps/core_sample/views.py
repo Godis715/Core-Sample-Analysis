@@ -91,4 +91,4 @@ def upload(request):
         else:
             raise Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
 
-    return Response({'Message': 'Error format file (Expected .zip)'}, status=HTTP_400_BAD_REQUEST)
+    return Response({'message': 'Error format file (Expected .zip)'}, status=HTTP_400_BAD_REQUEST)
