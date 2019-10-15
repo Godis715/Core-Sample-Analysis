@@ -4,8 +4,11 @@ from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
 from rest_framework.status import (
     HTTP_500_INTERNAL_SERVER_ERROR,
-    HTTP_400_BAD_REQUEST,
+    HTTP_409_CONFLICT,
+    HTTP_404_NOT_FOUND,
+    HTTP_403_FORBIDDEN,
     HTTP_401_UNAUTHORIZED,
+    HTTP_400_BAD_REQUEST,
     HTTP_200_OK
 )
 from rest_framework.response import Response
@@ -28,7 +31,7 @@ ERROR_INVALID_ID = "Invalid id: {} not found!"
 ERROR_NOT_AUTHOR = "The user is not author of this {}!"
 ERROR_NOT_FOUND_FOLDER = "Not found {} folder!"
 
-WARN_FILE_UPLOADED_BEFORE = "This file has been uploaded before"
+CONFLICT_FILE_UPLOADED_BEFORE = "This file has been uploaded before"
 
 
 def _cs_count_top_bottom(fragments):
@@ -87,8 +90,8 @@ def upload(request):
     control_sum = hashlib.md5(file.read()).hexdigest()
     try:
         core_sample = models.Core_sample.objects.filter(control_sum=control_sum)[0]
-        return Response({'csId': core_sample.global_id, 'message': WARN_FILE_UPLOADED_BEFORE},
-                        status=HTTP_200_OK)
+        return Response({'csId': core_sample.global_id, 'message': CONFLICT_FILE_UPLOADED_BEFORE},
+                        status=HTTP_409_CONFLICT)
     except:
         ...
 
@@ -114,11 +117,11 @@ def delete(request, csId):
         core_sample = models.Core_sample.objects.get(global_id=csId)
     except:
         return Response({'message': ERROR_INVALID_ID.format('core sample')},
-                        status=HTTP_400_BAD_REQUEST)
+                        status=HTTP_404_NOT_FOUND)
 
     if request.user != core_sample.user:
         return Response({'message': ERROR_NOT_AUTHOR.format('core sample')},
-                        status=HTTP_400_BAD_REQUEST)
+                        status=HTTP_403_FORBIDDEN)
 
     if f'user_{request.user.username}' in os.listdir(ROOT_STATIC_APP):
         if f'cs_{csId}' in os.listdir(f'{ROOT_STATIC_APP}\\user_{request.user.username}'):
@@ -140,11 +143,11 @@ def get(request, csId):
         core_sample = models.Core_sample.objects.get(global_id=csId)
     except:
         return Response({'message': ERROR_INVALID_ID.format('core sample')},
-                        status=HTTP_400_BAD_REQUEST)
+                        status=HTTP_404_NOT_FOUND)
 
     if request.user != core_sample.user:
         return Response({'message': ERROR_NOT_AUTHOR.format('core sample')},
-                        status=HTTP_400_BAD_REQUEST)
+                        status=HTTP_403_FORBIDDEN)
 
     return Response({
         'csName': core_sample.name,
