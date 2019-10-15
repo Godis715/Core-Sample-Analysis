@@ -9,7 +9,8 @@ All methods, except Login, returns **401** status code, if token wasn’t provid
 
  - **returns**: token 
 
-   + **401**: credentials are not valid 
+   + **401**: credentials are not valid
+   + **400**: username or password wasn't provided
 ---
 ### (POST) logout/ 
 
