@@ -22,6 +22,9 @@ from . import models
 import os
 import shutil
 import hashlib
+import threading
+import requests
+
 
 ROOT_STATIC_APP = f'{settings.PROJECT_ROOT}\\static\\core_sample'
 
@@ -32,6 +35,10 @@ ERROR_NOT_AUTHOR = "The user is not author of this {}!"
 ERROR_NOT_FOUND_FOLDER = "Not found {} folder!"
 
 CONFLICT_FILE_UPLOADED_BEFORE = "This file has been uploaded before"
+CONFLICT_CORE_SAMPLE_ANALYSED_BEFORE = "This core sample has been analysed before"
+CONFLICT_CORE_SAMPLE_IN_PROCESS_ANALYSE = "This core sample is analysing now"
+
+OK_ANALYSIS_RUN = "The analysis is run"
 
 
 def _cs_count_top_bottom(fragments):
@@ -169,3 +176,57 @@ def getAll(request):
             'status': core_sample.status
         })
     return Response({'data': data}, status=HTTP_200_OK)
+
+
+#from time import sleep
+
+
+def _analyse(core_sample):
+    data = []
+
+    fragments = models.Fragment.objects.filter(cs_id=core_sample)
+    for fragment in fragments:
+        dlImg = open(f'{ROOT_STATIC_APP}\\{fragment.dl_src}', 'rb')
+        uvImg = open(f'{ROOT_STATIC_APP}\\{fragment.uv_src}', 'rb')
+        data.append({
+            'top': fragment.top,
+            'bottom': fragment.bottom,
+            'dlImg': dlImg.read(),
+            'uvImg': uvImg.read(),
+        })
+        dlImg.close()
+        uvImg.close()
+
+    url = 'http://127.0.0.1:5050/api/data_analysis'
+    response_markup = requests.get(url, data=data)
+
+
+
+
+
+@csrf_exempt
+@api_view(["PUT"])
+def analyse(request, csId):
+    try:
+        core_sample = models.Core_sample.objects.get(global_id=csId)
+    except:
+        return Response({'message': ERROR_INVALID_ID.format('core sample')},
+                        status=HTTP_404_NOT_FOUND)
+    if request.user != core_sample.user:
+        return Response({'message': ERROR_NOT_AUTHOR.format('core sample')},
+                        status=HTTP_403_FORBIDDEN)
+    if core_sample.status == models.Core_sample.ANALYSED:
+        return Response({'message': CONFLICT_CORE_SAMPLE_ANALYSED_BEFORE},
+                        status=HTTP_409_CONFLICT)
+    if core_sample.status == models.Core_sample.IN_PROCESS:
+        return Response({'message': CONFLICT_CORE_SAMPLE_IN_PROCESS_ANALYSE},
+                        status=HTTP_409_CONFLICT)
+
+    core_sample.status = models.Core_sample.IN_PROCESS
+    core_sample.save()
+
+    thread = threading.Thread(target=_analyse, args=(core_sample, ))
+    thread.start()
+
+    return Response({'message': OK_ANALYSIS_RUN}, status=HTTP_200_OK)
+

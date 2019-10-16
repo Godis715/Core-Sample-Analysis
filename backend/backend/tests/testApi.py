@@ -69,6 +69,9 @@ if token:
     # csId = '00e81d72-c8de-4a1e-bf3b-d46a6a6fe93c'
     # response = requests.get(f"{url}core_sample/{csId}", headers=headers)
 
+    csId = 'b664248e-09a2-4e2e-8934-dade9cf31946'
+    response = requests.put(f"{url}core_sample/analyse/{csId}", headers=headers)
+
     print(response.status_code)
     print(response.text)
 else:

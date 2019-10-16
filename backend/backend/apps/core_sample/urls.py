@@ -9,6 +9,6 @@ urlpatterns = [
     path('<uuid:csId>', views.get, name="get"),
     path('<uuid:csId>', views.delete, name="delete"),
     path('upload', views.upload, name="upload"),
-    # path('analyse/<string:csId>', ''),
+    path('analyse/<uuid:csId>', views.analyse, name="analyse"),
     # path('status', ''),
 ]

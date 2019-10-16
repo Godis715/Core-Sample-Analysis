@@ -17,12 +17,12 @@ class Core_sample(models.Model):
 
     NOT_ANALYSED = 1
     ANALYSED = 2
-    IN_PROGRESS = 3
+    IN_PROCESS = 3
     ERROR = 4
     STATUS_TYPES = (
         (NOT_ANALYSED, 'notAnalysed'),
         (ANALYSED, 'analysed'),
-        (IN_PROGRESS, 'inProcess'),
+        (IN_PROCESS, 'inProcess'),
         (ERROR, 'error'),
     )
     status = models.IntegerField(verbose_name='Статус', choices=STATUS_TYPES, default=NOT_ANALYSED)
