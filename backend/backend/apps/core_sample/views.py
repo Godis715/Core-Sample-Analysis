@@ -29,7 +29,7 @@ import  json
 
 ROOT_STATIC_APP = f'{settings.PROJECT_ROOT}\\static\\core_sample'
 
-ERROR_FILE_IS_NOT_ATTACHED = "File is not attached!"
+ERROR_IS_NOT_ATTACHED = "{} is not attached!"
 ERROR_FORMAT_FILE = "File format error (Expected .zip)!"
 ERROR_INVALID_ID = "Invalid id: {} not found!"
 ERROR_NOT_AUTHOR = "The user is not author of this {}!"
@@ -93,7 +93,7 @@ def upload(request):
     try:
         file = request.FILES['archive']
     except:
-        return Response({'message': ERROR_FILE_IS_NOT_ATTACHED}, status=HTTP_400_BAD_REQUEST)
+        return Response({'message': ERROR_IS_NOT_ATTACHED.format('File')}, status=HTTP_400_BAD_REQUEST)
 
     control_sum = hashlib.md5(file.read()).hexdigest()
     try:
@@ -209,9 +209,6 @@ def _analyse(core_sample):
     core_sample.save()
 
 
-
-
-
 @csrf_exempt
 @api_view(["PUT"])
 def analyse(request, csId):
@@ -226,9 +223,9 @@ def analyse(request, csId):
     if core_sample.status == models.Core_sample.ANALYSED:
         return Response({'message': CONFLICT_CORE_SAMPLE_ANALYSED_BEFORE},
                         status=HTTP_409_CONFLICT)
-    # if core_sample.status == models.Core_sample.IN_PROCESS:
-    #     return Response({'message': CONFLICT_CORE_SAMPLE_IN_PROCESS_ANALYSE},
-    #                     status=HTTP_409_CONFLICT)
+    if core_sample.status == models.Core_sample.IN_PROCESS:
+        return Response({'message': CONFLICT_CORE_SAMPLE_IN_PROCESS_ANALYSE},
+                        status=HTTP_409_CONFLICT)
 
     core_sample.status = models.Core_sample.IN_PROCESS
     core_sample.save()
@@ -237,4 +234,35 @@ def analyse(request, csId):
     thread.start()
 
     return Response({'message': OK_ANALYSIS_RUN}, status=HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(["GET"])
+def status(request):
+    try:
+        csIds = json.loads(request.POST['csIds'])
+    except:
+        return Response({'message': ERROR_IS_NOT_ATTACHED.format('csIds')}, status=HTTP_400_BAD_REQUEST)
+
+    statuses = {}
+    for csId in csIds:
+        try:
+            core_sample = models.Core_sample.objects.get(global_id=csId)
+        except:
+            return Response({'message': ERROR_INVALID_ID.format('core sample')},
+                            status=HTTP_404_NOT_FOUND)
+        if request.user != core_sample.user:
+            return Response({'message': ERROR_NOT_AUTHOR.format('core sample')},
+                            status=HTTP_403_FORBIDDEN)
+        if core_sample.status == models.Core_sample.NOT_ANALYSED:
+            statuses[csId] = 'notAnalysed'
+        elif core_sample.status == models.Core_sample.ANALYSED:
+            statuses[csId] = 'analysed'
+        elif core_sample.status == models.Core_sample.IN_PROCESS:
+            statuses[csId] = 'inProcess'
+        elif core_sample.status == models.Core_sample.ERROR:
+            statuses[csId] = 'error'
+
+    return Response({'statuses': statuses}, status=HTTP_200_OK)
+
 
