@@ -24,6 +24,7 @@ import shutil
 import hashlib
 import threading
 import requests
+import  json
 
 
 ROOT_STATIC_APP = f'{settings.PROJECT_ROOT}\\static\\core_sample'
@@ -178,27 +179,34 @@ def getAll(request):
     return Response({'data': data}, status=HTTP_200_OK)
 
 
-#from time import sleep
-
-
 def _analyse(core_sample):
-    data = []
+    files = {}
+    data = {
+        'deposit': core_sample.deposit,
+        'hole': core_sample.hole,
+        'fragments': []
+    }
 
     fragments = models.Fragment.objects.filter(cs_id=core_sample)
     for fragment in fragments:
         dlImg = open(f'{ROOT_STATIC_APP}\\{fragment.dl_src}', 'rb')
         uvImg = open(f'{ROOT_STATIC_APP}\\{fragment.uv_src}', 'rb')
-        data.append({
+        data['fragments'].append({
             'top': fragment.top,
             'bottom': fragment.bottom,
-            'dlImg': dlImg.read(),
-            'uvImg': uvImg.read(),
+            'dlImg': os.path.basename(dlImg.name),
+            'uvImg': os.path.basename(uvImg.name),
         })
-        dlImg.close()
-        uvImg.close()
+        files[os.path.basename(dlImg.name)] = dlImg
+        files[os.path.basename(uvImg.name)] = uvImg
 
-    url = 'http://127.0.0.1:5050/api/data_analysis'
-    response_markup = requests.get(url, data=data)
+    url = 'http://127.0.0.1:5050/api/data_analysis/'
+    response_markup = requests.post(url, data={'data': json.dumps(data)}, files=files)
+    print(response_markup.status_code)
+    print(response_markup.text)
+    #load markup in DB
+    core_sample.status = models.Core_sample.ANALYSED
+    core_sample.save()
 
 
 
@@ -218,9 +226,9 @@ def analyse(request, csId):
     if core_sample.status == models.Core_sample.ANALYSED:
         return Response({'message': CONFLICT_CORE_SAMPLE_ANALYSED_BEFORE},
                         status=HTTP_409_CONFLICT)
-    if core_sample.status == models.Core_sample.IN_PROCESS:
-        return Response({'message': CONFLICT_CORE_SAMPLE_IN_PROCESS_ANALYSE},
-                        status=HTTP_409_CONFLICT)
+    # if core_sample.status == models.Core_sample.IN_PROCESS:
+    #     return Response({'message': CONFLICT_CORE_SAMPLE_IN_PROCESS_ANALYSE},
+    #                     status=HTTP_409_CONFLICT)
 
     core_sample.status = models.Core_sample.IN_PROCESS
     core_sample.save()
