@@ -3,6 +3,7 @@ from flask import jsonify, abort, make_response, request
 
 from zipfile import ZipFile
 
+from archiveDecoder import decode_archive
 
 @app.errorhandler(404)
 def not_found(error):
@@ -26,15 +27,15 @@ def data_analysis():
     file = request.files['archive']
     if allowed_file(file.filename):
         zip_file = ZipFile(file, 'r')
-        # result_decode = decode_archive(zip_file)
-        # if (result_decode['Type'] == 'Success'):
-        #     result_analysis = analysis(result_decode['Data'])
-        #     if (result_analysis['Type'] == 'Success'):
-        #         return jsonify({'Type': 'Success', 'Data:': result_analysis['Data']})
-        #     else:
-        #         return jsonify({'Type': 'Error', 'Message:': result_analysis['Message']})
-        # else:
-        #     return jsonify({'Type': 'Error', 'Message:': result_decode['Message']})
-        return f'File load! type {request.mimetype}' #Temp
+        result_decode = decode_archive(zip_file)
+        if (result_decode['Type'] == 'Success'):
+            return jsonify({'Type': 'Success', 'Data:': 'Not analysed yet'}) #temp
+            # result_analysis = analysis(result_decode['Data'])
+            # if (result_analysis['Type'] == 'Success'):
+            #     return jsonify({'Type': 'Success', 'Data:': result_analysis['Data']})
+            # else:
+            #     return jsonify({'Type': 'Error', 'Message:': result_analysis['Message']})
+        else:
+            return jsonify({'Type': 'Error', 'Message:': result_decode['Message']})
     return jsonify({'Type': 'Error', 'Message:': 'Error format file (Expected .zip)'})
 
