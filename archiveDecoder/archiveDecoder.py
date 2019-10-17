@@ -11,14 +11,14 @@ from PIL import Image
 ALLOWED_PARAMS_SAMPLE = {'deposit', 'hole', 'fragments'}
 ALLOWED_PARAMS_PART = {'dlImg', 'uvImg', 'top', 'bottom'}
 
-ERROR_FORMAT = 'Error format file (Expected {})'
-ERROR_NOT_EXIST_FILE = '{} file not exist!'
-ERROR_NOT_FOUND_FILE_BY_LINK = 'Not found {} by link!'
-ERROR_NOT_CORRECT_SAMPLE_PARAMS = 'Description params of sample is not correct!'
-ERROR_NOT_CORRECT_PART_PARAMS = 'Description params of part is not correct!'
+ERROR_FORMAT = "File format error (Expected {})"
+ERROR_NOT_EXIST_FILE = "file '{}' doesn't exist!"
+ERROR_NOT_FOUND_FILE_BY_LINK = "Link points to a non-existent file '{}'!"
+ERROR_NOT_CORRECT_SAMPLE_PARAMS = "Description of core sample is not valid!"
+ERROR_NOT_CORRECT_PART_PARAMS = "Description of fragment is not valid!"
 
-WARN_NOT_CORRECT_SIZE_IMAGES = 'Size of images not equal: dl({}) and uv({})'
-WARN_NOT_USE_ALL_IMAGES = 'Archive contains the not using images'
+WARN_NOT_CORRECT_SIZE_IMAGES = "Sizes of images dl('{}'), uv('{}') don't match"
+WARN_NOT_USE_ALL_IMAGES = "The archive contains unreferenced images"
 
 
 def _description_sample_params_isCorrect(params):
