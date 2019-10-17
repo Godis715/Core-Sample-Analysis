@@ -8,7 +8,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
 develop-eggs/
 dist/
 downloads/
@@ -170,4 +169,3 @@ typings/
 
 # static files
 backend/backend/static/
-
