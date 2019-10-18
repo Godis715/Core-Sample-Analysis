@@ -1,6 +1,6 @@
 import torch
 from torchvision import transforms
-model = torch.load('ruin_pred/ruin_squeeze.pth')
+model = torch.load('ruin_squeeze.pth')
 
 transform = transforms.Compose([
     transforms.Resize(224),
