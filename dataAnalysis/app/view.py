@@ -7,6 +7,8 @@ import io
 from PIL import Image
 from time import sleep
 
+from analysisModels.mock import analyse
+
 
 @app.errorhandler(404)
 def not_found(error):
@@ -27,6 +29,5 @@ def data_analysis():
             'uvImg': Image.open(io.BytesIO(request.files[fragment['uvImg']].read()))
         })
 
-    #analyse(date)
-    return jsonify({'Message:': 'Success!'})
+    return make_response(jsonify({'markup': analyse(data)}), 200)
 
