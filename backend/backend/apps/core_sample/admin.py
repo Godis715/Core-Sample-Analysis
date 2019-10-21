@@ -9,7 +9,7 @@ class Core_sample_admin(admin.ModelAdmin):
     list_display = [field.name for field in Core_sample._meta.fields]
 
     search_fields = ['name']
-    list_filter = ['user_id', 'deposit', 'hole', 'status']
+    list_filter = ['user_id', 'deposit', 'hole', 'status', 'date']
 
     class Meta:
         model = Core_sample
