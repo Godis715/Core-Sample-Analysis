@@ -1,24 +1,38 @@
 <template>
 <div>
-    <site-header></site-header>
+    <site-header />
     <div>
-        <label for="cs-uploader">Upload core sample</label>
+        <label v-if="status=='noFile'" for="cs-uploader">Upload core sample</label>
+        <label v-else for="cs-uploader">Restore core sample</label>
         <input required type="file" id="cs-uploader" ref="csFile" @change="onChanged">
-        <div v-if="status==='warnings'">Continue</div>
-        <div id="err-block" v-if="errors.length>0">
-            <div>Errors: </div>
+
+        <div id="err-block" class="message-block" v-if="errors.length>0">
+            <div>Core sample wasn't uploaded. Errors occured:</div>
             <div class="block-item" v-for="err in errors">{{err}}</div>
         </div>
-        <div id="warn-block" v-if="warnings.length>0">
-            <div>Warnings: </div>
+
+        <div class="message-block" v-if="status==='alreadyUploaded'">
+            <div class="block-item">
+                <div>This core sample has been uploaded before.</div>
+                <router-link :to="'/core_sample/'+csId">Link</router-link>
+            </div>
+        </div>
+
+        <div id="warn-block" class="message-block" v-if="warnings.length>0">
+            <div>Core sample was uploaded with warnings: </div>
             <div class="block-item" v-for="warn in warnings">{{warn}}</div>
+        </div>
+
+        <!-- start analysis when uploaded without errors -->
+        <div v-if="status==='warnings'||status==='success'">
+            <router-link :to="{name:'Account'}">Start analysis</router-link>
         </div>
     </div>
 </div>
 </template>
 
 <style>
-    #err-block, #warn-block {
+    .message-block {
         font-size: 0.8em;
         padding: 5px;
         width: fit-content;
@@ -51,42 +65,33 @@
             return {
                 warnings: [],
                 errors: [],
-                status: 'no-file'
+                status: 'noFile'
             }
         },
         methods: {
+            // uploaded file has changed
             onChanged() {
                 let file = this.$refs.csFile.files[0];
-                if (!file) return;
 
-                console.log(this.status);
-                if (this.status === 'warnings' || this.status === 'success') {
-                    console.log('Deleteing previous core sample before uploading..');
-                    this.$axios.delete(`api/core_sample/${this.csId}`).then(resp => {
-                        console.log('Successfully deleted');
-                        this.upload(file);
-                    }).catch(err => {
-                        console.log(err);
-                    });
-                } else {
-                    this.upload(file);
+                // if file is attached
+                if (file) {
+                    let uploading = this.upload(file);
+                    this.$root.$emit('start-loading', uploading);
                 }
 
                 this.warnings = [];
                 this.errors = [];
-                this.status = "no-file";
+                this.status = "noFile";
             },
+
             upload(file) {
                 let formData = new FormData();
                 formData.append('archive', file);
                 formData.append('csName', 'core-sample');
+                let headers =  { headers: { 'Content-Type': 'multipart/form-data' } };
 
                 console.log('Uploading photo...');
-                this.$axios.post('api/core_sample/upload', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                }).then(resp => {
+                return this.$axios.post('api/core_sample/upload', formData, headers).then(resp => {
                     console.log('status ' + resp.status);
                     console.log(resp.data);
 
@@ -96,13 +101,18 @@
 
                     if (this.warnings.length > 0) this.status = "warnings";
                     else this.status = "success";
-                    
                 }).catch(err => {
                     console.log('status ' + err.response.status);
                     console.log(err.response.data.message);
 
-                    this.errors = [err.response.data.message];
-                    this.status = "errors";
+                    // if file has been uploaded before
+                    if (err.response.status == 409) {
+                        this.status = "alreadyUploaded";
+                        this.csId = err.response.data.csId;
+                    } else {
+                        this.errors = [err.response.data.message];
+                        this.status = "errors";
+                    }
                 });
             }
         }
