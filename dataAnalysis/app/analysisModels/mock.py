@@ -15,22 +15,6 @@ CLASSES = {
 }
 
 
-def _merge_fragments(fragments):
-    general_dl_density = 0
-    general_uv_density = 0
-    for fragment in fragments:
-        general_dl_density = max(general_dl_density, fragment['dl_density'])
-        general_uv_density = max(general_uv_density, fragment['uv_density'])
-
-    general_height_dl = 0
-    general_height_uv = 0
-    for fragment in fragments:
-        general_height_dl += (fragment['bottom'] - fragment['top']) * general_dl_density
-        general_height_uv += (fragment['bottom'] - fragment['top']) * general_uv_density
-
-    return max(general_dl_density, general_uv_density), max(general_height_dl, general_height_uv)
-
-
 def _analyse_param(fragments, size_step, name_param):
     markup_fragments = []
     for fragment in fragments:
@@ -90,12 +74,10 @@ def analyse(data):
     markup_fragments_carbon = _analyse_param(data['fragments'], STEP_CARBON, 'carbon')
     markup_fragments_disruption = _analyse_param(data['fragments'], STEP_DISRUPTION, 'disruption')
 
-    general_density, general_height = _merge_fragments(data['fragments'])
-
-    markup_rock = _merge_markups(markup_fragments_rock, STEP_ROCK * general_density)
-    markup_oil = _merge_markups(markup_fragments_oil, STEP_OIL * general_density)
-    markup_carbon = _merge_markups(markup_fragments_carbon, STEP_CARBON * general_density)
-    markup_disruption = _merge_markups(markup_fragments_disruption, STEP_DISRUPTION * general_density)
+    markup_rock = _merge_markups(markup_fragments_rock, STEP_ROCK)
+    markup_oil = _merge_markups(markup_fragments_oil, STEP_OIL)
+    markup_carbon = _merge_markups(markup_fragments_carbon, STEP_CARBON)
+    markup_disruption = _merge_markups(markup_fragments_disruption, STEP_DISRUPTION)
 
     return {
         'rock': _merge_windows(markup_rock),
