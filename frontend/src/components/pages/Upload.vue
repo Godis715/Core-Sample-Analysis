@@ -2,29 +2,29 @@
 <div>
     <site-header />
     <div>
-        <label v-if="status=='noFile'" for="cs-uploader">Upload core sample</label>
+        <label v-if="noFile" for="cs-uploader">Upload core sample</label>
         <label v-else for="cs-uploader">Restore core sample</label>
         <input required type="file" id="cs-uploader" ref="csFile" @change="onChanged">
 
-        <div id="err-block" class="message-block" v-if="errors.length>0">
+        <div id="err-block" class="message-block" v-if="hasErrors">
             <div>Core sample wasn't uploaded. Errors occured:</div>
             <div class="block-item" v-for="err in errors">{{err}}</div>
         </div>
 
-        <div class="message-block" v-if="status==='alreadyUploaded'">
+        <div class="message-block" v-if="alreadyUploaded">
             <div class="block-item">
                 <div>This core sample has been uploaded before.</div>
                 <router-link :to="'/core_sample/'+csId">Link</router-link>
             </div>
         </div>
 
-        <div id="warn-block" class="message-block" v-if="warnings.length>0">
+        <div id="warn-block" class="message-block" v-if="hasWarnings">
             <div>Core sample was uploaded with warnings: </div>
             <div class="block-item" v-for="warn in warnings">{{warn}}</div>
         </div>
 
         <!-- start analysis when uploaded without errors -->
-        <div v-if="status==='warnings'||status==='success'">
+        <div v-if="allowedAnalysis">
             <router-link :to="{name:'Account'}">Start analysis</router-link>
         </div>
     </div>
@@ -132,6 +132,24 @@
                         this.status = "errors";
                     }
                 });
+            }
+        },
+
+        computed: {
+            noFile() {
+                return this.status === 'noFile';
+            },
+            hasErrors() {
+                return this.errors.length > 0;
+            },
+            hasWarnings() {
+                return this.warnings.length > 0;
+            },
+            alreadyUploaded() {
+                return this.status === 'alreadyUploaded';
+            },
+            allowedAnalysis() {
+                return this.status === 'warnings' || this.status === 'success';
             }
         }
     };
