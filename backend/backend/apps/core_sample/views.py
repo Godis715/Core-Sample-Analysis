@@ -24,7 +24,7 @@ import shutil
 import hashlib
 import threading
 import requests
-import  json
+import json
 
 
 ROOT_STATIC_APP = f'{settings.PROJECT_ROOT}\\static\\core_sample'
@@ -75,6 +75,8 @@ def _upload_on_server(csName, data, control_sum, user):
             cs=core_sample_db,
             dl_src=f'{src_rel}\\{dlImg_name}',
             uv_src=f'{src_rel}\\{uvImg_name}',
+            dl_density=fragment['dlImg'].size[1] / (fragment['bottom'] - fragment['top']),
+            uv_density=fragment['uvImg'].size[1] / (fragment['bottom'] - fragment['top']),
             top=fragment['top'],
             bottom=fragment['bottom']
         )
@@ -194,6 +196,8 @@ def _analyse(core_sample):
         data['fragments'].append({
             'top': fragment.top,
             'bottom': fragment.bottom,
+            'dl_density': fragment.dl_density,
+            'uv_density': fragment.uv_density,
             'dlImg': os.path.basename(dlImg.name),
             'uvImg': os.path.basename(uvImg.name),
         })
