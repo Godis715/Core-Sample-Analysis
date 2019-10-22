@@ -93,7 +93,7 @@ class Oil_layer(models.Model):
         verbose_name_plural = 'Слои нефтенасыщенности'
 
     def __str__(self):
-        return self.id
+        return str(self.id)
 
 
 class Rock_layer(models.Model):
@@ -118,7 +118,7 @@ class Rock_layer(models.Model):
         verbose_name_plural = 'Слои породы'
 
     def __str__(self):
-        return self.id
+        return str(self.id)
 
 
 class Carbon_layer(models.Model):
@@ -143,7 +143,7 @@ class Carbon_layer(models.Model):
         verbose_name_plural = 'Слои карбонатности'
 
     def __str__(self):
-        return self.id
+        return str(self.id)
 
 
 class Disruption_layer(models.Model):
@@ -168,4 +168,4 @@ class Disruption_layer(models.Model):
         verbose_name_plural = 'Слои разрушенности'
 
     def __str__(self):
-        return self.id
+        return str(self.id)
