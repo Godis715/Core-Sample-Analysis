@@ -14,24 +14,32 @@ data = {
         {
             'top': 0.0,
             'bottom': 1.3,
+            'dl_density': 100.0,
+            'uv_density': 100.0,
             'dlImg': f'{TESTDIR}/fragments/fragment1_DL.jpg',
             'uvImg': f'{TESTDIR}/fragments/fragment1_UV.jpg',
         },
         {
             'top': 0.0,
             'bottom': 1.3,
+            'dl_density': 100.0,
+            'uv_density': 100.0,
             'dlImg': f'{TESTDIR}/fragments/fragment2_DL.jpg',
             'uvImg': f'{TESTDIR}/fragments/fragment2_UV.jpg',
         },
         {
             'top': 0.0,
             'bottom': 1.3,
+            'dl_density': 100.0,
+            'uv_density': 100.0,
             'dlImg': f'{TESTDIR}/fragments/fragment3_DL.jpg',
             'uvImg': f'{TESTDIR}/fragments/fragment3_UV.jpg',
         },
         {
             'top': 0.0,
             'bottom': 1.3,
+            'dl_density': 100.0,
+            'uv_density': 100.0,
             'dlImg': f'{TESTDIR}/fragments/fragment4_DL.jpg',
             'uvImg': f'{TESTDIR}/fragments/fragment4_UV.jpg',
         }

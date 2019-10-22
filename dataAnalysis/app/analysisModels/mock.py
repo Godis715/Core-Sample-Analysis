@@ -2,10 +2,10 @@ from PIL import Image
 
 import random
 
-STEP_ROCK = 20
-STEP_OIL = 30
-STEP_CARBON = 10
-STEP_DISRUPTION = 40
+STEP_ROCK = 0.4
+STEP_OIL = 0.2
+STEP_CARBON = 0.1
+STEP_DISRUPTION = 0.1
 
 CLASSES = {
     'rock': ['clay', 'siltstone', 'sandstone'],
@@ -16,34 +16,54 @@ CLASSES = {
 
 
 def _merge_fragments(fragments):
-    general_width = 0
+    general_dl_density = 0
+    general_uv_density = 0
     for fragment in fragments:
-        general_width = max(general_width, fragment['dlImg'].size[0])
-        general_width = max(general_width, fragment['uvImg'].size[0])
+        general_dl_density = max(general_dl_density, fragment['dl_density'])
+        general_uv_density = max(general_uv_density, fragment['uv_density'])
 
     general_height_dl = 0
     general_height_uv = 0
     for fragment in fragments:
-        general_height_dl += fragment['dlImg'].size[1] * (general_width / fragment['dlImg'].size[0])
-        general_height_uv += fragment['uvImg'].size[1] * (general_width / fragment['uvImg'].size[0])
+        general_height_dl += (fragment['bottom'] - fragment['top']) * general_dl_density
+        general_height_uv += (fragment['bottom'] - fragment['top']) * general_uv_density
 
-    return general_width, max(general_height_dl, general_height_uv)
+    return max(general_dl_density, general_uv_density), max(general_height_dl, general_height_uv)
 
 
-def _analyse_param(height, size_step, name_param):
-    markup = []
+def _analyse_param(fragments, size_step, name_param):
+    markup_fragments = []
+    for fragment in fragments:
+        markup_fragment = []
+        size_step_fragment = size_step * fragment['dl_density']
+        current_height = size_step_fragment
+        while current_height < fragment['dlImg'].size[1]:
+            markup_fragment.append({
+                'class': CLASSES[name_param][random.randint(0, len(CLASSES[name_param]) - 1)],
+                'begin': current_height - size_step_fragment,
+                'end': current_height
+            })
+            current_height += size_step_fragment
+        markup_fragments.append(markup_fragment)
+
+    return markup_fragments
+
+
+def _merge_markups(markup_fragments, size_step):
+    general_markup = []
     current_height = size_step
-    while current_height < height:
-        markup.append({
-            'class': CLASSES[name_param][random.randint(0, len(CLASSES[name_param]) - 1)],
-            'begin': current_height - size_step,
-            'end': current_height
-        })
-        current_height += size_step
-    return markup
+    for i, markup_fragment in enumerate(markup_fragments):
+        for window in markup_fragment:
+            general_markup.append({
+                'class': window['class'],
+                'begin': current_height - size_step,
+                'end': current_height
+            })
+            current_height += size_step
+    return general_markup
 
 
-def _merge_markup(markup):
+def _merge_windows(markup):
     merge_markup = []
     temp_class = None
     temp_begin_class = None
@@ -65,15 +85,21 @@ def _merge_markup(markup):
 
 
 def analyse(data):
-    _, general_height = _merge_fragments(data['fragments'])
-    markup_rock = _analyse_param(general_height, STEP_ROCK, 'rock')
-    markup_oil = _analyse_param(general_height, STEP_ROCK, 'oil')
-    markup_carbon = _analyse_param(general_height, STEP_ROCK, 'carbon')
-    markup_disruption = _analyse_param(general_height, STEP_ROCK, 'disruption')
+    markup_fragments_rock = _analyse_param(data['fragments'], STEP_ROCK, 'rock')
+    markup_fragments_oil = _analyse_param(data['fragments'], STEP_OIL, 'oil')
+    markup_fragments_carbon = _analyse_param(data['fragments'], STEP_CARBON, 'carbon')
+    markup_fragments_disruption = _analyse_param(data['fragments'], STEP_DISRUPTION, 'disruption')
+
+    general_density, general_height = _merge_fragments(data['fragments'])
+
+    markup_rock = _merge_markups(markup_fragments_rock, STEP_ROCK * general_density)
+    markup_oil = _merge_markups(markup_fragments_oil, STEP_OIL * general_density)
+    markup_carbon = _merge_markups(markup_fragments_carbon, STEP_CARBON * general_density)
+    markup_disruption = _merge_markups(markup_fragments_disruption, STEP_DISRUPTION * general_density)
 
     return {
-        'rock': _merge_markup(markup_rock),
-        'oil': _merge_markup(markup_oil),
-        'carbon': _merge_markup(markup_carbon),
-        'disruption': _merge_markup(markup_disruption)
+        'rock': _merge_windows(markup_rock),
+        'oil': _merge_windows(markup_oil),
+        'carbon': _merge_windows(markup_carbon),
+        'disruption': _merge_windows(markup_disruption)
     }

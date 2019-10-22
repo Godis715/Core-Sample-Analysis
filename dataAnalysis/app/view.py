@@ -25,6 +25,8 @@ def data_analysis():
         data['fragments'].append({
             'top': fragment['top'],
             'bottom': fragment['bottom'],
+            'dl_density': fragment['dl_density'],
+            'uv_density': fragment['uv_density'],
             'dlImg': Image.open(io.BytesIO(request.files[fragment['dlImg']].read())),
             'uvImg': Image.open(io.BytesIO(request.files[fragment['uvImg']].read()))
         })
