@@ -6,6 +6,16 @@
         <label v-else for="cs-uploader">Restore core sample</label>
         <input required type="file" id="cs-uploader" ref="csFile" @change="onChanged">
 
+        <div id="btns-block">
+            <div>
+                <button @click="startAnalysis" v-if="!isAnalysed" :disabled="!allowedAnalysis">Start analysis</button>
+                <button v-else :disabled="true">Analysing..</button>
+            </div>
+            <div>
+                <button @click="resetView" :disabled="noFileAttached">Reset</button>
+            </div>
+        </div>
+
         <div id="err-block" class="message-block" v-if="hasErrors">
             <div>Core sample wasn't uploaded. Errors occured:</div>
             <div class="block-item" v-for="err in errors">{{err}}</div>
@@ -22,11 +32,7 @@
             <div>Core sample was uploaded with warnings: </div>
             <div class="block-item" v-for="warn in warnings">{{warn}}</div>
         </div>
-
         <!-- start analysis when uploaded without errors -->
-        <div v-if="allowedAnalysis">
-            <router-link :to="{name:'Account'}">Start analysis</router-link>
-        </div>
     </div>
 </div>
 </template>
@@ -53,6 +59,12 @@
     div > .block-item::before {
         content: "- ";
     }
+    .enabled-btn {
+        background-color: rgb(86, 175, 86);
+    }
+    .disabled-btn {
+        background-color: gray;
+    }
 </style>
 
 <script>
@@ -71,6 +83,9 @@
     async function deleteFile (axiosInst, csId) {
         return axiosInst.delete(`api/core_sample/${csId}`);
     }
+    async function analyseCoreSample(axiosInst, csId) {
+        return axiosInst.put(`api/core_sample/analyse/${csId}`);
+    }
 
     export default {
         name: 'Upload',
@@ -80,7 +95,8 @@
                 warnings: [],
                 errors: [],
                 status: 'noFile',
-                csId: ''
+                csId: '',
+                isAnalysed: false
             }
         },
         methods: {
@@ -90,13 +106,6 @@
 
                 // if file is attached
                 if (file) {
-
-                    // deleting if uploaded
-                    if (this.csId !== '') {
-                        deleteFile(this.$axios, this.csId).catch(err => {
-                            console.error(err);
-                        });
-                    }
 
                     let uploading = this.upload(file);
                     this.$root.$emit('start-loading', uploading);
@@ -132,6 +141,33 @@
                         this.status = "errors";
                     }
                 });
+            },
+
+            resetView() {
+                this.$refs.csFile.value = '';
+                this.warnings = [];
+                this.errors = [];
+                this.status = "noFile";
+                this.csId = '';
+                this.isAnalysed = false;
+
+                // deleting if uploaded
+                if (this.csId !== '' && this.status !=='alreadyUploaded') {
+                    deleteFile(this.$axios, this.csId).catch(err => {
+                        console.error(err);
+                    });
+                }
+            },
+
+            startAnalysis() {
+                if (!this.csId || this.status === 'alreadyUploaded') return;
+                analyseCoreSample(this.$axios, this.csId).then(resp => {
+                    console.log(resp);
+                    this.isAnalysed = true;
+                }).catch(err => {
+                    console.error(err);
+                    console.log(err.response);
+                });
             }
         },
 
@@ -150,6 +186,9 @@
             },
             allowedAnalysis() {
                 return this.status === 'warnings' || this.status === 'success';
+            },
+            noFileAttached() {
+                return this.status === 'noFile';
             }
         }
     };
