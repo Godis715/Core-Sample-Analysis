@@ -27,7 +27,7 @@ All methods, except Login, returns **401** status code, if token wasn’t provid
 
     + **404**: core sample not found. 
 ---
-### (DELETE) core_sample/{csId} 
+### (DELETE) core_sample/delete/{csId} 
 
   - **csId**: string 
 
@@ -67,7 +67,7 @@ All methods, except Login, returns **401** status code, if token wasn’t provid
 
     + **409** and **csId**: core sample has already been uploaded. 
 ---
-### (PUT) core_sample/{csId}/analyse 
+### (PUT) core_sample/analyse/{csId}/ 
 
   - **csId**: string 
 
