@@ -81,12 +81,17 @@ class Oil_layer(models.Model):
     NOT_DEFINED = 1
     LOW = 2
     HIGH = 3
-    CLASS_LABELS = (
+    CLASS_LABELS_DIR = {
+        'notDefined': NOT_DEFINED,
+        'low': LOW,
+        'high': HIGH
+    }
+    CLASS_LABELS_CHOICE = (
         (NOT_DEFINED, 'notDefined'),
         (LOW, 'low'),
         (HIGH, 'high'),
     )
-    class_label = models.IntegerField(verbose_name='Класс', choices=CLASS_LABELS)
+    class_label = models.IntegerField(verbose_name='Класс', choices=CLASS_LABELS_CHOICE)
 
     class Meta:
         verbose_name = 'Слой нефтенасыщенности'
@@ -105,13 +110,18 @@ class Rock_layer(models.Model):
 
     SILTSTONE = 1
     SANDSTONE = 2
-    CLAY = 3
-    CLASS_LABELS = (
+    MUDSTONE = 3
+    CLASS_LABELS_DIR = {
+        'siltstone': SILTSTONE,
+        'sandstone': SANDSTONE,
+        'mudstone': MUDSTONE
+    }
+    CLASS_LABELS_CHOICE = (
         (SILTSTONE, 'siltstone'),
         (SANDSTONE, 'sandstone'),
-        (CLAY, 'clay'),
+        (MUDSTONE, 'mudstone'),
     )
-    class_label = models.IntegerField(verbose_name='Класс', choices=CLASS_LABELS)
+    class_label = models.IntegerField(verbose_name='Класс', choices=CLASS_LABELS_CHOICE)
 
     class Meta:
         verbose_name = 'Слой породы'
@@ -131,12 +141,17 @@ class Carbon_layer(models.Model):
     NOT_DEFINED = 1
     LOW = 2
     HIGH = 3
-    CLASS_LABELS = (
+    CLASS_LABELS_DIR = {
+        'notDefined': NOT_DEFINED,
+        'low': LOW,
+        'high': HIGH
+    }
+    CLASS_LABELS_CHOICE = (
         (NOT_DEFINED, 'notDefined'),
         (LOW, 'low'),
         (HIGH, 'high'),
     )
-    class_label = models.IntegerField(verbose_name='Класс', choices=CLASS_LABELS)
+    class_label = models.IntegerField(verbose_name='Класс', choices=CLASS_LABELS_CHOICE)
 
     class Meta:
         verbose_name = 'Слой карбонатности'
@@ -156,12 +171,17 @@ class Disruption_layer(models.Model):
     NONE = 1
     LOW = 2
     HIGH = 3
-    CLASS_LABELS = (
+    CLASS_LABELS_DIR = {
+        'none': NONE,
+        'low': LOW,
+        'high': HIGH
+    }
+    CLASS_LABELS_CHOICE = (
         (NONE, 'none'),
         (LOW, 'low'),
         (HIGH, 'high'),
     )
-    class_label = models.IntegerField(verbose_name='Класс', choices=CLASS_LABELS)
+    class_label = models.IntegerField(verbose_name='Класс', choices=CLASS_LABELS_CHOICE)
 
     class Meta:
         verbose_name = 'Слой разрушенности'

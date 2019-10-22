@@ -60,13 +60,19 @@ if token:
 
     # response = requests.post(f"{url}logout", headers=headers)
 
-    # csId = 'd29150b0-5df6-4b12-91d9-7c5f6bcd13e4'
-    # #csId = 4
-    # response = requests.delete(f"{url}core_sample/delete/{csId}", headers=headers)
+    # print(response.status_code)
+    # print(response.text)
 
-    response = requests.get(f"{url}core_sample/markup", headers=headers)
-    print(response.status_code)
-    print(response.text)
+    # csId = '9abd2799-cfba-4aa3-a580-6476bb352a75'
+    # #csId = 4
+    # response = requests.delete(f"{url}core_sample/{csId}/delete", headers=headers)
+
+    # print(response.status_code)
+    # print(response.text)
+
+    # response = requests.get(f"{url}core_sample/markup", headers=headers)
+    # print(response.status_code)
+    # print(response.text)
 
     # response = requests.get(f"{url}core_sample/", headers=headers)
 
@@ -74,11 +80,11 @@ if token:
     # csId = '00e81d72-c8de-4a1e-bf3b-d46a6a6fe93c'
     # response = requests.get(f"{url}core_sample/{csId}", headers=headers)
 
-    # csId = 'b664248e-09a2-4e2e-8934-dade9cf31946'
-    # response = requests.put(f"{url}core_sample/analyse/{csId}", headers=headers)
-    #
-    # print(response.status_code)
-    # print(response.text)
+    csId = '65cd87f9-1ed5-48bd-b029-0ee4b940decb'
+    response = requests.put(f"{url}core_sample/{csId}/analyse", headers=headers)
+
+    print(response.status_code)
+    print(response.text)
     #
     # csIds = ['4ebf3a6f-ce3c-4844-b60c-587321b438a0', 'b664248e-09a2-4e2e-8934-dade9cf31946',
     #          '97966069-45b9-4091-960b-72451939f342']
