@@ -58,6 +58,20 @@
 <script>
     import SiteHeader from '../fragments/Header.vue';
 
+    async function uploadFile(axiosInst, file) {
+        let formData = new FormData();
+        formData.append('archive', file);
+        formData.append('csName', 'core-sample');
+        let headers =  { headers: { 'Content-Type': 'multipart/form-data' } };
+
+        console.log('Uploading photo...');
+
+        return await axiosInst.post('api/core_sample/upload', formData, headers);
+    }
+    async function deleteFile (axiosInst, csId) {
+        return axiosInst.delete(`api/core_sample/${csId}`);
+    }
+
     export default {
         name: 'Upload',
         components: { SiteHeader },
@@ -65,7 +79,8 @@
             return {
                 warnings: [],
                 errors: [],
-                status: 'noFile'
+                status: 'noFile',
+                csId: ''
             }
         },
         methods: {
@@ -75,6 +90,14 @@
 
                 // if file is attached
                 if (file) {
+
+                    // deleting if uploaded
+                    if (this.csId !== '') {
+                        deleteFile(this.$axios, this.csId).catch(err => {
+                            console.error(err);
+                        });
+                    }
+
                     let uploading = this.upload(file);
                     this.$root.$emit('start-loading', uploading);
                 }
@@ -82,16 +105,11 @@
                 this.warnings = [];
                 this.errors = [];
                 this.status = "noFile";
+                this.csId = '';
             },
 
             upload(file) {
-                let formData = new FormData();
-                formData.append('archive', file);
-                formData.append('csName', 'core-sample');
-                let headers =  { headers: { 'Content-Type': 'multipart/form-data' } };
-
-                console.log('Uploading photo...');
-                return this.$axios.post('api/core_sample/upload', formData, headers).then(resp => {
+                return uploadFile(this.$axios, file).then(resp => {
                     console.log('status ' + resp.status);
                     console.log(resp.data);
 
