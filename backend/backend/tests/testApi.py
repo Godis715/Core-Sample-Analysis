@@ -60,7 +60,7 @@ if token:
 
     # response = requests.post(f"{url}logout", headers=headers)
 
-    # csId = '3df92d06-116a-4508-b1b3-ec3a3c6ea65c'
+    # csId = 'd29150b0-5df6-4b12-91d9-7c5f6bcd13e4'
     # #csId = 4
     # response = requests.delete(f"{url}core_sample/delete/{csId}", headers=headers)
 
