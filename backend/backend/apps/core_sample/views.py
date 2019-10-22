@@ -208,47 +208,47 @@ def _analyse(core_sample, user):
 
     markup_data = json.loads(response_markup.text)['markup']
 
-    markup = models.Markup(
+    markup_db = models.Markup(
         cs=core_sample,
         user=user
     )
-    markup.save()
+    markup_db.save()
 
     for oil_layer in markup_data['oil']:
-        layer = models.Oil_layer(
-            markup=markup,
+        oil_layer_db = models.Oil_layer(
+            markup=markup_db,
             top=oil_layer['top'],
             bottom=oil_layer['bottom'],
             class_label=models.Oil_layer.CLASS_LABELS_DIR[oil_layer['class']]
         )
-        layer.save()
+        oil_layer_db.save()
 
     for carbon_layer in markup_data['carbon']:
-        layer = models.Carbon_layer(
-            markup=markup,
+        carbon_layer_db = models.Carbon_layer(
+            markup=markup_db,
             top=carbon_layer['top'],
             bottom=carbon_layer['bottom'],
             class_label=models.Carbon_layer.CLASS_LABELS_DIR[carbon_layer['class']]
         )
-        layer.save()
+        carbon_layer_db.save()
 
     for rock_layer in markup_data['rock']:
-        layer = models.Rock_layer(
-            markup=markup,
+        rock_layer_db = models.Rock_layer(
+            markup=markup_db,
             top=rock_layer['top'],
             bottom=rock_layer['bottom'],
             class_label=models.Rock_layer.CLASS_LABELS_DIR[rock_layer['class']]
         )
-        layer.save()
+        rock_layer_db.save()
 
-    for disruption_layer in markup_data['oil']:
-        layer = models.Disruption_layer(
-            markup=markup,
+    for disruption_layer in markup_data['disruption']:
+        disruption_layer_db = models.Disruption_layer(
+            markup=markup_db,
             top=disruption_layer['top'],
             bottom=disruption_layer['bottom'],
             class_label=models.Disruption_layer.CLASS_LABELS_DIR[disruption_layer['class']]
         )
-        layer.save()
+        disruption_layer_db.save()
 
     core_sample.status = models.Core_sample.ANALYSED
     core_sample.save()
