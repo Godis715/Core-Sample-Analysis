@@ -62,11 +62,6 @@ def _upload_on_server(csName, data, control_sum, user):
     )
     core_sample_db.save()
 
-    general_width = 0
-    for fragment in data['fragments']:
-        general_width = max(general_width, fragment['dlImg'].size[0])
-        general_width = max(general_width, fragment['uvImg'].size[0])
-
     src_rel = f'user_{user.username}\\cs_{core_sample_db.global_id}'
     src_abs = f'{ROOT_STATIC_APP}\\{src_rel}'
     os.makedirs(src_abs)
@@ -79,10 +74,8 @@ def _upload_on_server(csName, data, control_sum, user):
             cs=core_sample_db,
             dl_src=f'{src_rel}\\{dlImg_name}',
             uv_src=f'{src_rel}\\{uvImg_name}',
-            dl_density=(fragment['dlImg'].size[1] * (general_width / fragment['dlImg'].size[0])) \
-                       / (fragment['bottom'] - fragment['top']),
-            uv_density=(fragment['uvImg'].size[1] * (general_width / fragment['uvImg'].size[0])) \
-                       / (fragment['bottom'] - fragment['top']),
+            dl_density=fragment['dlImg'].size[1] / (fragment['bottom'] - fragment['top']),
+            uv_density=fragment['uvImg'].size[1] / (fragment['bottom'] - fragment['top']),
             top=fragment['top'],
             bottom=fragment['bottom']
         )
