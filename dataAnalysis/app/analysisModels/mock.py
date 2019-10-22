@@ -8,9 +8,9 @@ STEP_CARBON = 0.1
 STEP_DISRUPTION = 0.1
 
 CLASSES = {
-    'rock': ['clay', 'siltstone', 'sandstone'],
-    'oil': ['not_define', 'low', 'high'],
-    'carbon': ['not_define', 'low', 'high'],
+    'rock': ['mudstone', 'siltstone', 'sandstone'],
+    'oil': ['notDefined', 'low', 'high'],
+    'carbon': ['notDefined', 'low', 'high'],
     'disruption': ['none', 'low', 'high']
 }
 
@@ -24,8 +24,8 @@ def _analyse_param(fragments, size_step, name_param):
         while current_height < fragment['dlImg'].size[1]:
             markup_fragment.append({
                 'class': CLASSES[name_param][random.randint(0, len(CLASSES[name_param]) - 1)],
-                'begin': current_height - size_step_fragment,
-                'end': current_height
+                'top': current_height - size_step_fragment,
+                'bottom': current_height
             })
             current_height += size_step_fragment
         markup_fragments.append(markup_fragment)
@@ -40,8 +40,8 @@ def _merge_markups(markup_fragments, size_step):
         for window in markup_fragment:
             general_markup.append({
                 'class': window['class'],
-                'begin': current_height - size_step,
-                'end': current_height
+                'top': current_height - size_step,
+                'bottom': current_height
             })
             current_height += size_step
     return general_markup
@@ -50,21 +50,21 @@ def _merge_markups(markup_fragments, size_step):
 def _merge_windows(markup):
     merge_markup = []
     temp_class = None
-    temp_begin_class = None
-    temp_end_class = None
+    temp_top_class = None
+    temp_bottom_class = None
     for window in markup:
         if temp_class != window['class']:
             if temp_class is not None:
                 merge_markup.append({
                     'class': temp_class,
-                    'begin': temp_begin_class,
-                    'end': temp_end_class
+                    'top': temp_top_class,
+                    'bottom': temp_bottom_class
                 })
             temp_class = window['class']
-            temp_begin_class = window['begin']
-            temp_end_class = window['end']
+            temp_top_class = window['top']
+            temp_bottom_class = window['bottom']
         else:
-            temp_end_class = window['end']
+            temp_bottom_class = window['bottom']
     return merge_markup
 
 
