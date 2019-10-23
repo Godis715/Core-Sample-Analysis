@@ -98,6 +98,10 @@
         color: rgb(30, 34, 94);
     }
 
+    .success-msg {
+        color: rgb(16, 161, 23);
+    }
+
     div > .block-item {
         padding-top: 1em;
     }
@@ -205,7 +209,13 @@
                         }
                         this.messages = newMessages;
                     }
-                    else this.status = "success";
+                    else {
+                        this.status = "success";
+                        this.messages = [{
+                            type: 'success',
+                            text: 'Successfully uploaded!'
+                        }];
+                    };
                 }).catch(err => {
                     console.log('status ' + err.response.status);
                     console.log(err.response.data.message);

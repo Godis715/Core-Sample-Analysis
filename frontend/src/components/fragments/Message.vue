@@ -22,7 +22,8 @@
                 return 'msg ' + 
                     (this.msgData.type === 'notification' ? 'notif-msg' :
                     this.msgData.type === 'warning' ? 'warn-msg' :
-                    this.msgData.type === 'error' ? 'error-msg' : '');
+                    this.msgData.type === 'error' ? 'error-msg' :
+                    this.msgData.type === 'success' ? 'success-msg' : '');
             }
         }
     };
