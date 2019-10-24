@@ -19,11 +19,11 @@ All methods, except Login, returns **401** status code, if token wasn’t provid
 ---
 ### (GET) core_sample/ 
 
-  - **returns**: array of { csId: string, csName: string, date: date-string, status: string }. Status could be one of “analysed, inProcess, notAnalysed, error”. Returns only that core samples, which was uploaded by user. 
+  - **returns**: array of { csId: string, csName: string, date: date-string, status: string, author: string }. Status could be one of “analysed, inProcess, notAnalysed, error”. Returns only that core samples, which was uploaded by user. 
 ---
 ### (GET) core_sample/{csId} 
 
-  - **returns**: if csId is valid, returns { csName: string, date: date-string, status: string }. **status** could be one of “analysed, inProcess, notAnalysed, error”. 
+  - **returns**: if csId is valid, returns { csName: string, date: date-string, status: string, author: string }. **status** could be one of “analysed, inProcess, notAnalysed, error”. 
 
     + **404**: core sample not found. 
 ---
