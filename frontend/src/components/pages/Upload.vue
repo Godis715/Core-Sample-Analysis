@@ -2,16 +2,21 @@
 <div>
     <site-header />
     <div id="main-cont">
+
+        <!-- Element, which provide file uploading -->
         <div id="upload-cont" @click="triggerUpload">
-            <input type="file" id="uploader" ref="uploadedFile" @change="onChanged">
+            <input type="file" id="uploader" ref="uploadedFile" @change="attachedFileChanged">
             <label for="uploader">Upload</label>
 
-            <span id="file-name" v-if="!noFileAttached">{{fileName}}</span>
+            <span id="file-name" v-if="!noFileAttached">{{file.name}}</span>
         </div>
-        <!-- div id="status">{{statusText}}</div -->
+
+        <!-- For showing diffrenet about file uploading messages -->
         <div v-if="!noFileAttached" id="message-block">
             <Message v-for="(msg, index) in messages" :msgData="msg" :key="index" />
         </div>
+
+        <!-- Buttons -->
         <div v-if="!noFileAttached" id="btns-block">
             <div>
                 <button @click="startAnalysis" v-if="!isAnalysed" :disabled="!allowedAnalysis">Start analysis</button>
@@ -135,13 +140,13 @@
         return await axiosInst.post('api/core_sample/upload', formData, headers);
     }
     async function deleteFile (axiosInst, csId) {
-        return axiosInst.delete(`api/core_sample/delete/${csId}`)
+        return axiosInst.delete(`api/core_sample/${csId}/delete`)
         .catch(err => {
             console.log(err);
         });
     }
     async function analyseCoreSample(axiosInst, csId) {
-        return axiosInst.put(`api/core_sample/analyse/${csId}`);
+        return axiosInst.put(`api/core_sample/${csId}/analyse`);
     }
 
     export default {
@@ -154,29 +159,23 @@
                 status: 'noFile',
                 csId: '',
                 isAnalysed: false,
-                messages: [],
-                // statusText: 'No file attached',
-                fileName: ''
+                messages: []
             }
         },
         methods: {
-            // uploaded file has changed
-            onChanged() {
+            attachedFileChanged() {
                 let file = this.$refs.uploadedFile.files[0];
+
                 // if file is attached
                 if (file) {
-                    this.fileName = file.name;
+                    this.file = file;
                     let uploading = this.upload(file);
                     this.$root.$emit('start-loading', uploading);
-                } else {
-                    this.fileName = '';
-                    this.messages = [];
-                    this.status = "noFile";
-                    // this.statusText = 'No file attached';
-                    this.csId = '';
+                    return;
                 }
             },
 
+            // redirecting click from upload container to input-file
             triggerUpload() {
                 this.$refs.uploadedFile.click();
             },
@@ -191,7 +190,6 @@
     
                     if (resp.data.warnings.length > 0) {
                         this.status = "warnings";
-                        // this.statusText = "Uploaded with warnings:";
 
                         let newMessages = [];
                         for(let i = 0; i < resp.data.warnings.length; ++i) {
@@ -217,7 +215,6 @@
                     if (err.response.status == 409) {
                         this.status = "alreadyUploaded";
                         this.csId = err.response.data.csId;
-                        // this.statusText = 'Core sample wasn\' uploaded';
                         this.messages = [{
                             text: 'This core sample has been already uploaded',
                             type: 'notification',
@@ -228,7 +225,6 @@
                         }];
                     } else {
                         this.status = "errors";
-                        // this.statusText = 'Some errors occured:';
                         this.messages = [{
                             text: err.response.data.message,
                             type: 'error'
@@ -237,7 +233,14 @@
                 });
             },
 
+            /*
+                clearing view to default
+                deleting file, if it has been uploaded
+            */
             resetView() {
+                let _status = this.status;
+                let _csId = this.csId;
+
                 this.messages = [];
                 this.status = "noFile";
                 this.statusText = 'No file attached';
@@ -248,8 +251,9 @@
                 this.$refs.uploadedFile.value = '';
 
                 // deleting if uploaded
-                if (this.csId !== '' && this.status !=='alreadyUploaded') {
-                    deleteFile(this.$axios, this.csId).catch(err => {
+                if (_csId !== '' && _status !=='alreadyUploaded') {
+                    console.log('Deleting');
+                    deleteFile(this.$axios, _csId).catch(err => {
                         console.error(err);
                     });
                 }
