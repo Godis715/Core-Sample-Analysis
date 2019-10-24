@@ -1,62 +1,128 @@
 <template>
 <div>
     <site-header />
-    <div>
-        <label v-if="status=='noFile'" for="cs-uploader">Upload core sample</label>
-        <label v-else for="cs-uploader">Restore core sample</label>
-        <input required type="file" id="cs-uploader" ref="csFile" @change="onChanged">
+    <div id="main-cont">
+        <div id="upload-cont" @click="triggerUpload">
+            <input type="file" id="uploader" ref="uploadedFile" @change="onChanged">
+            <label for="uploader">Upload</label>
 
-        <div id="err-block" class="message-block" v-if="errors.length>0">
-            <div>Core sample wasn't uploaded. Errors occured:</div>
-            <div class="block-item" v-for="err in errors">{{err}}</div>
+            <span id="file-name" v-if="!noFileAttached">{{fileName}}</span>
         </div>
-
-        <div class="message-block" v-if="status==='alreadyUploaded'">
-            <div class="block-item">
-                <div>This core sample has been uploaded before.</div>
-                <router-link :to="'/core_sample/'+csId">Link</router-link>
+        <!-- div id="status">{{statusText}}</div -->
+        <div v-if="!noFileAttached" id="message-block">
+            <Message v-for="(msg, index) in messages" :msgData="msg" :key="index" />
+        </div>
+        <div v-if="!noFileAttached" id="btns-block">
+            <div>
+                <button @click="startAnalysis" v-if="!isAnalysed" :disabled="!allowedAnalysis">Start analysis</button>
+                <button v-else :disabled="true">Analysing..</button>
             </div>
-        </div>
-
-        <div id="warn-block" class="message-block" v-if="warnings.length>0">
-            <div>Core sample was uploaded with warnings: </div>
-            <div class="block-item" v-for="warn in warnings">{{warn}}</div>
-        </div>
-
-        <!-- start analysis when uploaded without errors -->
-        <div v-if="status==='warnings'||status==='success'">
-            <router-link :to="{name:'Account'}">Start analysis</router-link>
+            <div>
+                <button @click="resetView">Reset</button>
+            </div>
         </div>
     </div>
 </div>
 </template>
 
 <style>
-    .message-block {
+    #main-cont {
+        margin: 1em;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #main-cont > *:not(:last-child) {
+        margin-bottom: 1em;
+    }
+    
+    #btns-block {
+        display: flex;
+        flex-direction: row;
+    }
+
+    #upload-cont {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 200px;
+        height: 100px;
+        background-color: whitesmoke;
+        outline: 2px dashed #5d5d5d;
+        outline-offset: -12px;
+        cursor: pointer;
+    }
+
+    #upload-cont:hover label {
+        text-decoration: underline;
+    }
+    
+    #upload-cont input[type=file] {
+        width: 0.1px;
+        height: 0.1px;
+        opacity: 0;
+        position: absolute;
+        z-index: -10;
+    } 
+
+    #message-block {
+        max-height: 100px;
+        overflow-y: auto;
+    }
+
+    #upload-cont label {
+        display: block;
+        cursor: pointer;
+    }  
+
+    #file-name {
         font-size: 0.8em;
-        padding: 5px;
+        color: darkgray;
+    }
+
+    .msg {
+        font-size: 0.8em;
         width: fit-content;
     }
 
-    #err-block {
-        background-color: pink;
-        color:rgb(131, 34, 34);
+    .error-msg { color:rgb(131, 34, 34); }
+
+    .warn-msg { color:rgb(116, 97, 34); }
+
+    .notif-msg { color: rgb(30, 34, 94); }
+
+    .success-msg { color: rgb(16, 161, 23); }
+
+    div > .block-item { padding-top: 1em; }
+    
+    div > .block-item::before { content: "- "; }
+    
+    .enabled-btn { background-color: rgb(86, 175, 86); }
+
+    .disabled-btn { background-color: gray; }
+
+    #btns-block button {
+        background-color: whitesmoke;
+        border: none;
+        padding: 0.3em 0.5em;
+        font-size: 0.8em;
     }
 
-    #warn-block {
-        background-color:khaki;
-        color:rgb(116, 97, 34);
+    #btns-block button:first-child {
+        margin-right: 1em;
     }
-    div > .block-item {
-        padding-top: 1em;
-    }
-    div > .block-item::before {
-        content: "- ";
+
+    button:not([disabled="disabled"]) {
+        cursor: pointer;
     }
 </style>
 
 <script>
     import SiteHeader from '../fragments/Header.vue';
+    import Message from '../fragments/Message.vue';
 
     async function uploadFile(axiosInst, file) {
         let formData = new FormData();
@@ -69,43 +135,50 @@
         return await axiosInst.post('api/core_sample/upload', formData, headers);
     }
     async function deleteFile (axiosInst, csId) {
-        return axiosInst.delete(`api/core_sample/${csId}`);
+        return axiosInst.delete(`api/core_sample/delete/${csId}`)
+        .catch(err => {
+            console.log(err);
+        });
+    }
+    async function analyseCoreSample(axiosInst, csId) {
+        return axiosInst.put(`api/core_sample/analyse/${csId}`);
     }
 
     export default {
         name: 'Upload',
-        components: { SiteHeader },
+        components: { SiteHeader, Message },
         data() {
             return {
                 warnings: [],
                 errors: [],
                 status: 'noFile',
-                csId: ''
+                csId: '',
+                isAnalysed: false,
+                messages: [],
+                // statusText: 'No file attached',
+                fileName: ''
             }
         },
         methods: {
             // uploaded file has changed
             onChanged() {
-                let file = this.$refs.csFile.files[0];
-
+                let file = this.$refs.uploadedFile.files[0];
                 // if file is attached
                 if (file) {
-
-                    // deleting if uploaded
-                    if (this.csId !== '') {
-                        deleteFile(this.$axios, this.csId).catch(err => {
-                            console.error(err);
-                        });
-                    }
-
+                    this.fileName = file.name;
                     let uploading = this.upload(file);
                     this.$root.$emit('start-loading', uploading);
+                } else {
+                    this.fileName = '';
+                    this.messages = [];
+                    this.status = "noFile";
+                    // this.statusText = 'No file attached';
+                    this.csId = '';
                 }
+            },
 
-                this.warnings = [];
-                this.errors = [];
-                this.status = "noFile";
-                this.csId = '';
+            triggerUpload() {
+                this.$refs.uploadedFile.click();
             },
 
             upload(file) {
@@ -113,12 +186,29 @@
                     console.log('status ' + resp.status);
                     console.log(resp.data);
 
-                    this.warnings = resp.data.warnings;
                     this.csId = resp.data.csId;
                     console.log(this.csId);
+    
+                    if (resp.data.warnings.length > 0) {
+                        this.status = "warnings";
+                        // this.statusText = "Uploaded with warnings:";
 
-                    if (this.warnings.length > 0) this.status = "warnings";
-                    else this.status = "success";
+                        let newMessages = [];
+                        for(let i = 0; i < resp.data.warnings.length; ++i) {
+                            newMessages.push({
+                                type: 'warning',
+                                text: resp.data.warnings[i]
+                            });
+                        }
+                        this.messages = newMessages;
+                    }
+                    else {
+                        this.status = "success";
+                        this.messages = [{
+                            type: 'success',
+                            text: 'Successfully uploaded!'
+                        }];
+                    };
                 }).catch(err => {
                     console.log('status ' + err.response.status);
                     console.log(err.response.data.message);
@@ -127,11 +217,74 @@
                     if (err.response.status == 409) {
                         this.status = "alreadyUploaded";
                         this.csId = err.response.data.csId;
+                        // this.statusText = 'Core sample wasn\' uploaded';
+                        this.messages = [{
+                            text: 'This core sample has been already uploaded',
+                            type: 'notification',
+                            link: {
+                                where: `core_sample/${this.csId}`,
+                                text: 'View this sample'
+                            }
+                        }];
                     } else {
-                        this.errors = [err.response.data.message];
                         this.status = "errors";
+                        // this.statusText = 'Some errors occured:';
+                        this.messages = [{
+                            text: err.response.data.message,
+                            type: 'error'
+                        }];
                     }
                 });
+            },
+
+            resetView() {
+                this.messages = [];
+                this.status = "noFile";
+                this.statusText = 'No file attached';
+                this.csId = '';
+                this.isAnalysed = false;
+                this.fileName = '';
+
+                this.$refs.uploadedFile.value = '';
+
+                // deleting if uploaded
+                if (this.csId !== '' && this.status !=='alreadyUploaded') {
+                    deleteFile(this.$axios, this.csId).catch(err => {
+                        console.error(err);
+                    });
+                }
+            },
+
+            startAnalysis() {
+                if (!this.csId || this.status === 'alreadyUploaded') return;
+                analyseCoreSample(this.$axios, this.csId).then(resp => {
+                    console.log(resp);
+                    this.isAnalysed = true;
+                }).catch(err => {
+                    console.error(err);
+                    console.log(err.response);
+                });
+            }
+        },
+
+        computed: {
+            noFile() {
+                return this.status === 'noFile';
+            },
+            hasErrors() {
+                return this.status === 'errors';
+            },
+            hasWarnings() {
+                return this.status === 'warnings';
+            },
+            alreadyUploaded() {
+                return this.status === 'alreadyUploaded';
+            },
+            allowedAnalysis() {
+                return this.status === 'warnings' || this.status === 'success';
+            },
+            noFileAttached() {
+                return this.status === 'noFile';
             }
         }
     };
