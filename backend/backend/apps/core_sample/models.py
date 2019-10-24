@@ -43,12 +43,149 @@ class Fragment(models.Model):
     cs = models.ForeignKey(Core_sample, verbose_name='Керн', on_delete=models.CASCADE)
     dl_src = models.FilePathField(verbose_name='ДС изображение')
     uv_src = models.FilePathField(verbose_name='УФ изображение')
+    dl_density = models.FloatField(verbose_name='Плотность ДС')
+    uv_density = models.FloatField(verbose_name='Плотность УФ')
     top = models.FloatField(verbose_name='Вверх')
     bottom = models.FloatField(verbose_name='Низ')
 
     class Meta:
         verbose_name = 'Фрагмент керна'
         verbose_name_plural = 'Фрагменты керна'
+
+    def __str__(self):
+        return str(self.id)
+
+
+class Markup(models.Model):
+    """Модель разметки керна"""
+
+    cs = models.ForeignKey(Core_sample, verbose_name='Керн', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
+    date = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True, null=True)
+
+    class Meta:
+        verbose_name = 'Разметка керна'
+        verbose_name_plural = 'Разметки керна'
+
+    def __str__(self):
+        return str(self.id)
+
+
+class Oil_layer(models.Model):
+    """Модель слоя нефтенасыщенности"""
+
+    markup = models.ForeignKey(Markup, verbose_name='Разметка', on_delete=models.CASCADE)
+    top = models.FloatField(verbose_name='Вверх')
+    bottom = models.FloatField(verbose_name='Низ')
+
+    NOT_DEFINED = 1
+    LOW = 2
+    HIGH = 3
+    CLASS_LABELS_DIR = {
+        'notDefined': NOT_DEFINED,
+        'low': LOW,
+        'high': HIGH
+    }
+    CLASS_LABELS_CHOICE = (
+        (NOT_DEFINED, 'notDefined'),
+        (LOW, 'low'),
+        (HIGH, 'high'),
+    )
+    class_label = models.IntegerField(verbose_name='Класс', choices=CLASS_LABELS_CHOICE)
+
+    class Meta:
+        verbose_name = 'Слой нефтенасыщенности'
+        verbose_name_plural = 'Слои нефтенасыщенности'
+
+    def __str__(self):
+        return str(self.id)
+
+
+class Rock_layer(models.Model):
+    """Модель слоя породы"""
+
+    markup = models.ForeignKey(Markup, verbose_name='Разметка', on_delete=models.CASCADE)
+    top = models.FloatField(verbose_name='Вверх')
+    bottom = models.FloatField(verbose_name='Низ')
+
+    SILTSTONE = 1
+    SANDSTONE = 2
+    MUDSTONE = 3
+    CLASS_LABELS_DIR = {
+        'siltstone': SILTSTONE,
+        'sandstone': SANDSTONE,
+        'mudstone': MUDSTONE
+    }
+    CLASS_LABELS_CHOICE = (
+        (SILTSTONE, 'siltstone'),
+        (SANDSTONE, 'sandstone'),
+        (MUDSTONE, 'mudstone'),
+    )
+    class_label = models.IntegerField(verbose_name='Класс', choices=CLASS_LABELS_CHOICE)
+
+    class Meta:
+        verbose_name = 'Слой породы'
+        verbose_name_plural = 'Слои породы'
+
+    def __str__(self):
+        return str(self.id)
+
+
+class Carbon_layer(models.Model):
+    """Модель слоя карбонатности"""
+
+    markup = models.ForeignKey(Markup, verbose_name='Разметка', on_delete=models.CASCADE)
+    top = models.FloatField(verbose_name='Вверх')
+    bottom = models.FloatField(verbose_name='Низ')
+
+    NOT_DEFINED = 1
+    LOW = 2
+    HIGH = 3
+    CLASS_LABELS_DIR = {
+        'notDefined': NOT_DEFINED,
+        'low': LOW,
+        'high': HIGH
+    }
+    CLASS_LABELS_CHOICE = (
+        (NOT_DEFINED, 'notDefined'),
+        (LOW, 'low'),
+        (HIGH, 'high'),
+    )
+    class_label = models.IntegerField(verbose_name='Класс', choices=CLASS_LABELS_CHOICE)
+
+    class Meta:
+        verbose_name = 'Слой карбонатности'
+        verbose_name_plural = 'Слои карбонатности'
+
+    def __str__(self):
+        return str(self.id)
+
+
+class Disruption_layer(models.Model):
+    """Модель слоя разрушенности"""
+
+    markup = models.ForeignKey(Markup, verbose_name='Разметка', on_delete=models.CASCADE)
+    top = models.FloatField(verbose_name='Вверх')
+    bottom = models.FloatField(verbose_name='Низ')
+
+    NONE = 1
+    LOW = 2
+    HIGH = 3
+    CLASS_LABELS_DIR = {
+        'none': NONE,
+        'low': LOW,
+        'high': HIGH
+    }
+    CLASS_LABELS_CHOICE = (
+        (NONE, 'none'),
+        (LOW, 'low'),
+        (HIGH, 'high'),
+    )
+    class_label = models.IntegerField(verbose_name='Класс', choices=CLASS_LABELS_CHOICE)
+
+    class Meta:
+        verbose_name = 'Слой разрушенности'
+        verbose_name_plural = 'Слои разрушенности'
 
     def __str__(self):
         return str(self.id)
