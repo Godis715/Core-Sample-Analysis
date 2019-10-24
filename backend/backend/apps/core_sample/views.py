@@ -33,6 +33,7 @@ ERROR_FORMAT_FILE = "File format error (Expected .zip)!"
 ERROR_INVALID_ID = "Invalid id: {} not found!"
 ERROR_NOT_AUTHOR = "The user is not author of this {}!"
 ERROR_NOT_FOUND_FOLDER = "Not found {} folder!"
+ERROR_NOT_ANALYSED = "This core sample hasn't be"
 
 CONFLICT_FILE_UPLOADED_BEFORE = "This file has been uploaded before"
 CONFLICT_CORE_SAMPLE_ANALYSED_BEFORE = "This core sample has been analysed before"
@@ -89,7 +90,7 @@ def _allowed_file(filename):
 
 @csrf_exempt
 @api_view(["POST"])
-def upload(request):
+def cs_upload(request):
     """Decoding archive -> load data -> response(json)"""
     try:
         file = request.FILES['archive']
@@ -121,7 +122,7 @@ def upload(request):
 
 @csrf_exempt
 @api_view(["DELETE"])
-def delete(request, csId):
+def cs_delete(request, csId):
     try:
         core_sample = models.Core_sample.objects.get(global_id=csId)
     except:
@@ -158,10 +159,20 @@ def cs_get(request, csId):
         return Response({'message': ERROR_NOT_AUTHOR.format('core sample')},
                         status=HTTP_403_FORBIDDEN)
 
+    status = None
+    if core_sample.status == models.Core_sample.NOT_ANALYSED:
+        status = 'notAnalysed'
+    elif core_sample.status == models.Core_sample.ANALYSED:
+        status = 'analysed'
+    elif core_sample.status == models.Core_sample.IN_PROCESS:
+        status = 'inProcess'
+    elif core_sample.status == models.Core_sample.ERROR:
+        status = 'error'
+
     return Response({
         'csName': core_sample.name,
         'date': core_sample.date,
-        'status': core_sample.status
+        'status': status
     }, status=HTTP_200_OK)
 
 
@@ -177,7 +188,7 @@ def cs_getAll(request):
             'date': core_sample.date,
             'status': core_sample.status
         })
-    return Response({'data': data}, status=HTTP_200_OK)
+    return Response(data, status=HTTP_200_OK)
 
 
 def _analyse(core_sample, user):
@@ -256,7 +267,7 @@ def _analyse(core_sample, user):
 
 @csrf_exempt
 @api_view(["PUT"])
-def analyse(request, csId):
+def cs_analyse(request, csId):
     try:
         core_sample = models.Core_sample.objects.get(global_id=csId)
     except:
@@ -280,7 +291,7 @@ def analyse(request, csId):
 
 @csrf_exempt
 @api_view(["GET"])
-def status(request):
+def css_status(request):
     try:
         csIds = json.loads(request.POST['csIds'])
     except:
@@ -306,3 +317,23 @@ def status(request):
             statuses[csId] = 'error'
 
     return Response({'statuses': statuses}, status=HTTP_200_OK)
+
+# @csrf_exempt
+# @api_view(["GET"])
+# def cs_markup_get(request, csId):
+#     try:
+#         core_sample = models.Core_sample.objects.get(global_id=csId)
+#     except:
+#         return Response({'message': ERROR_INVALID_ID.format('core sample')},
+#                         status=HTTP_404_NOT_FOUND)
+#
+#     if core_sample.status != core_sample.ANALYSED:
+#         return Response({'message': ERROR_INVALID_ID.format('core sample')},
+#                         status=HTTP_400_BAD_REQUEST)
+#
+#     return Response({
+#         'csName': core_sample.name,
+#         'date': core_sample.date,
+#         'status': core_sample.status
+#     }, status=HTTP_200_OK)
+
