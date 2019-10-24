@@ -19,6 +19,18 @@ class Core_sample(models.Model):
     ANALYSED = 2
     IN_PROCESS = 3
     ERROR = 4
+    STATUS_TYPES_NUMBER = {
+        'notAnalysed': NOT_ANALYSED,
+        'analysed': ANALYSED,
+        'inProcess': IN_PROCESS,
+        'error': ERROR
+    }
+    STATUS_TYPES_NAME = {
+        NOT_ANALYSED: 'notAnalysed',
+        ANALYSED: 'analysed',
+        IN_PROCESS: 'inProcess',
+        ERROR: 'error'
+    }
     STATUS_TYPES = (
         (NOT_ANALYSED, 'notAnalysed'),
         (ANALYSED, 'analysed'),
@@ -81,10 +93,15 @@ class Oil_layer(models.Model):
     NOT_DEFINED = 1
     LOW = 2
     HIGH = 3
-    CLASS_LABELS_DIR = {
+    CLASS_LABELS_NUMBER = {
         'notDefined': NOT_DEFINED,
         'low': LOW,
         'high': HIGH
+    }
+    CLASS_LABELS_NAME = {
+        NOT_DEFINED: 'notDefined',
+        LOW: 'low',
+        HIGH: 'high'
     }
     CLASS_LABELS_CHOICE = (
         (NOT_DEFINED, 'notDefined'),
@@ -111,10 +128,15 @@ class Rock_layer(models.Model):
     SILTSTONE = 1
     SANDSTONE = 2
     MUDSTONE = 3
-    CLASS_LABELS_DIR = {
+    CLASS_LABELS_NUMBER = {
         'siltstone': SILTSTONE,
         'sandstone': SANDSTONE,
         'mudstone': MUDSTONE
+    }
+    CLASS_LABELS_NAME = {
+        SILTSTONE: 'siltstone',
+        SANDSTONE: 'sandstone',
+        MUDSTONE: 'mudstone'
     }
     CLASS_LABELS_CHOICE = (
         (SILTSTONE, 'siltstone'),
@@ -141,10 +163,15 @@ class Carbon_layer(models.Model):
     NOT_DEFINED = 1
     LOW = 2
     HIGH = 3
-    CLASS_LABELS_DIR = {
+    CLASS_LABELS_NUMBER = {
         'notDefined': NOT_DEFINED,
         'low': LOW,
         'high': HIGH
+    }
+    CLASS_LABELS_NAME = {
+        NOT_DEFINED: 'notDefined',
+        LOW: 'low',
+        HIGH: 'high'
     }
     CLASS_LABELS_CHOICE = (
         (NOT_DEFINED, 'notDefined'),
@@ -171,10 +198,15 @@ class Disruption_layer(models.Model):
     NONE = 1
     LOW = 2
     HIGH = 3
-    CLASS_LABELS_DIR = {
+    CLASS_LABELS_NUMBER = {
         'none': NONE,
         'low': LOW,
         'high': HIGH
+    }
+    CLASS_LABELS_NAME = {
+        NONE: 'none',
+        LOW: 'low',
+        HIGH: 'high'
     }
     CLASS_LABELS_CHOICE = (
         (NONE, 'none'),
