@@ -2,7 +2,7 @@
 <div>
     <site-header />
     <div id="main-cont">
-        <div id="upload-cont">
+        <div id="upload-cont" @click="triggerUpload">
             <input type="file" id="uploader" ref="uploadedFile" @change="onChanged">
             <label for="uploader">Upload</label>
 
@@ -37,6 +37,7 @@
     #main-cont > *:not(:last-child) {
         margin-bottom: 1em;
     }
+    
     #btns-block {
         display: flex;
         flex-direction: row;
@@ -52,6 +53,11 @@
         background-color: whitesmoke;
         outline: 2px dashed #5d5d5d;
         outline-offset: -12px;
+        cursor: pointer;
+    }
+
+    #upload-cont:hover label {
+        text-decoration: underline;
     }
     
     #upload-cont input[type=file] {
@@ -72,10 +78,6 @@
         cursor: pointer;
     }  
 
-    #upload-cont label:hover {
-        text-decoration: underline;
-    }
-
     #file-name {
         font-size: 0.8em;
         color: darkgray;
@@ -86,34 +88,21 @@
         width: fit-content;
     }
 
-    .error-msg {
-        color:rgb(131, 34, 34);
-    }
+    .error-msg { color:rgb(131, 34, 34); }
 
-    .warn-msg {
-        color:rgb(116, 97, 34);
-    }
+    .warn-msg { color:rgb(116, 97, 34); }
 
-    .notif-msg {
-        color: rgb(30, 34, 94);
-    }
+    .notif-msg { color: rgb(30, 34, 94); }
 
-    .success-msg {
-        color: rgb(16, 161, 23);
-    }
+    .success-msg { color: rgb(16, 161, 23); }
 
-    div > .block-item {
-        padding-top: 1em;
-    }
-    div > .block-item::before {
-        content: "- ";
-    }
-    .enabled-btn {
-        background-color: rgb(86, 175, 86);
-    }
-    .disabled-btn {
-        background-color: gray;
-    }
+    div > .block-item { padding-top: 1em; }
+    
+    div > .block-item::before { content: "- "; }
+    
+    .enabled-btn { background-color: rgb(86, 175, 86); }
+
+    .disabled-btn { background-color: gray; }
 
     #btns-block button {
         background-color: whitesmoke;
@@ -186,6 +175,10 @@
                     // this.statusText = 'No file attached';
                     this.csId = '';
                 }
+            },
+
+            triggerUpload() {
+                this.$refs.uploadedFile.click();
             },
 
             upload(file) {
