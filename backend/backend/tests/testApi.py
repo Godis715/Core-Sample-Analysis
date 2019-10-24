@@ -78,7 +78,7 @@ if token:
 
     # csIds = ['4ebf3a6f-ce3c-4844-b60c-587321b438a0', 'b664248e-09a2-4e2e-8934-dade9cf31946',
     #          '97966069-45b9-4091-960b-72451939f342']
-    # response = requests.get(f"{url}core_sample/status", data={'csIds': json.dumps(csIds)}, headers=headers)
+    # response = requests.put(f"{url}core_sample/status", data={'csIds': json.dumps(csIds)}, headers=headers)
     #
 
     print(response.status_code)

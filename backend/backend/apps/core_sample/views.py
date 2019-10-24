@@ -181,6 +181,44 @@ def cs_getAll(request):
     return Response(data, status=HTTP_200_OK)
 
 
+def _load_markup_on_server(markup_db, markup_data):
+    for oil_layer in markup_data['oil']:
+        oil_layer_db = models.Oil_layer(
+            markup=markup_db,
+            top=oil_layer['top'],
+            bottom=oil_layer['bottom'],
+            class_label=models.Oil_layer.CLASS_LABELS_NUMBER[oil_layer['class']]
+        )
+        oil_layer_db.save()
+
+    for carbon_layer in markup_data['carbon']:
+        carbon_layer_db = models.Carbon_layer(
+            markup=markup_db,
+            top=carbon_layer['top'],
+            bottom=carbon_layer['bottom'],
+            class_label=models.Carbon_layer.CLASS_LABELS_NUMBER[carbon_layer['class']]
+        )
+        carbon_layer_db.save()
+
+    for rock_layer in markup_data['rock']:
+        rock_layer_db = models.Rock_layer(
+            markup=markup_db,
+            top=rock_layer['top'],
+            bottom=rock_layer['bottom'],
+            class_label=models.Rock_layer.CLASS_LABELS_NUMBER[rock_layer['class']]
+        )
+        rock_layer_db.save()
+
+    for disruption_layer in markup_data['disruption']:
+        disruption_layer_db = models.Disruption_layer(
+            markup=markup_db,
+            top=disruption_layer['top'],
+            bottom=disruption_layer['bottom'],
+            class_label=models.Disruption_layer.CLASS_LABELS_NUMBER[disruption_layer['class']]
+        )
+        disruption_layer_db.save()
+
+
 def _analyse(core_sample, user):
     files = {}
     data = {
@@ -219,41 +257,7 @@ def _analyse(core_sample, user):
         )
         markup_db.save()
 
-        for oil_layer in markup_data['oil']:
-            oil_layer_db = models.Oil_layer(
-                markup=markup_db,
-                top=oil_layer['top'],
-                bottom=oil_layer['bottom'],
-                class_label=models.Oil_layer.CLASS_LABELS_NUMBER[oil_layer['class']]
-            )
-            oil_layer_db.save()
-
-        for carbon_layer in markup_data['carbon']:
-            carbon_layer_db = models.Carbon_layer(
-                markup=markup_db,
-                top=carbon_layer['top'],
-                bottom=carbon_layer['bottom'],
-                class_label=models.Carbon_layer.CLASS_LABELS_NUMBER[carbon_layer['class']]
-            )
-            carbon_layer_db.save()
-
-        for rock_layer in markup_data['rock']:
-            rock_layer_db = models.Rock_layer(
-                markup=markup_db,
-                top=rock_layer['top'],
-                bottom=rock_layer['bottom'],
-                class_label=models.Rock_layer.CLASS_LABELS_NUMBER[rock_layer['class']]
-            )
-            rock_layer_db.save()
-
-        for disruption_layer in markup_data['disruption']:
-            disruption_layer_db = models.Disruption_layer(
-                markup=markup_db,
-                top=disruption_layer['top'],
-                bottom=disruption_layer['bottom'],
-                class_label=models.Disruption_layer.CLASS_LABELS_NUMBER[disruption_layer['class']]
-            )
-            disruption_layer_db.save()
+        _load_markup_on_server(markup_db, markup_data)
 
         core_sample.status = models.Core_sample.ANALYSED
         core_sample.save()
@@ -284,7 +288,7 @@ def cs_analyse(request, csId):
 
 
 @csrf_exempt
-@api_view(["GET"])
+@api_view(["PUT"])
 def css_status(request):
     try:
         csIds = json.loads(request.POST['csIds'])
@@ -374,3 +378,70 @@ def cs_markup_get(request, csId):
 
     return Response(data, status=HTTP_200_OK)
 
+
+# @csrf_exempt
+# @api_view(["PUT"])
+# def cs_markup_put(request, csId):
+#     try:
+#         core_sample = models.Core_sample.objects.get(global_id=csId)
+#     except:
+#         return Response({'message': ERROR_INVALID_ID.format('core sample')},
+#                         status=HTTP_404_NOT_FOUND)
+#
+#     if core_sample.status != core_sample.ANALYSED:
+#         return Response({'message': ERROR_INVALID_ID.format('core sample')},
+#                         status=HTTP_400_BAD_REQUEST)
+#
+#     data = {
+#         'dlImages': [],
+#         'uvImages': [],
+#         'markup': {
+#             'rock': [],
+#             'oil': [],
+#             'carbon': [],
+#             'disruption': []
+#         }
+#     }
+#     fragments = models.Fragment.objects.filter(cs=core_sample)
+#     for fragment in fragments:
+#         data['uvImages'].append({
+#             'src': fragment.uv_src,
+#             'uv_density': fragment.uv_density,
+#             'top': fragment.top,
+#             'bottom': fragment.bottom
+#         })
+#         data['dlImages'].append({
+#             'src': fragment.dl_src,
+#             'dl_density': fragment.dl_density,
+#             'top': fragment.top,
+#             'bottom': fragment.bottom
+#         })
+#     markup = models.Markup.objects.get(cs=core_sample)
+#     oil_layers = models.Oil_layer.objects.filter(markup=markup)
+#     for oil_layer in oil_layers:
+#         data['markup']['oil'].append({
+#             'class': models.Oil_layer.CLASS_LABELS_NAME[oil_layer.class_label],
+#             'top': oil_layer.top,
+#             'bottom': oil_layer.bottom
+#         })
+#     rock_layers = models.Rock_layer.objects.filter(markup=markup)
+#     for rock_layer in rock_layers:
+#         data['markup']['rock'].append({
+#             'class': models.Rock_layer.CLASS_LABELS_NAME[rock_layer.class_label],
+#             'top': rock_layer.top,
+#             'bottom': rock_layer.bottom
+#         })
+#     carbon_layers = models.Carbon_layer.objects.filter(markup=markup)
+#     for carbon_layer in carbon_layers:
+#         data['markup']['carbon'].append({
+#             'class': models.Carbon_layer.CLASS_LABELS_NAME[carbon_layer.class_label],
+#             'top': carbon_layer.top,
+#             'bottom': carbon_layer.bottom
+#         })
+#     disruption_layers = models.Disruption_layer.objects.filter(markup=markup)
+#     for disruption_layer in disruption_layers:
+#         data['markup']['disruption'].append({
+#             'class': models.Disruption_layer.CLASS_LABELS_NAME[disruption_layer.class_label],
+#             'top': disruption_layer.top,
+#             'bottom': disruption_layer.bottom
+#         })
