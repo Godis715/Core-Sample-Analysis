@@ -24,8 +24,7 @@ import shutil
 import hashlib
 import threading
 import requests
-import  json
-
+import json
 
 ROOT_STATIC_APP = f'{settings.PROJECT_ROOT}\\static\\core_sample'
 
@@ -75,6 +74,8 @@ def _upload_on_server(csName, data, control_sum, user):
             cs=core_sample_db,
             dl_src=f'{src_rel}\\{dlImg_name}',
             uv_src=f'{src_rel}\\{uvImg_name}',
+            dl_density=fragment['dlImg'].size[1] / (fragment['bottom'] - fragment['top']),
+            uv_density=fragment['uvImg'].size[1] / (fragment['bottom'] - fragment['top']),
             top=fragment['top'],
             bottom=fragment['bottom']
         )
@@ -146,7 +147,7 @@ def delete(request, csId):
 
 @csrf_exempt
 @api_view(["GET"])
-def get(request, csId):
+def cs_get(request, csId):
     try:
         core_sample = models.Core_sample.objects.get(global_id=csId)
     except:
@@ -166,7 +167,7 @@ def get(request, csId):
 
 @csrf_exempt
 @api_view(["GET"])
-def getAll(request):
+def cs_getAll(request):
     core_sample_all = models.Core_sample.objects.filter(user=request.user)
     data = []
     for core_sample in core_sample_all:
@@ -179,7 +180,7 @@ def getAll(request):
     return Response({'data': data}, status=HTTP_200_OK)
 
 
-def _analyse(core_sample):
+def _analyse(core_sample, user):
     files = {}
     data = {
         'deposit': core_sample.deposit,
@@ -194,6 +195,8 @@ def _analyse(core_sample):
         data['fragments'].append({
             'top': fragment.top,
             'bottom': fragment.bottom,
+            'dl_density': fragment.dl_density,
+            'uv_density': fragment.uv_density,
             'dlImg': os.path.basename(dlImg.name),
             'uvImg': os.path.basename(uvImg.name),
         })
@@ -202,9 +205,51 @@ def _analyse(core_sample):
 
     url = 'http://127.0.0.1:5050/api/data_analysis/'
     response_markup = requests.post(url, data={'data': json.dumps(data)}, files=files)
-    print(response_markup.status_code)
-    print(response_markup.text)
-    #load markup in DB
+
+    markup_data = json.loads(response_markup.text)['markup']
+
+    markup_db = models.Markup(
+        cs=core_sample,
+        user=user
+    )
+    markup_db.save()
+
+    for oil_layer in markup_data['oil']:
+        oil_layer_db = models.Oil_layer(
+            markup=markup_db,
+            top=oil_layer['top'],
+            bottom=oil_layer['bottom'],
+            class_label=models.Oil_layer.CLASS_LABELS_DIR[oil_layer['class']]
+        )
+        oil_layer_db.save()
+
+    for carbon_layer in markup_data['carbon']:
+        carbon_layer_db = models.Carbon_layer(
+            markup=markup_db,
+            top=carbon_layer['top'],
+            bottom=carbon_layer['bottom'],
+            class_label=models.Carbon_layer.CLASS_LABELS_DIR[carbon_layer['class']]
+        )
+        carbon_layer_db.save()
+
+    for rock_layer in markup_data['rock']:
+        rock_layer_db = models.Rock_layer(
+            markup=markup_db,
+            top=rock_layer['top'],
+            bottom=rock_layer['bottom'],
+            class_label=models.Rock_layer.CLASS_LABELS_DIR[rock_layer['class']]
+        )
+        rock_layer_db.save()
+
+    for disruption_layer in markup_data['disruption']:
+        disruption_layer_db = models.Disruption_layer(
+            markup=markup_db,
+            top=disruption_layer['top'],
+            bottom=disruption_layer['bottom'],
+            class_label=models.Disruption_layer.CLASS_LABELS_DIR[disruption_layer['class']]
+        )
+        disruption_layer_db.save()
+
     core_sample.status = models.Core_sample.ANALYSED
     core_sample.save()
 
@@ -217,9 +262,6 @@ def analyse(request, csId):
     except:
         return Response({'message': ERROR_INVALID_ID.format('core sample')},
                         status=HTTP_404_NOT_FOUND)
-    if request.user != core_sample.user:
-        return Response({'message': ERROR_NOT_AUTHOR.format('core sample')},
-                        status=HTTP_403_FORBIDDEN)
     if core_sample.status == models.Core_sample.ANALYSED:
         return Response({'message': CONFLICT_CORE_SAMPLE_ANALYSED_BEFORE},
                         status=HTTP_409_CONFLICT)
@@ -230,7 +272,7 @@ def analyse(request, csId):
     core_sample.status = models.Core_sample.IN_PROCESS
     core_sample.save()
 
-    thread = threading.Thread(target=_analyse, args=(core_sample, ))
+    thread = threading.Thread(target=_analyse, args=(core_sample, request.user, ))
     thread.start()
 
     return Response({'message': OK_ANALYSIS_RUN}, status=HTTP_200_OK)
@@ -264,5 +306,3 @@ def status(request):
             statuses[csId] = 'error'
 
     return Response({'statuses': statuses}, status=HTTP_200_OK)
-
-
