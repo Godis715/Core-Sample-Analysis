@@ -33,6 +33,7 @@ ERROR_FORMAT_FILE = "File format error (Expected .zip)!"
 ERROR_INVALID_ID = "Invalid id: {} not found!"
 ERROR_NOT_AUTHOR = "The user is not author of this {}!"
 ERROR_NOT_FOUND_FOLDER = "Not found {} folder!"
+ERROR_NOT_ANALYSED = "This core sample hasn't be"
 
 CONFLICT_FILE_UPLOADED_BEFORE = "This file has been uploaded before"
 CONFLICT_CORE_SAMPLE_ANALYSED_BEFORE = "This core sample has been analysed before"
@@ -89,7 +90,7 @@ def _allowed_file(filename):
 
 @csrf_exempt
 @api_view(["POST"])
-def upload(request):
+def cs_upload(request):
     """Decoding archive -> load data -> response(json)"""
     try:
         file = request.FILES['archive']
@@ -121,7 +122,7 @@ def upload(request):
 
 @csrf_exempt
 @api_view(["DELETE"])
-def delete(request, csId):
+def cs_delete(request, csId):
     try:
         core_sample = models.Core_sample.objects.get(global_id=csId)
     except:
@@ -161,7 +162,7 @@ def cs_get(request, csId):
     return Response({
         'csName': core_sample.name,
         'date': core_sample.date,
-        'status': core_sample.status
+        'status': models.Core_sample.STATUS_TYPES_NAME[core_sample.status]
     }, status=HTTP_200_OK)
 
 
@@ -175,9 +176,9 @@ def cs_getAll(request):
             'csId': core_sample.global_id,
             'csName': core_sample.name,
             'date': core_sample.date,
-            'status': core_sample.status
+            'status': models.Core_sample.STATUS_TYPES_NAME[core_sample.status]
         })
-    return Response({'data': data}, status=HTTP_200_OK)
+    return Response(data, status=HTTP_200_OK)
 
 
 def _analyse(core_sample, user):
@@ -219,7 +220,7 @@ def _analyse(core_sample, user):
             markup=markup_db,
             top=oil_layer['top'],
             bottom=oil_layer['bottom'],
-            class_label=models.Oil_layer.CLASS_LABELS_DIR[oil_layer['class']]
+            class_label=models.Oil_layer.CLASS_LABELS_NUMBER[oil_layer['class']]
         )
         oil_layer_db.save()
 
@@ -228,7 +229,7 @@ def _analyse(core_sample, user):
             markup=markup_db,
             top=carbon_layer['top'],
             bottom=carbon_layer['bottom'],
-            class_label=models.Carbon_layer.CLASS_LABELS_DIR[carbon_layer['class']]
+            class_label=models.Carbon_layer.CLASS_LABELS_NUMBER[carbon_layer['class']]
         )
         carbon_layer_db.save()
 
@@ -237,7 +238,7 @@ def _analyse(core_sample, user):
             markup=markup_db,
             top=rock_layer['top'],
             bottom=rock_layer['bottom'],
-            class_label=models.Rock_layer.CLASS_LABELS_DIR[rock_layer['class']]
+            class_label=models.Rock_layer.CLASS_LABELS_NUMBER[rock_layer['class']]
         )
         rock_layer_db.save()
 
@@ -246,7 +247,7 @@ def _analyse(core_sample, user):
             markup=markup_db,
             top=disruption_layer['top'],
             bottom=disruption_layer['bottom'],
-            class_label=models.Disruption_layer.CLASS_LABELS_DIR[disruption_layer['class']]
+            class_label=models.Disruption_layer.CLASS_LABELS_NUMBER[disruption_layer['class']]
         )
         disruption_layer_db.save()
 
@@ -256,7 +257,7 @@ def _analyse(core_sample, user):
 
 @csrf_exempt
 @api_view(["PUT"])
-def analyse(request, csId):
+def cs_analyse(request, csId):
     try:
         core_sample = models.Core_sample.objects.get(global_id=csId)
     except:
@@ -280,7 +281,7 @@ def analyse(request, csId):
 
 @csrf_exempt
 @api_view(["GET"])
-def status(request):
+def css_status(request):
     try:
         csIds = json.loads(request.POST['csIds'])
     except:
@@ -296,13 +297,59 @@ def status(request):
         if request.user != core_sample.user:
             return Response({'message': ERROR_NOT_AUTHOR.format('core sample')},
                             status=HTTP_403_FORBIDDEN)
-        if core_sample.status == models.Core_sample.NOT_ANALYSED:
-            statuses[csId] = 'notAnalysed'
-        elif core_sample.status == models.Core_sample.ANALYSED:
-            statuses[csId] = 'analysed'
-        elif core_sample.status == models.Core_sample.IN_PROCESS:
-            statuses[csId] = 'inProcess'
-        elif core_sample.status == models.Core_sample.ERROR:
-            statuses[csId] = 'error'
+        statuses[csId] = models.Core_sample.STATUS_TYPES_NAME[core_sample.status]
 
     return Response({'statuses': statuses}, status=HTTP_200_OK)
+
+# @csrf_exempt
+# @api_view(["GET"])
+# def cs_markup_get(request, csId):
+#     try:
+#         core_sample = models.Core_sample.objects.get(global_id=csId)
+#     except:
+#         return Response({'message': ERROR_INVALID_ID.format('core sample')},
+#                         status=HTTP_404_NOT_FOUND)
+#
+#     if core_sample.status != core_sample.ANALYSED:
+#         return Response({'message': ERROR_INVALID_ID.format('core sample')},
+#                         status=HTTP_400_BAD_REQUEST)
+#
+#     data = {
+#         'dlImages': [],
+#         'uvImages': [],
+#         'markup': {
+#             'rock': [],
+#             'oil': [],
+#             'carbon': [],
+#             'disruption': []
+#         }
+#     }
+#     fragments = models.Fragment.objects.filter(cs=core_sample)
+#     for fragment in fragments:
+#         data['uvImages'].append({
+#             'src': fragment.uv_src,
+#             'uv_density': fragment.uv_density,
+#             'top': fragment.top,
+#             'bottom': fragment.bottom
+#         })
+#         data['dlImages'].append({
+#             'src': fragment.dl_src,
+#             'dl_density': fragment.dl_density,
+#             'top': fragment.top,
+#             'bottom': fragment.bottom
+#         })
+#     markup = models.Markup.objects.get(cs=core_sample)
+#     oil_layers = models.Oil_layer.objects.filter(markup=markup)
+#     for oil_layer in oil_layers:
+#         data['markup']['oil'].append({
+#             'class': oil_layer.class_label,
+#             'top': oil_layer.top,
+#             'bottom': oil_layer.bottom
+#         })
+#
+#     return Response({
+#         'csName': core_sample.name,
+#         'date': core_sample.date,
+#         'status': core_sample.status
+#     }, status=HTTP_200_OK)
+
