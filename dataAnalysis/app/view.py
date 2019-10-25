@@ -7,7 +7,7 @@ import io
 from PIL import Image
 from time import sleep
 
-from analysisModels.mock import analyse
+from analysisModels.analysis import analyse
 
 
 @app.errorhandler(404)

@@ -2,7 +2,9 @@ from joblib import load
 from PIL import ImageStat
 import numpy as np
 import cv2
-model = load('oil_pred/oil_rfc.joblib')
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+model = load(os.path.join(BASE_DIR, 'oil_rfc.joblib'))
 
 def predict(pil_img, ruin):
     img = np.array(pil_img)
