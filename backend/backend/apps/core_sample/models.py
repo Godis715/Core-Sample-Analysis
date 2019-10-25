@@ -59,6 +59,10 @@ class Fragment(models.Model):
     uv_resolution = models.FloatField(verbose_name='Плотность УФ')
     top = models.FloatField(verbose_name='Вверх')
     bottom = models.FloatField(verbose_name='Низ')
+    dl_height = models.IntegerField(verbose_name='Высота ДС (px)')
+    uv_height = models.IntegerField(verbose_name='Высота УФ (px)')
+    dl_width = models.IntegerField(verbose_name='Ширина ДС (px)')
+    uv_width = models.IntegerField(verbose_name='Ширина УФ (px)')
 
     class Meta:
         verbose_name = 'Фрагмент керна'

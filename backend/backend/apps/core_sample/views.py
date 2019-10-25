@@ -85,7 +85,11 @@ def _upload_on_server(csName, data, control_sum, user):
             dl_resolution=fragment['dlImg'].size[1] / (fragment['bottom'] - fragment['top']),
             uv_resolution=fragment['uvImg'].size[1] / (fragment['bottom'] - fragment['top']),
             top=fragment['top'],
-            bottom=fragment['bottom']
+            bottom=fragment['bottom'],
+            dl_height=fragment['dlImg'].size[1],
+            dl_width=fragment['dlImg'].size[0],
+            uv_height=fragment['uvImg'].size[1],
+            uv_width=fragment['uvImg'].size[0],
         )
         fragment_db.save()
     return core_sample_db.global_id
@@ -344,13 +348,15 @@ def cs_markup_get(request, csId):
     for fragment in fragments:
         data['uvImages'].append({
             'src': fragment.uv_src,
-            'uv_resolution': fragment.uv_resolution,
+            'uv_height': fragment.uv_height,
+            'uv_width': fragment.uv_width,
             'top': fragment.top,
             'bottom': fragment.bottom
         })
         data['dlImages'].append({
             'src': fragment.dl_src,
-            'dl_resolution': fragment.dl_resolution,
+            'dl_height': fragment.dl_height,
+            'dl_width': fragment.dl_width,
             'top': fragment.top,
             'bottom': fragment.bottom
         })

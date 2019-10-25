@@ -53,13 +53,13 @@ if token:
     token = f"Token {token}"
     headers = {"Authorization": token}
 
-    # file_obj = open(os.path.join(os.path.dirname(__file__), 'sample.zip'), 'rb')
-    # response = requests.post(f"{url}core_sample/upload",
-    #                          files={"archive": file_obj},
-    #                          data={'csName': 'Тест'},
-    #                          headers=headers)
-    # print(response.status_code)
-    # print(response.text)
+    file_obj = open(os.path.join(os.path.dirname(__file__), 'sample.zip'), 'rb')
+    response = requests.post(f"{url}core_sample/upload",
+                             files={"archive": file_obj},
+                             data={'csName': 'Тест'},
+                             headers=headers)
+    print(response.status_code)
+    print(response.text)
 
     csId = 'a2a4d24a-e30f-409d-be37-bec9a5169c2a'
     # response = requests.get(f"{url}core_sample/{csId}/markup", headers=headers)
@@ -72,13 +72,13 @@ if token:
     # file.write(response.text)
     # file.close()
 
-    file = open(os.path.join(os.path.dirname(__file__), 'markup.json'), 'rb')
-    data = json.loads(file.read())
-    file.close()
-
-    response = requests.put(f"{url}core_sample/{csId}/markup/put", data={'markup': json.dumps(data['markup'])}, headers=headers)
-    print(response.status_code)
-    print(response.text)
+    # file = open(os.path.join(os.path.dirname(__file__), 'markup.json'), 'rb')
+    # data = json.loads(file.read())
+    # file.close()
+    #
+    # response = requests.put(f"{url}core_sample/{csId}/markup/put", data={'markup': json.dumps(data['markup'])}, headers=headers)
+    # print(response.status_code)
+    # print(response.text)
 
     # response = requests.post(f"{url}logout", headers=headers)
 
