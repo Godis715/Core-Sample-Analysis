@@ -82,8 +82,8 @@ def _upload_on_server(csName, data, control_sum, user):
             cs=core_sample_db,
             dl_src=f'{src_rel}\\{dlImg_name}',
             uv_src=f'{src_rel}\\{uvImg_name}',
-            dl_density=fragment['dlImg'].size[1] / (fragment['bottom'] - fragment['top']),
-            uv_density=fragment['uvImg'].size[1] / (fragment['bottom'] - fragment['top']),
+            dl_resolution=fragment['dlImg'].size[1] / (fragment['bottom'] - fragment['top']),
+            uv_resolution=fragment['uvImg'].size[1] / (fragment['bottom'] - fragment['top']),
             top=fragment['top'],
             bottom=fragment['bottom']
         )
@@ -241,8 +241,8 @@ def _analyse(core_sample, user):
         data['fragments'].append({
             'top': fragment.top,
             'bottom': fragment.bottom,
-            'dl_density': fragment.dl_density,
-            'uv_density': fragment.uv_density,
+            'dl_resolution': fragment.dl_resolution,
+            'uv_resolution': fragment.uv_resolution,
             'dlImg': os.path.basename(dlImg.name),
             'uvImg': os.path.basename(uvImg.name),
         })
@@ -344,13 +344,13 @@ def cs_markup_get(request, csId):
     for fragment in fragments:
         data['uvImages'].append({
             'src': fragment.uv_src,
-            'uv_density': fragment.uv_density,
+            'uv_resolution': fragment.uv_resolution,
             'top': fragment.top,
             'bottom': fragment.bottom
         })
         data['dlImages'].append({
             'src': fragment.dl_src,
-            'dl_density': fragment.dl_density,
+            'dl_resolution': fragment.dl_resolution,
             'top': fragment.top,
             'bottom': fragment.bottom
         })

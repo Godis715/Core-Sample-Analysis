@@ -19,7 +19,7 @@ def _analyse_param(fragments, size_step, name_param):
     markup_fragments = []
     for fragment in fragments:
         markup_fragment = []
-        size_step_fragment = size_step * fragment['dl_density']
+        size_step_fragment = size_step * fragment['dl_resolution']
         current_height = size_step_fragment
         while current_height < fragment['dlImg'].size[1]:
             markup_fragment.append({
@@ -44,7 +44,7 @@ def _merge_markups(markup_fragments, fragments):
     current_height = 0
     for i, markup_fragment in enumerate(markup_fragments):
         for window in markup_fragment:
-            size_step_fragment = (window['bottom'] - window['top']) / fragments[i]['dl_density']
+            size_step_fragment = (window['bottom'] - window['top']) / fragments[i]['dl_resolution']
             current_height += size_step_fragment
             general_markup.append({
                 'class': window['class'],

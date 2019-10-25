@@ -55,8 +55,8 @@ class Fragment(models.Model):
     cs = models.ForeignKey(Core_sample, verbose_name='Керн', on_delete=models.CASCADE)
     dl_src = models.FilePathField(verbose_name='ДС изображение')
     uv_src = models.FilePathField(verbose_name='УФ изображение')
-    dl_density = models.FloatField(verbose_name='Плотность ДС')
-    uv_density = models.FloatField(verbose_name='Плотность УФ')
+    dl_resolution = models.FloatField(verbose_name='Плотность ДС')
+    uv_resolution = models.FloatField(verbose_name='Плотность УФ')
     top = models.FloatField(verbose_name='Вверх')
     bottom = models.FloatField(verbose_name='Низ')
 
