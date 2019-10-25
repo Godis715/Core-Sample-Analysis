@@ -353,7 +353,7 @@ def cs_markup_get(request, csId):
             'top': fragment.top,
             'bottom': fragment.bottom
         })
-    markup = models.Markup.objects.get(cs=core_sample)
+    markup = models.Markup.objects.filter(cs=core_sample).last()
     oil_layers = models.Oil_layer.objects.filter(markup=markup)
     for oil_layer in oil_layers:
         data['markup']['oil'].append({
@@ -525,6 +525,7 @@ def cs_markup_put(request, csId):
         new_markup_db.save()
 
         _load_markup_on_server(new_markup_db, new_markup_data)
+        return Response(status=HTTP_200_OK)
     else:
         return response
 
