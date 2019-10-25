@@ -28,22 +28,30 @@ def _analyse_param(fragments, size_step, name_param):
                 'bottom': current_height
             })
             current_height += size_step_fragment
+        if current_height > fragment['dlImg'].size[1]:
+            markup_fragment.append({
+                'class': CLASSES[name_param][random.randint(0, len(CLASSES[name_param]) - 1)],
+                'top': current_height - size_step_fragment,
+                'bottom': fragment['dlImg'].size[1]
+            })
         markup_fragments.append(markup_fragment)
 
     return markup_fragments
 
 
-def _merge_markups(markup_fragments, size_step):
+def _merge_markups(markup_fragments, fragments):
     general_markup = []
-    current_height = size_step
+    current_height = 0
     for i, markup_fragment in enumerate(markup_fragments):
         for window in markup_fragment:
+            size_step_fragment = (window['bottom'] - window['top']) / fragments[i]['dl_density']
+            current_height += size_step_fragment
             general_markup.append({
                 'class': window['class'],
-                'top': current_height - size_step,
+                'top': current_height - size_step_fragment,
                 'bottom': current_height
             })
-            current_height += size_step
+
     return general_markup
 
 
@@ -57,14 +65,20 @@ def _merge_windows(markup):
             if temp_class is not None:
                 merge_markup.append({
                     'class': temp_class,
-                    'top': temp_top_class,
-                    'bottom': temp_bottom_class
+                    'top': round(temp_top_class, 2),
+                    'bottom': round(temp_bottom_class, 2)
                 })
             temp_class = window['class']
             temp_top_class = window['top']
             temp_bottom_class = window['bottom']
         else:
             temp_bottom_class = window['bottom']
+    if temp_class is not None:
+        merge_markup.append({
+            'class': temp_class,
+            'top': round(temp_top_class, 2),
+            'bottom': round(temp_bottom_class, 2)
+        })
     return merge_markup
 
 
@@ -74,10 +88,10 @@ def analyse(data):
     markup_fragments_carbon = _analyse_param(data['fragments'], STEP_CARBON, 'carbon')
     markup_fragments_disruption = _analyse_param(data['fragments'], STEP_DISRUPTION, 'disruption')
 
-    markup_rock = _merge_markups(markup_fragments_rock, STEP_ROCK)
-    markup_oil = _merge_markups(markup_fragments_oil, STEP_OIL)
-    markup_carbon = _merge_markups(markup_fragments_carbon, STEP_CARBON)
-    markup_disruption = _merge_markups(markup_fragments_disruption, STEP_DISRUPTION)
+    markup_rock = _merge_markups(markup_fragments_rock, data['fragments'])
+    markup_oil = _merge_markups(markup_fragments_oil, data['fragments'])
+    markup_carbon = _merge_markups(markup_fragments_carbon, data['fragments'])
+    markup_disruption = _merge_markups(markup_fragments_disruption, data['fragments'])
 
     return {
         'rock': _merge_windows(markup_rock),
