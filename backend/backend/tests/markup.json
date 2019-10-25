@@ -94,7 +94,7 @@
 	  },
 	  {"class":"high","top":0.18,"bottom":0.28},{"class":"notDefined","top":0.28,"bottom":0.38},{"class":"low","top":0.38,"bottom":0.68},{"class":"notDefined","top":0.68,"bottom":0.78},{"class":"low","top":0.78,"bottom":0.88},{"class":"high","top":0.88,"bottom":0.98},{"class":"notDefined","top":0.98,"bottom":1.18},{"class":"high","top":1.18,"bottom":1.28},{"class":"notDefined","top":1.28,"bottom":1.38},{"class":"high","top":1.38,"bottom":1.68},{"class":"notDefined","top":1.68,"bottom":1.78},{"class":"high","top":1.78,"bottom":1.98},{"class":"low","top":1.98,"bottom":2.08},{"class":"high","top":2.08,"bottom":2.18},{"class":"low","top":2.18,"bottom":2.39},{"class":"notDefined","top":2.39,"bottom":2.59},{"class":"high","top":2.59,"bottom":2.69},{"class":"low","top":2.69,"bottom":2.89},{"class":"notDefined","top":2.89,"bottom":2.99},{"class":"low","top":2.99,"bottom":3.09},{"class":"high","top":3.09,"bottom":3.19},{"class":"notDefined","top":3.19,"bottom":3.39},{"class":"low","top":3.39,"bottom":3.59},{"class":"notDefined","top":3.59,"bottom":3.89},{"class":"high","top":3.89,"bottom":4.09},{"class":"notDefined","top":4.09,"bottom":4.48},{"class":"high","top":4.48,"bottom":4.58},{"class":"notDefined","top":4.58,"bottom":4.68},{"class":"high","top":4.68,"bottom":4.78},{"class":"notDefined","top":4.78,"bottom":4.88},{"class":"high","top":4.88,"bottom":5.18},{"class":"low","top":5.18,"bottom":5.38},{"class":"notDefined","top":5.38,"bottom":5.48},{"class":"high","top":5.48,"bottom":5.58},{"class":"low","top":5.58,"bottom":5.68},{"class":"notDefined","top":5.68,"bottom":5.78},{"class":"high","top":5.78,"bottom":5.88},{"class":"low","top":5.88,"bottom":5.93}
 	],
-	"disruption":
+	"ruin":
 	[
 	  {
 		"class":"high",

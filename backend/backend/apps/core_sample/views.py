@@ -216,12 +216,12 @@ def _load_markup_on_server(markup_db, markup_data):
         )
         rock_layer_db.save()
 
-    for disruption_layer in markup_data['disruption']:
-        disruption_layer_db = models.Disruption_layer_m(
+    for disruption_layer in markup_data['ruin']:
+        disruption_layer_db = models.Ruin_layer_m(
             markup=markup_db,
             top=disruption_layer['top'],
             bottom=disruption_layer['bottom'],
-            class_label=models.Disruption_layer_m.CLASS_LABELS_NUMBER[disruption_layer['class']]
+            class_label=models.Ruin_layer_m.CLASS_LABELS_NUMBER[disruption_layer['class']]
         )
         disruption_layer_db.save()
 
@@ -336,7 +336,7 @@ def cs_markup_get(request, csId):
             'rock': [],
             'oil': [],
             'carbon': [],
-            'disruption': []
+            'ruin': []
         }
     }
     fragments = models.Fragment_m.objects.filter(cs=core_sample)
@@ -375,10 +375,10 @@ def cs_markup_get(request, csId):
             'top': carbon_layer.top,
             'bottom': carbon_layer.bottom
         })
-    disruption_layers = models.Disruption_layer_m.objects.filter(markup=markup)
+    disruption_layers = models.Ruin_layer_m.objects.filter(markup=markup)
     for disruption_layer in disruption_layers:
-        data['markup']['disruption'].append({
-            'class': models.Disruption_layer_m.CLASS_LABELS_NAME[disruption_layer.class_label],
+        data['markup']['ruin'].append({
+            'class': models.Ruin_layer_m.CLASS_LABELS_NAME[disruption_layer.class_label],
             'top': disruption_layer.top,
             'bottom': disruption_layer.bottom
         })
@@ -469,8 +469,8 @@ def _validate_markup(markup_data, core_sample):
                                status=HTTP_400_BAD_REQUEST)
 
     disruption_general_height = 0
-    if 'disruption' in markup_data:
-        for disruption_layer in markup_data['disruption']:
+    if 'ruin' in markup_data:
+        for disruption_layer in markup_data['ruin']:
             if 'top' not in disruption_layer:
                 return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('top', 'disruption_layer')},
                                        status=HTTP_400_BAD_REQUEST)
@@ -485,15 +485,15 @@ def _validate_markup(markup_data, core_sample):
             else:
                 return False, Response({'message': ERROR_VALUES_ORDER.format('top', 'bottom')},
                                        status=HTTP_400_BAD_REQUEST)
-            if disruption_layer['class'] not in models.Disruption_layer_m.CLASS_LABELS_NUMBER:
+            if disruption_layer['class'] not in models.Ruin_layer_m.CLASS_LABELS_NUMBER:
                 return False, Response({'message': ERROR_VALUE.format('class')},
                                        status=HTTP_400_BAD_REQUEST)
     else:
-        return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('disruption', 'markup')},
+        return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('ruin', 'markup')},
                                status=HTTP_400_BAD_REQUEST)
 
     if disruption_general_height != core_sample.bottom - core_sample.top:
-        return False, Response({'message': ERROR_VALUES_SUM.format('height layers of disruption')},
+        return False, Response({'message': ERROR_VALUES_SUM.format('height layers of ruin')},
                                status=HTTP_400_BAD_REQUEST)
 
     return True, None

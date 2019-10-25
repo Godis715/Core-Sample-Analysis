@@ -11,7 +11,7 @@ CLASSES = {
     'rock': ['mudstone', 'siltstone', 'sandstone'],
     'oil': ['notDefined', 'low', 'high'],
     'carbon': ['notDefined', 'low', 'high'],
-    'disruption': ['none', 'low', 'high']
+    'ruin': ['none', 'low', 'high']
 }
 
 
@@ -86,7 +86,7 @@ def analyse(data):
     markup_fragments_rock = _analyse_param(data['fragments'], STEP_ROCK, 'rock')
     markup_fragments_oil = _analyse_param(data['fragments'], STEP_OIL, 'oil')
     markup_fragments_carbon = _analyse_param(data['fragments'], STEP_CARBON, 'carbon')
-    markup_fragments_disruption = _analyse_param(data['fragments'], STEP_DISRUPTION, 'disruption')
+    markup_fragments_disruption = _analyse_param(data['fragments'], STEP_DISRUPTION, 'ruin')
 
     markup_rock = _merge_markups(markup_fragments_rock, data['fragments'])
     markup_oil = _merge_markups(markup_fragments_oil, data['fragments'])
@@ -97,5 +97,5 @@ def analyse(data):
         'rock': _merge_windows(markup_rock),
         'oil': _merge_windows(markup_oil),
         'carbon': _merge_windows(markup_carbon),
-        'disruption': _merge_windows(markup_disruption)
+        'ruin': _merge_windows(markup_disruption)
     }

@@ -7,7 +7,7 @@ from .models import \
     Oil_layer_m, \
     Rock_layer_m, \
     Carbon_layer_m, \
-    Disruption_layer_m
+    Ruin_layer_m
 
 
 class Core_sample_admin(admin.ModelAdmin):
@@ -78,13 +78,13 @@ class Carbon_layer_admin(admin.ModelAdmin):
 
 class Disruption_layer_admin(admin.ModelAdmin):
     """Слой разрушенности"""
-    list_display = [field.name for field in Disruption_layer_m._meta.fields]
+    list_display = [field.name for field in Ruin_layer_m._meta.fields]
 
     list_filter = ['markup_id']
     search_fields = ['id']
 
     class Meta:
-        model = Disruption_layer_m
+        model = Ruin_layer_m
 
 
 admin.site.register(Core_sample_m, Core_sample_admin)
@@ -93,6 +93,6 @@ admin.site.register(Markup_m, Markup_admin)
 admin.site.register(Oil_layer_m, Oil_layer_admin)
 admin.site.register(Rock_layer_m, Rock_layer_admin)
 admin.site.register(Carbon_layer_m, Carbon_layer_admin)
-admin.site.register(Disruption_layer_m, Disruption_layer_admin)
+admin.site.register(Ruin_layer_m, Disruption_layer_admin)
 
 

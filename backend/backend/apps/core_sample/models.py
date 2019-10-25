@@ -188,7 +188,7 @@ class Carbon_layer_m(models.Model):
         return str(self.id)
 
 
-class Disruption_layer_m(models.Model):
+class Ruin_layer_m(models.Model):
     """Модель слоя разрушенности"""
 
     markup = models.ForeignKey(Markup_m, verbose_name='Разметка', on_delete=models.CASCADE)
