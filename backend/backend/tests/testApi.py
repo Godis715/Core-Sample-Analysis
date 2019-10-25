@@ -1,5 +1,6 @@
 import requests
 import json
+import time
 import os
 
 # from Crypto.Cipher import AES
@@ -57,6 +58,27 @@ if token:
     #                          files={"archive": file_obj},
     #                          data={'csName': 'Тест'},
     #                          headers=headers)
+    # print(response.status_code)
+    # print(response.text)
+
+    csId = '643da111-2c1a-4556-ae60-6d11948e3f1d'
+    # response = requests.get(f"{url}core_sample/{csId}/markup", headers=headers)
+    # print(response.status_code)
+    # print(response.text)
+
+    #data = json.loads(response.text)
+
+    # file = open(os.path.join(os.path.dirname(__file__), 'markup.json'), 'w')
+    # file.write(response.text)
+    # file.close()
+
+    file = open(os.path.join(os.path.dirname(__file__), 'markup.json'), 'rb')
+    data = json.loads(file.read())
+    file.close()
+
+    response = requests.put(f"{url}core_sample/{csId}/put_markup", data={'markup': json.dumps(data['markup'])}, headers=headers)
+    print(response.status_code)
+    print(response.text)
 
     # response = requests.post(f"{url}logout", headers=headers)
 
@@ -64,8 +86,8 @@ if token:
     # #csId = 4
     # response = requests.delete(f"{url}core_sample/{csId}/delete", headers=headers)
 
-    csId = '63b0ddcf-b28f-430b-add8-ac0b14a5be63'
-    response = requests.get(f"{url}core_sample/{csId}/markup", headers=headers)
+    # csId = '63b0ddcf-b28f-430b-add8-ac0b14a5be63'
+    # response = requests.get(f"{url}core_sample/{csId}/markup", headers=headers)
 
     # response = requests.get(f"{url}core_sample/", headers=headers)
 
@@ -73,7 +95,7 @@ if token:
     # csId = '00e81d72-c8de-4a1e-bf3b-d46a6a6fe93c'
     # response = requests.get(f"{url}core_sample/{csId}", headers=headers)
 
-    # csId = '63b0ddcf-b28f-430b-add8-ac0b14a5be63'
+    # csId = '643da111-2c1a-4556-ae60-6d11948e3f1d'
     # response = requests.put(f"{url}core_sample/{csId}/analyse", headers=headers)
 
     # csIds = ['4ebf3a6f-ce3c-4844-b60c-587321b438a0', 'b664248e-09a2-4e2e-8934-dade9cf31946',
@@ -81,8 +103,8 @@ if token:
     # response = requests.put(f"{url}core_sample/status", data={'csIds': json.dumps(csIds)}, headers=headers)
     #
 
-    print(response.status_code)
-    print(response.text)
+    # print(response.status_code)
+    # print(response.text)
 else:
     print('No Key')
 

@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate
+from django.http import QueryDict
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
@@ -33,7 +34,13 @@ ERROR_FORMAT_FILE = "File format error (Expected .zip)!"
 ERROR_INVALID_ID = "Invalid id: {} not found!"
 ERROR_NOT_AUTHOR = "The user is not author of this {}!"
 ERROR_NOT_FOUND_FOLDER = "Not found {} folder!"
-ERROR_NOT_ANALYSED = "This core sample hasn't be"
+ERROR_NOT_ANALYSED = "This core sample hasn't be!"
+
+ERROR_STRUCT_NOT_INCLUDED = "'{}' is not included in '{}'!"
+ERROR_VALUES_ORDER = "Values of {} and {} have the wrong order!"
+ERROR_VALUES_SUM = "Sum of {} is not correct!"
+ERROR_VALUE = "{} have the wrong value!"
+
 
 CONFLICT_FILE_UPLOADED_BEFORE = "This file has been uploaded before"
 CONFLICT_CORE_SAMPLE_ANALYSED_BEFORE = "This core sample has been analysed before"
@@ -291,7 +298,7 @@ def cs_analyse(request, csId):
 @api_view(["PUT"])
 def css_status(request):
     try:
-        csIds = json.loads(request.POST['csIds'])
+        csIds = json.loads(QueryDict(request.body).get('csIds'))
     except:
         return Response({'message': ERROR_IS_NOT_ATTACHED.format('csIds')}, status=HTTP_400_BAD_REQUEST)
 
@@ -319,7 +326,7 @@ def cs_markup_get(request, csId):
                         status=HTTP_404_NOT_FOUND)
 
     if core_sample.status != core_sample.ANALYSED:
-        return Response({'message': ERROR_INVALID_ID.format('core sample')},
+        return Response({'message': ERROR_NOT_ANALYSED},
                         status=HTTP_400_BAD_REQUEST)
 
     data = {
@@ -346,7 +353,7 @@ def cs_markup_get(request, csId):
             'top': fragment.top,
             'bottom': fragment.bottom
         })
-    markup = models.Markup.objects.get(cs=core_sample)
+    markup = models.Markup.objects.filter(cs=core_sample).last()
     oil_layers = models.Oil_layer.objects.filter(markup=markup)
     for oil_layer in oil_layers:
         data['markup']['oil'].append({
@@ -379,69 +386,149 @@ def cs_markup_get(request, csId):
     return Response(data, status=HTTP_200_OK)
 
 
-# @csrf_exempt
-# @api_view(["PUT"])
-# def cs_markup_put(request, csId):
-#     try:
-#         core_sample = models.Core_sample.objects.get(global_id=csId)
-#     except:
-#         return Response({'message': ERROR_INVALID_ID.format('core sample')},
-#                         status=HTTP_404_NOT_FOUND)
-#
-#     if core_sample.status != core_sample.ANALYSED:
-#         return Response({'message': ERROR_INVALID_ID.format('core sample')},
-#                         status=HTTP_400_BAD_REQUEST)
-#
-#     data = {
-#         'dlImages': [],
-#         'uvImages': [],
-#         'markup': {
-#             'rock': [],
-#             'oil': [],
-#             'carbon': [],
-#             'disruption': []
-#         }
-#     }
-#     fragments = models.Fragment.objects.filter(cs=core_sample)
-#     for fragment in fragments:
-#         data['uvImages'].append({
-#             'src': fragment.uv_src,
-#             'uv_density': fragment.uv_density,
-#             'top': fragment.top,
-#             'bottom': fragment.bottom
-#         })
-#         data['dlImages'].append({
-#             'src': fragment.dl_src,
-#             'dl_density': fragment.dl_density,
-#             'top': fragment.top,
-#             'bottom': fragment.bottom
-#         })
-#     markup = models.Markup.objects.get(cs=core_sample)
-#     oil_layers = models.Oil_layer.objects.filter(markup=markup)
-#     for oil_layer in oil_layers:
-#         data['markup']['oil'].append({
-#             'class': models.Oil_layer.CLASS_LABELS_NAME[oil_layer.class_label],
-#             'top': oil_layer.top,
-#             'bottom': oil_layer.bottom
-#         })
-#     rock_layers = models.Rock_layer.objects.filter(markup=markup)
-#     for rock_layer in rock_layers:
-#         data['markup']['rock'].append({
-#             'class': models.Rock_layer.CLASS_LABELS_NAME[rock_layer.class_label],
-#             'top': rock_layer.top,
-#             'bottom': rock_layer.bottom
-#         })
-#     carbon_layers = models.Carbon_layer.objects.filter(markup=markup)
-#     for carbon_layer in carbon_layers:
-#         data['markup']['carbon'].append({
-#             'class': models.Carbon_layer.CLASS_LABELS_NAME[carbon_layer.class_label],
-#             'top': carbon_layer.top,
-#             'bottom': carbon_layer.bottom
-#         })
-#     disruption_layers = models.Disruption_layer.objects.filter(markup=markup)
-#     for disruption_layer in disruption_layers:
-#         data['markup']['disruption'].append({
-#             'class': models.Disruption_layer.CLASS_LABELS_NAME[disruption_layer.class_label],
-#             'top': disruption_layer.top,
-#             'bottom': disruption_layer.bottom
-#         })
+def _validate_markup(markup_data, core_sample):
+    oil_general_height = 0
+    if 'oil' in markup_data:
+        for oil_layer in markup_data['oil']:
+            if 'top' not in oil_layer:
+                return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('top', 'oil_layer')},
+                                       status=HTTP_400_BAD_REQUEST)
+            if 'bottom' not in oil_layer:
+                return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('bottom', 'oil_layer')},
+                                       status=HTTP_400_BAD_REQUEST)
+            if 'class' not in oil_layer:
+                return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('class', 'oil_layer')},
+                                       status=HTTP_400_BAD_REQUEST)
+            if oil_layer['bottom'] > oil_layer['top']:
+                oil_general_height += oil_layer['bottom'] - oil_layer['top']
+            else:
+                return False, Response({'message': ERROR_VALUES_ORDER.format('top', 'bottom')},
+                                       status=HTTP_400_BAD_REQUEST)
+            if oil_layer['class'] not in models.Oil_layer.CLASS_LABELS_NUMBER:
+                return False, Response({'message': ERROR_VALUE.format('class')},
+                                       status=HTTP_400_BAD_REQUEST)
+    else:
+        return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('oil', 'markup')},
+                               status=HTTP_400_BAD_REQUEST)
+    if oil_general_height != core_sample.bottom - core_sample.top:
+        return False, Response({'message': ERROR_VALUES_SUM.format('height layers of oil')},
+                               status=HTTP_400_BAD_REQUEST)
+
+    carbon_general_height = 0
+    if 'carbon' in markup_data:
+        for carbon_layer in markup_data['carbon']:
+            if 'top' not in carbon_layer:
+                return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('top', 'carbon_layer')},
+                                       status=HTTP_400_BAD_REQUEST)
+            if 'bottom' not in carbon_layer:
+                return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('bottom', 'carbon_layer')},
+                                       status=HTTP_400_BAD_REQUEST)
+            if 'class' not in carbon_layer:
+                return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('class', 'carbon_layer')},
+                                       status=HTTP_400_BAD_REQUEST)
+            if carbon_layer['bottom'] > carbon_layer['top']:
+                carbon_general_height += carbon_layer['bottom'] - carbon_layer['top']
+            else:
+                return False, Response({'message': ERROR_VALUES_ORDER.format('top', 'bottom')},
+                                       status=HTTP_400_BAD_REQUEST)
+            if carbon_layer['class'] not in models.Carbon_layer.CLASS_LABELS_NUMBER:
+                return False, Response({'message': ERROR_VALUE.format('class')},
+                                       status=HTTP_400_BAD_REQUEST)
+    else:
+        return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('carbon', 'markup')},
+                               status=HTTP_400_BAD_REQUEST)
+    if carbon_general_height != core_sample.bottom - core_sample.top:
+        return False, Response({'message': ERROR_VALUES_SUM.format('height layers of carbon')},
+                               status=HTTP_400_BAD_REQUEST)
+
+    rock_general_height = 0
+    if 'rock' in markup_data:
+        for rock_layer in markup_data['rock']:
+            if 'top' not in rock_layer:
+                return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('top', 'rock_layer')},
+                                       status=HTTP_400_BAD_REQUEST)
+            if 'bottom' not in rock_layer:
+                return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('bottom', 'rock_layer')},
+                                       status=HTTP_400_BAD_REQUEST)
+            if 'class' not in rock_layer:
+                return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('class', 'rock_layer')},
+                                       status=HTTP_400_BAD_REQUEST)
+            if rock_layer['bottom'] > rock_layer['top']:
+                rock_general_height += rock_layer['bottom'] - rock_layer['top']
+            else:
+                return False, Response({'message': ERROR_VALUES_ORDER.format('top', 'bottom')},
+                                       status=HTTP_400_BAD_REQUEST)
+            if rock_layer['class'] not in models.Rock_layer.CLASS_LABELS_NUMBER:
+                return False, Response({'message': ERROR_VALUE.format('class')},
+                                       status=HTTP_400_BAD_REQUEST)
+    else:
+        return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('rock', 'markup')},
+                               status=HTTP_400_BAD_REQUEST)
+    if rock_general_height != core_sample.bottom - core_sample.top:
+        return False, Response({'message': ERROR_VALUES_SUM.format('height layers of rock')},
+                               status=HTTP_400_BAD_REQUEST)
+
+    disruption_general_height = 0
+    if 'disruption' in markup_data:
+        for disruption_layer in markup_data['disruption']:
+            if 'top' not in disruption_layer:
+                return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('top', 'disruption_layer')},
+                                       status=HTTP_400_BAD_REQUEST)
+            if 'bottom' not in disruption_layer:
+                return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('bottom', 'disruption_layer')},
+                                       status=HTTP_400_BAD_REQUEST)
+            if 'class' not in disruption_layer:
+                return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('class', 'disruption_layer')},
+                                       status=HTTP_400_BAD_REQUEST)
+            if disruption_layer['bottom'] > disruption_layer['top']:
+                disruption_general_height += disruption_layer['bottom'] - disruption_layer['top']
+            else:
+                return False, Response({'message': ERROR_VALUES_ORDER.format('top', 'bottom')},
+                                       status=HTTP_400_BAD_REQUEST)
+            if disruption_layer['class'] not in models.Disruption_layer.CLASS_LABELS_NUMBER:
+                return False, Response({'message': ERROR_VALUE.format('class')},
+                                       status=HTTP_400_BAD_REQUEST)
+    else:
+        return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('disruption', 'markup')},
+                               status=HTTP_400_BAD_REQUEST)
+
+    if disruption_general_height != core_sample.bottom - core_sample.top:
+        return False, Response({'message': ERROR_VALUES_SUM.format('height layers of disruption')},
+                               status=HTTP_400_BAD_REQUEST)
+
+    return True, None
+
+
+@csrf_exempt
+@api_view(["PUT"])
+def cs_markup_put(request, csId):
+    try:
+        core_sample = models.Core_sample.objects.get(global_id=csId)
+    except:
+        return Response({'message': ERROR_INVALID_ID.format('core sample')},
+                        status=HTTP_404_NOT_FOUND)
+
+    if core_sample.status != core_sample.ANALYSED:
+        return Response({'message': ERROR_NOT_ANALYSED},
+                        status=HTTP_400_BAD_REQUEST)
+    try:
+        new_markup_data = json.loads(QueryDict(request.body).get('markup'))
+    except:
+        return Response({'message': ERROR_IS_NOT_ATTACHED.format('Markup')}, status=HTTP_400_BAD_REQUEST)
+
+    isCorrect, response = _validate_markup(new_markup_data, core_sample)
+    if isCorrect:
+        new_markup_db = models.Markup(
+            cs=core_sample,
+            user=request.user
+        )
+        new_markup_db.save()
+
+        _load_markup_on_server(new_markup_db, new_markup_data)
+        return Response(status=HTTP_200_OK)
+    else:
+        return response
+
+
+
+
