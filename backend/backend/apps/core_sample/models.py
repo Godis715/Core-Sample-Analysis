@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 import uuid
 
 
-class Core_sample(models.Model):
+class Core_sample_m(models.Model):
     """Основаня модель керна"""
 
     global_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -49,10 +49,10 @@ class Core_sample(models.Model):
         return self.name
 
 
-class Fragment(models.Model):
+class Fragment_m(models.Model):
     """Модель фрагмента керна"""
 
-    cs = models.ForeignKey(Core_sample, verbose_name='Керн', on_delete=models.CASCADE)
+    cs = models.ForeignKey(Core_sample_m, verbose_name='Керн', on_delete=models.CASCADE)
     dl_src = models.FilePathField(verbose_name='ДС изображение')
     uv_src = models.FilePathField(verbose_name='УФ изображение')
     dl_density = models.FloatField(verbose_name='Плотность ДС')
@@ -68,10 +68,10 @@ class Fragment(models.Model):
         return str(self.id)
 
 
-class Markup(models.Model):
+class Markup_m(models.Model):
     """Модель разметки керна"""
 
-    cs = models.ForeignKey(Core_sample, verbose_name='Керн', on_delete=models.CASCADE)
+    cs = models.ForeignKey(Core_sample_m, verbose_name='Керн', on_delete=models.CASCADE)
     user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
     date = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True, null=True)
 
@@ -83,10 +83,10 @@ class Markup(models.Model):
         return str(self.id)
 
 
-class Oil_layer(models.Model):
+class Oil_layer_m(models.Model):
     """Модель слоя нефтенасыщенности"""
 
-    markup = models.ForeignKey(Markup, verbose_name='Разметка', on_delete=models.CASCADE)
+    markup = models.ForeignKey(Markup_m, verbose_name='Разметка', on_delete=models.CASCADE)
     top = models.FloatField(verbose_name='Вверх')
     bottom = models.FloatField(verbose_name='Низ')
 
@@ -118,10 +118,10 @@ class Oil_layer(models.Model):
         return str(self.id)
 
 
-class Rock_layer(models.Model):
+class Rock_layer_m(models.Model):
     """Модель слоя породы"""
 
-    markup = models.ForeignKey(Markup, verbose_name='Разметка', on_delete=models.CASCADE)
+    markup = models.ForeignKey(Markup_m, verbose_name='Разметка', on_delete=models.CASCADE)
     top = models.FloatField(verbose_name='Вверх')
     bottom = models.FloatField(verbose_name='Низ')
 
@@ -153,10 +153,10 @@ class Rock_layer(models.Model):
         return str(self.id)
 
 
-class Carbon_layer(models.Model):
+class Carbon_layer_m(models.Model):
     """Модель слоя карбонатности"""
 
-    markup = models.ForeignKey(Markup, verbose_name='Разметка', on_delete=models.CASCADE)
+    markup = models.ForeignKey(Markup_m, verbose_name='Разметка', on_delete=models.CASCADE)
     top = models.FloatField(verbose_name='Вверх')
     bottom = models.FloatField(verbose_name='Низ')
 
@@ -188,10 +188,10 @@ class Carbon_layer(models.Model):
         return str(self.id)
 
 
-class Disruption_layer(models.Model):
+class Disruption_layer_m(models.Model):
     """Модель слоя разрушенности"""
 
-    markup = models.ForeignKey(Markup, verbose_name='Разметка', on_delete=models.CASCADE)
+    markup = models.ForeignKey(Markup_m, verbose_name='Разметка', on_delete=models.CASCADE)
     top = models.FloatField(verbose_name='Вверх')
     bottom = models.FloatField(verbose_name='Низ')
 

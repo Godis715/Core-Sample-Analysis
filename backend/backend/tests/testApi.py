@@ -72,19 +72,19 @@ if token:
     # file.write(response.text)
     # file.close()
 
-    file = open(os.path.join(os.path.dirname(__file__), 'markup.json'), 'rb')
-    data = json.loads(file.read())
-    file.close()
-
-    response = requests.put(f"{url}core_sample/{csId}/put_markup", data={'markup': json.dumps(data['markup'])}, headers=headers)
-    print(response.status_code)
-    print(response.text)
+    # file = open(os.path.join(os.path.dirname(__file__), 'markup.json'), 'rb')
+    # data = json.loads(file.read())
+    # file.close()
+    #
+    # response = requests.put(f"{url}core_sample/{csId}/markup", data={'markup': json.dumps(data['markup'])}, headers=headers)
+    # print(response.status_code)
+    # print(response.text)
 
     # response = requests.post(f"{url}logout", headers=headers)
 
     # csId = '9abd2799-cfba-4aa3-a580-6476bb352a75'
     # #csId = 4
-    # response = requests.delete(f"{url}core_sample/{csId}/delete", headers=headers)
+    response = requests.delete(f"{url}core_sample/{csId}/delete", headers=headers)
 
     # csId = '63b0ddcf-b28f-430b-add8-ac0b14a5be63'
     # response = requests.get(f"{url}core_sample/{csId}/markup", headers=headers)
@@ -103,8 +103,8 @@ if token:
     # response = requests.put(f"{url}core_sample/status", data={'csIds': json.dumps(csIds)}, headers=headers)
     #
 
-    # print(response.status_code)
-    # print(response.text)
+    print(response.status_code)
+    print(response.text)
 else:
     print('No Key')
 

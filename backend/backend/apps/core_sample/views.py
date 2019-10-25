@@ -59,7 +59,7 @@ def _cs_count_top_bottom(fragments):
 
 def _upload_on_server(csName, data, control_sum, user):
     cs_top, cs_bottom = _cs_count_top_bottom(data['fragments'])
-    core_sample_db = models.Core_sample(
+    core_sample_db = models.Core_sample_m(
         name=csName,
         user=user,
         control_sum=control_sum,
@@ -78,7 +78,7 @@ def _upload_on_server(csName, data, control_sum, user):
         fragment['dlImg'].save(f'{src_abs}\\{dlImg_name}')
         uvImg_name = fragment['uvImg'].filename
         fragment['uvImg'].save(f'{src_abs}\\{uvImg_name}')
-        fragment_db = models.Fragment(
+        fragment_db = models.Fragment_m(
             cs=core_sample_db,
             dl_src=f'{src_rel}\\{dlImg_name}',
             uv_src=f'{src_rel}\\{uvImg_name}',
@@ -106,7 +106,7 @@ def cs_upload(request):
 
     control_sum = hashlib.md5(file.read()).hexdigest()
     try:
-        core_sample = models.Core_sample.objects.filter(control_sum=control_sum)[0]
+        core_sample = models.Core_sample_m.objects.filter(control_sum=control_sum)[0]
         return Response({'csId': core_sample.global_id, 'message': CONFLICT_FILE_UPLOADED_BEFORE},
                         status=HTTP_409_CONFLICT)
     except:
@@ -131,7 +131,7 @@ def cs_upload(request):
 @api_view(["DELETE"])
 def cs_delete(request, csId):
     try:
-        core_sample = models.Core_sample.objects.get(global_id=csId)
+        core_sample = models.Core_sample_m.objects.get(global_id=csId)
     except:
         return Response({'message': ERROR_INVALID_ID.format('core sample')},
                         status=HTTP_404_NOT_FOUND)
@@ -157,7 +157,7 @@ def cs_delete(request, csId):
 @api_view(["GET"])
 def cs_get(request, csId):
     try:
-        core_sample = models.Core_sample.objects.get(global_id=csId)
+        core_sample = models.Core_sample_m.objects.get(global_id=csId)
     except:
         return Response({'message': ERROR_INVALID_ID.format('core sample')},
                         status=HTTP_404_NOT_FOUND)
@@ -169,59 +169,59 @@ def cs_get(request, csId):
     return Response({
         'csName': core_sample.name,
         'date': core_sample.date,
-        'status': models.Core_sample.STATUS_TYPES_NAME[core_sample.status]
+        'status': models.Core_sample_m.STATUS_TYPES_NAME[core_sample.status]
     }, status=HTTP_200_OK)
 
 
 @csrf_exempt
 @api_view(["GET"])
 def cs_getAll(request):
-    core_sample_all = models.Core_sample.objects.filter(user=request.user)
+    core_sample_all = models.Core_sample_m.objects.filter(user=request.user)
     data = []
     for core_sample in core_sample_all:
         data.append({
             'csId': core_sample.global_id,
             'csName': core_sample.name,
             'date': core_sample.date,
-            'status': models.Core_sample.STATUS_TYPES_NAME[core_sample.status]
+            'status': models.Core_sample_m.STATUS_TYPES_NAME[core_sample.status]
         })
     return Response(data, status=HTTP_200_OK)
 
 
 def _load_markup_on_server(markup_db, markup_data):
     for oil_layer in markup_data['oil']:
-        oil_layer_db = models.Oil_layer(
+        oil_layer_db = models.Oil_layer_m(
             markup=markup_db,
             top=oil_layer['top'],
             bottom=oil_layer['bottom'],
-            class_label=models.Oil_layer.CLASS_LABELS_NUMBER[oil_layer['class']]
+            class_label=models.Oil_layer_m.CLASS_LABELS_NUMBER[oil_layer['class']]
         )
         oil_layer_db.save()
 
     for carbon_layer in markup_data['carbon']:
-        carbon_layer_db = models.Carbon_layer(
+        carbon_layer_db = models.Carbon_layer_m(
             markup=markup_db,
             top=carbon_layer['top'],
             bottom=carbon_layer['bottom'],
-            class_label=models.Carbon_layer.CLASS_LABELS_NUMBER[carbon_layer['class']]
+            class_label=models.Carbon_layer_m.CLASS_LABELS_NUMBER[carbon_layer['class']]
         )
         carbon_layer_db.save()
 
     for rock_layer in markup_data['rock']:
-        rock_layer_db = models.Rock_layer(
+        rock_layer_db = models.Rock_layer_m(
             markup=markup_db,
             top=rock_layer['top'],
             bottom=rock_layer['bottom'],
-            class_label=models.Rock_layer.CLASS_LABELS_NUMBER[rock_layer['class']]
+            class_label=models.Rock_layer_m.CLASS_LABELS_NUMBER[rock_layer['class']]
         )
         rock_layer_db.save()
 
     for disruption_layer in markup_data['disruption']:
-        disruption_layer_db = models.Disruption_layer(
+        disruption_layer_db = models.Disruption_layer_m(
             markup=markup_db,
             top=disruption_layer['top'],
             bottom=disruption_layer['bottom'],
-            class_label=models.Disruption_layer.CLASS_LABELS_NUMBER[disruption_layer['class']]
+            class_label=models.Disruption_layer_m.CLASS_LABELS_NUMBER[disruption_layer['class']]
         )
         disruption_layer_db.save()
 
@@ -234,7 +234,7 @@ def _analyse(core_sample, user):
         'fragments': []
     }
 
-    fragments = models.Fragment.objects.filter(cs_id=core_sample)
+    fragments = models.Fragment_m.objects.filter(cs_id=core_sample)
     for fragment in fragments:
         dlImg = open(f'{ROOT_STATIC_APP}\\{fragment.dl_src}', 'rb')
         uvImg = open(f'{ROOT_STATIC_APP}\\{fragment.uv_src}', 'rb')
@@ -253,12 +253,12 @@ def _analyse(core_sample, user):
     try:
         response_markup = requests.post(url, data={'data': json.dumps(data)}, files=files)
     except:
-        core_sample.status = models.Core_sample.ERROR
+        core_sample.status = models.Core_sample_m.ERROR
         core_sample.save()
     else:
         markup_data = json.loads(response_markup.text)['markup']
 
-        markup_db = models.Markup(
+        markup_db = models.Markup_m(
             cs=core_sample,
             user=user
         )
@@ -266,7 +266,7 @@ def _analyse(core_sample, user):
 
         _load_markup_on_server(markup_db, markup_data)
 
-        core_sample.status = models.Core_sample.ANALYSED
+        core_sample.status = models.Core_sample_m.ANALYSED
         core_sample.save()
 
 
@@ -274,18 +274,18 @@ def _analyse(core_sample, user):
 @api_view(["PUT"])
 def cs_analyse(request, csId):
     try:
-        core_sample = models.Core_sample.objects.get(global_id=csId)
+        core_sample = models.Core_sample_m.objects.get(global_id=csId)
     except:
         return Response({'message': ERROR_INVALID_ID.format('core sample')},
                         status=HTTP_404_NOT_FOUND)
-    if core_sample.status == models.Core_sample.ANALYSED:
+    if core_sample.status == models.Core_sample_m.ANALYSED:
         return Response({'message': CONFLICT_CORE_SAMPLE_ANALYSED_BEFORE},
                         status=HTTP_409_CONFLICT)
-    if core_sample.status == models.Core_sample.IN_PROCESS:
+    if core_sample.status == models.Core_sample_m.IN_PROCESS:
         return Response({'message': CONFLICT_CORE_SAMPLE_IN_PROCESS_ANALYSE},
                         status=HTTP_409_CONFLICT)
 
-    core_sample.status = models.Core_sample.IN_PROCESS
+    core_sample.status = models.Core_sample_m.IN_PROCESS
     core_sample.save()
 
     thread = threading.Thread(target=_analyse, args=(core_sample, request.user, ))
@@ -305,14 +305,14 @@ def css_status(request):
     statuses = {}
     for csId in csIds:
         try:
-            core_sample = models.Core_sample.objects.get(global_id=csId)
+            core_sample = models.Core_sample_m.objects.get(global_id=csId)
         except:
             return Response({'message': ERROR_INVALID_ID.format('core sample')},
                             status=HTTP_404_NOT_FOUND)
         if request.user != core_sample.user:
             return Response({'message': ERROR_NOT_AUTHOR.format('core sample')},
                             status=HTTP_403_FORBIDDEN)
-        statuses[csId] = models.Core_sample.STATUS_TYPES_NAME[core_sample.status]
+        statuses[csId] = models.Core_sample_m.STATUS_TYPES_NAME[core_sample.status]
 
     return Response({'statuses': statuses}, status=HTTP_200_OK)
 
@@ -320,7 +320,7 @@ def css_status(request):
 @api_view(["GET"])
 def cs_markup_get(request, csId):
     try:
-        core_sample = models.Core_sample.objects.get(global_id=csId)
+        core_sample = models.Core_sample_m.objects.get(global_id=csId)
     except:
         return Response({'message': ERROR_INVALID_ID.format('core sample')},
                         status=HTTP_404_NOT_FOUND)
@@ -339,7 +339,7 @@ def cs_markup_get(request, csId):
             'disruption': []
         }
     }
-    fragments = models.Fragment.objects.filter(cs=core_sample)
+    fragments = models.Fragment_m.objects.filter(cs=core_sample)
     for fragment in fragments:
         data['uvImages'].append({
             'src': fragment.uv_src,
@@ -353,32 +353,32 @@ def cs_markup_get(request, csId):
             'top': fragment.top,
             'bottom': fragment.bottom
         })
-    markup = models.Markup.objects.filter(cs=core_sample).last()
-    oil_layers = models.Oil_layer.objects.filter(markup=markup)
+    markup = models.Markup_m.objects.filter(cs=core_sample).last()
+    oil_layers = models.Oil_layer_m.objects.filter(markup=markup)
     for oil_layer in oil_layers:
         data['markup']['oil'].append({
-            'class': models.Oil_layer.CLASS_LABELS_NAME[oil_layer.class_label],
+            'class': models.Oil_layer_m.CLASS_LABELS_NAME[oil_layer.class_label],
             'top': oil_layer.top,
             'bottom': oil_layer.bottom
         })
-    rock_layers = models.Rock_layer.objects.filter(markup=markup)
+    rock_layers = models.Rock_layer_m.objects.filter(markup=markup)
     for rock_layer in rock_layers:
         data['markup']['rock'].append({
-            'class': models.Rock_layer.CLASS_LABELS_NAME[rock_layer.class_label],
+            'class': models.Rock_layer_m.CLASS_LABELS_NAME[rock_layer.class_label],
             'top': rock_layer.top,
             'bottom': rock_layer.bottom
         })
-    carbon_layers = models.Carbon_layer.objects.filter(markup=markup)
+    carbon_layers = models.Carbon_layer_m.objects.filter(markup=markup)
     for carbon_layer in carbon_layers:
         data['markup']['carbon'].append({
-            'class': models.Carbon_layer.CLASS_LABELS_NAME[carbon_layer.class_label],
+            'class': models.Carbon_layer_m.CLASS_LABELS_NAME[carbon_layer.class_label],
             'top': carbon_layer.top,
             'bottom': carbon_layer.bottom
         })
-    disruption_layers = models.Disruption_layer.objects.filter(markup=markup)
+    disruption_layers = models.Disruption_layer_m.objects.filter(markup=markup)
     for disruption_layer in disruption_layers:
         data['markup']['disruption'].append({
-            'class': models.Disruption_layer.CLASS_LABELS_NAME[disruption_layer.class_label],
+            'class': models.Disruption_layer_m.CLASS_LABELS_NAME[disruption_layer.class_label],
             'top': disruption_layer.top,
             'bottom': disruption_layer.bottom
         })
@@ -404,7 +404,7 @@ def _validate_markup(markup_data, core_sample):
             else:
                 return False, Response({'message': ERROR_VALUES_ORDER.format('top', 'bottom')},
                                        status=HTTP_400_BAD_REQUEST)
-            if oil_layer['class'] not in models.Oil_layer.CLASS_LABELS_NUMBER:
+            if oil_layer['class'] not in models.Oil_layer_m.CLASS_LABELS_NUMBER:
                 return False, Response({'message': ERROR_VALUE.format('class')},
                                        status=HTTP_400_BAD_REQUEST)
     else:
@@ -431,7 +431,7 @@ def _validate_markup(markup_data, core_sample):
             else:
                 return False, Response({'message': ERROR_VALUES_ORDER.format('top', 'bottom')},
                                        status=HTTP_400_BAD_REQUEST)
-            if carbon_layer['class'] not in models.Carbon_layer.CLASS_LABELS_NUMBER:
+            if carbon_layer['class'] not in models.Carbon_layer_m.CLASS_LABELS_NUMBER:
                 return False, Response({'message': ERROR_VALUE.format('class')},
                                        status=HTTP_400_BAD_REQUEST)
     else:
@@ -458,7 +458,7 @@ def _validate_markup(markup_data, core_sample):
             else:
                 return False, Response({'message': ERROR_VALUES_ORDER.format('top', 'bottom')},
                                        status=HTTP_400_BAD_REQUEST)
-            if rock_layer['class'] not in models.Rock_layer.CLASS_LABELS_NUMBER:
+            if rock_layer['class'] not in models.Rock_layer_m.CLASS_LABELS_NUMBER:
                 return False, Response({'message': ERROR_VALUE.format('class')},
                                        status=HTTP_400_BAD_REQUEST)
     else:
@@ -485,7 +485,7 @@ def _validate_markup(markup_data, core_sample):
             else:
                 return False, Response({'message': ERROR_VALUES_ORDER.format('top', 'bottom')},
                                        status=HTTP_400_BAD_REQUEST)
-            if disruption_layer['class'] not in models.Disruption_layer.CLASS_LABELS_NUMBER:
+            if disruption_layer['class'] not in models.Disruption_layer_m.CLASS_LABELS_NUMBER:
                 return False, Response({'message': ERROR_VALUE.format('class')},
                                        status=HTTP_400_BAD_REQUEST)
     else:
@@ -503,7 +503,7 @@ def _validate_markup(markup_data, core_sample):
 @api_view(["PUT"])
 def cs_markup_put(request, csId):
     try:
-        core_sample = models.Core_sample.objects.get(global_id=csId)
+        core_sample = models.Core_sample_m.objects.get(global_id=csId)
     except:
         return Response({'message': ERROR_INVALID_ID.format('core sample')},
                         status=HTTP_404_NOT_FOUND)
@@ -518,7 +518,7 @@ def cs_markup_put(request, csId):
 
     isCorrect, response = _validate_markup(new_markup_data, core_sample)
     if isCorrect:
-        new_markup_db = models.Markup(
+        new_markup_db = models.Markup_m(
             cs=core_sample,
             user=request.user
         )
