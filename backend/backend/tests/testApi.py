@@ -62,11 +62,19 @@ if token:
     # print(response.text)
 
     csId = '643da111-2c1a-4556-ae60-6d11948e3f1d'
-    response = requests.get(f"{url}core_sample/{csId}/markup", headers=headers)
-    print(response.status_code)
-    print(response.text)
+    # response = requests.get(f"{url}core_sample/{csId}/markup", headers=headers)
+    # print(response.status_code)
+    # print(response.text)
 
-    data = json.loads(response.text)
+    #data = json.loads(response.text)
+
+    # file = open(os.path.join(os.path.dirname(__file__), 'markup.json'), 'w')
+    # file.write(response.text)
+    # file.close()
+
+    file = open(os.path.join(os.path.dirname(__file__), 'markup.json'), 'rb')
+    data = json.loads(file.read())
+    file.close()
 
     response = requests.put(f"{url}core_sample/markup/{csId}", data={'markup': json.dumps(data['markup'])}, headers=headers)
     print(response.status_code)
