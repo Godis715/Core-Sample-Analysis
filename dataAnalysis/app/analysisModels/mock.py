@@ -2,10 +2,10 @@ from PIL import Image
 
 import random
 
-STEP_ROCK = 0.4
-STEP_OIL = 0.2
-STEP_CARBON = 0.1
-STEP_DISRUPTION = 0.1
+STEP_ROCK = 40
+STEP_OIL = 20
+STEP_CARBON = 10
+STEP_DISRUPTION = 10
 
 CLASSES = {
     'rock': ['mudstone', 'siltstone', 'sandstone'],
@@ -65,8 +65,8 @@ def _merge_windows(markup):
             if temp_class is not None:
                 merge_markup.append({
                     'class': temp_class,
-                    'top': round(temp_top_class, 2),
-                    'bottom': round(temp_bottom_class, 2)
+                    'top': round(temp_top_class),
+                    'bottom': round(temp_bottom_class)
                 })
             temp_class = window['class']
             temp_top_class = window['top']
@@ -76,8 +76,8 @@ def _merge_windows(markup):
     if temp_class is not None:
         merge_markup.append({
             'class': temp_class,
-            'top': round(temp_top_class, 2),
-            'bottom': round(temp_bottom_class, 2)
+            'top': round(temp_top_class),
+            'bottom': round(temp_bottom_class)
         })
     return merge_markup
 

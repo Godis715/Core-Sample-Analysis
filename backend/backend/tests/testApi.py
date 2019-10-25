@@ -53,15 +53,15 @@ if token:
     token = f"Token {token}"
     headers = {"Authorization": token}
 
-    file_obj = open(os.path.join(os.path.dirname(__file__), 'sample.zip'), 'rb')
-    response = requests.post(f"{url}core_sample/upload",
-                             files={"archive": file_obj},
-                             data={'csName': 'Тест'},
-                             headers=headers)
-    print(response.status_code)
-    print(response.text)
+    # file_obj = open(os.path.join(os.path.dirname(__file__), 'sample.zip'), 'rb')
+    # response = requests.post(f"{url}core_sample/upload",
+    #                          files={"archive": file_obj},
+    #                          data={'csName': 'Тест'},
+    #                          headers=headers)
+    # print(response.status_code)
+    # print(response.text)
 
-    csId = 'a2a4d24a-e30f-409d-be37-bec9a5169c2a'
+    csId = '93a352e2-c877-4715-a1ef-8865d7f9f075'
     # response = requests.get(f"{url}core_sample/{csId}/markup", headers=headers)
     # print(response.status_code)
     # print(response.text)
@@ -96,7 +96,7 @@ if token:
     # response = requests.get(f"{url}core_sample/{csId}", headers=headers)
 
     # csId = '643da111-2c1a-4556-ae60-6d11948e3f1d'
-    # response = requests.put(f"{url}core_sample/{csId}/analyse", headers=headers)
+    response = requests.put(f"{url}core_sample/{csId}/analyse", headers=headers)
 
     # csIds = ['4ebf3a6f-ce3c-4844-b60c-587321b438a0', 'b664248e-09a2-4e2e-8934-dade9cf31946',
     #          '97966069-45b9-4091-960b-72451939f342']

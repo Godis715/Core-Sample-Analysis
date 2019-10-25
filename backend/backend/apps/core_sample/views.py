@@ -196,8 +196,8 @@ def _load_markup_on_server(markup_db, markup_data):
     for oil_layer in markup_data['oil']:
         oil_layer_db = models.Oil_layer(
             markup=markup_db,
-            top=oil_layer['top'],
-            bottom=oil_layer['bottom'],
+            top=int(oil_layer['top']),
+            bottom=int(oil_layer['bottom']),
             class_label=models.Oil_layer.CLASS_LABELS_NUMBER[oil_layer['class']]
         )
         oil_layer_db.save()
@@ -205,8 +205,8 @@ def _load_markup_on_server(markup_db, markup_data):
     for carbon_layer in markup_data['carbon']:
         carbon_layer_db = models.Carbon_layer(
             markup=markup_db,
-            top=carbon_layer['top'],
-            bottom=carbon_layer['bottom'],
+            top=int(carbon_layer['top']),
+            bottom=int(carbon_layer['bottom']),
             class_label=models.Carbon_layer.CLASS_LABELS_NUMBER[carbon_layer['class']]
         )
         carbon_layer_db.save()
@@ -214,8 +214,8 @@ def _load_markup_on_server(markup_db, markup_data):
     for rock_layer in markup_data['rock']:
         rock_layer_db = models.Rock_layer(
             markup=markup_db,
-            top=rock_layer['top'],
-            bottom=rock_layer['bottom'],
+            top=int(rock_layer['top']),
+            bottom=int(rock_layer['bottom']),
             class_label=models.Rock_layer.CLASS_LABELS_NUMBER[rock_layer['class']]
         )
         rock_layer_db.save()
@@ -223,8 +223,8 @@ def _load_markup_on_server(markup_db, markup_data):
     for disruption_layer in markup_data['ruin']:
         disruption_layer_db = models.Ruin_layer(
             markup=markup_db,
-            top=disruption_layer['top'],
-            bottom=disruption_layer['bottom'],
+            top=int(disruption_layer['top']),
+            bottom=int(disruption_layer['bottom']),
             class_label=models.Ruin_layer.CLASS_LABELS_NUMBER[disruption_layer['class']]
         )
         disruption_layer_db.save()

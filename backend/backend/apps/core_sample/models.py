@@ -12,8 +12,8 @@ class Core_sample(models.Model):
     user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
     deposit = models.PositiveIntegerField(verbose_name='Месторождение')
     hole = models.PositiveIntegerField(verbose_name='Скважина')
-    top = models.FloatField(verbose_name='Вверх')
-    bottom = models.FloatField(verbose_name='Низ')
+    top = models.PositiveIntegerField(verbose_name='Вверх (см)')
+    bottom = models.PositiveIntegerField(verbose_name='Низ (см)')
 
     NOT_ANALYSED = 1
     ANALYSED = 2
@@ -57,12 +57,12 @@ class Fragment(models.Model):
     uv_src = models.FilePathField(verbose_name='УФ изображение')
     dl_resolution = models.FloatField(verbose_name='Плотность ДС')
     uv_resolution = models.FloatField(verbose_name='Плотность УФ')
-    top = models.FloatField(verbose_name='Вверх')
-    bottom = models.FloatField(verbose_name='Низ')
-    dl_height = models.IntegerField(verbose_name='Высота ДС (px)')
-    uv_height = models.IntegerField(verbose_name='Высота УФ (px)')
-    dl_width = models.IntegerField(verbose_name='Ширина ДС (px)')
-    uv_width = models.IntegerField(verbose_name='Ширина УФ (px)')
+    top = models.PositiveIntegerField(verbose_name='Вверх (см)')
+    bottom = models.PositiveIntegerField(verbose_name='Низ (см)')
+    dl_height = models.PositiveIntegerField(verbose_name='Высота ДС (px)')
+    uv_height = models.PositiveIntegerField(verbose_name='Высота УФ (px)')
+    dl_width = models.PositiveIntegerField(verbose_name='Ширина ДС (px)')
+    uv_width = models.PositiveIntegerField(verbose_name='Ширина УФ (px)')
 
     class Meta:
         verbose_name = 'Фрагмент керна'
@@ -91,8 +91,8 @@ class Oil_layer(models.Model):
     """Модель слоя нефтенасыщенности"""
 
     markup = models.ForeignKey(Markup, verbose_name='Разметка', on_delete=models.CASCADE)
-    top = models.FloatField(verbose_name='Вверх')
-    bottom = models.FloatField(verbose_name='Низ')
+    top = models.PositiveIntegerField(verbose_name='Вверх (см)')
+    bottom = models.PositiveIntegerField(verbose_name='Низ (см)')
 
     NOT_DEFINED = 1
     LOW = 2
@@ -126,8 +126,8 @@ class Rock_layer(models.Model):
     """Модель слоя породы"""
 
     markup = models.ForeignKey(Markup, verbose_name='Разметка', on_delete=models.CASCADE)
-    top = models.FloatField(verbose_name='Вверх')
-    bottom = models.FloatField(verbose_name='Низ')
+    top = models.PositiveIntegerField(verbose_name='Вверх (см)')
+    bottom = models.PositiveIntegerField(verbose_name='Низ (см)')
 
     SILTSTONE = 1
     SANDSTONE = 2
@@ -161,8 +161,8 @@ class Carbon_layer(models.Model):
     """Модель слоя карбонатности"""
 
     markup = models.ForeignKey(Markup, verbose_name='Разметка', on_delete=models.CASCADE)
-    top = models.FloatField(verbose_name='Вверх')
-    bottom = models.FloatField(verbose_name='Низ')
+    top = models.PositiveIntegerField(verbose_name='Вверх (см)')
+    bottom = models.PositiveIntegerField(verbose_name='Низ (см)')
 
     NOT_DEFINED = 1
     LOW = 2
@@ -196,8 +196,8 @@ class Ruin_layer(models.Model):
     """Модель слоя разрушенности"""
 
     markup = models.ForeignKey(Markup, verbose_name='Разметка', on_delete=models.CASCADE)
-    top = models.FloatField(verbose_name='Вверх')
-    bottom = models.FloatField(verbose_name='Низ')
+    top = models.PositiveIntegerField(verbose_name='Вверх (см)')
+    bottom = models.PositiveIntegerField(verbose_name='Низ (см)')
 
     NONE = 1
     LOW = 2
