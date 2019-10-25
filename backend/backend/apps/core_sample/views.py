@@ -82,10 +82,14 @@ def _upload_on_server(csName, data, control_sum, user):
             cs=core_sample_db,
             dl_src=f'{src_rel}\\{dlImg_name}',
             uv_src=f'{src_rel}\\{uvImg_name}',
-            dl_density=fragment['dlImg'].size[1] / (fragment['bottom'] - fragment['top']),
-            uv_density=fragment['uvImg'].size[1] / (fragment['bottom'] - fragment['top']),
+            dl_resolution=fragment['dlImg'].size[1] / (fragment['bottom'] - fragment['top']),
+            uv_resolution=fragment['uvImg'].size[1] / (fragment['bottom'] - fragment['top']),
             top=fragment['top'],
-            bottom=fragment['bottom']
+            bottom=fragment['bottom'],
+            dl_height=fragment['dlImg'].size[1],
+            dl_width=fragment['dlImg'].size[0],
+            uv_height=fragment['uvImg'].size[1],
+            uv_width=fragment['uvImg'].size[0],
         )
         fragment_db.save()
     return core_sample_db.global_id
@@ -192,8 +196,8 @@ def _load_markup_on_server(markup_db, markup_data):
     for oil_layer in markup_data['oil']:
         oil_layer_db = models.Oil_layer(
             markup=markup_db,
-            top=oil_layer['top'],
-            bottom=oil_layer['bottom'],
+            top=int(oil_layer['top']),
+            bottom=int(oil_layer['bottom']),
             class_label=models.Oil_layer.CLASS_LABELS_NUMBER[oil_layer['class']]
         )
         oil_layer_db.save()
@@ -201,8 +205,8 @@ def _load_markup_on_server(markup_db, markup_data):
     for carbon_layer in markup_data['carbon']:
         carbon_layer_db = models.Carbon_layer(
             markup=markup_db,
-            top=carbon_layer['top'],
-            bottom=carbon_layer['bottom'],
+            top=int(carbon_layer['top']),
+            bottom=int(carbon_layer['bottom']),
             class_label=models.Carbon_layer.CLASS_LABELS_NUMBER[carbon_layer['class']]
         )
         carbon_layer_db.save()
@@ -210,18 +214,18 @@ def _load_markup_on_server(markup_db, markup_data):
     for rock_layer in markup_data['rock']:
         rock_layer_db = models.Rock_layer(
             markup=markup_db,
-            top=rock_layer['top'],
-            bottom=rock_layer['bottom'],
+            top=int(rock_layer['top']),
+            bottom=int(rock_layer['bottom']),
             class_label=models.Rock_layer.CLASS_LABELS_NUMBER[rock_layer['class']]
         )
         rock_layer_db.save()
 
-    for disruption_layer in markup_data['disruption']:
-        disruption_layer_db = models.Disruption_layer(
+    for disruption_layer in markup_data['ruin']:
+        disruption_layer_db = models.Ruin_layer(
             markup=markup_db,
-            top=disruption_layer['top'],
-            bottom=disruption_layer['bottom'],
-            class_label=models.Disruption_layer.CLASS_LABELS_NUMBER[disruption_layer['class']]
+            top=int(disruption_layer['top']),
+            bottom=int(disruption_layer['bottom']),
+            class_label=models.Ruin_layer.CLASS_LABELS_NUMBER[disruption_layer['class']]
         )
         disruption_layer_db.save()
 
@@ -241,8 +245,8 @@ def _analyse(core_sample, user):
         data['fragments'].append({
             'top': fragment.top,
             'bottom': fragment.bottom,
-            'dl_density': fragment.dl_density,
-            'uv_density': fragment.uv_density,
+            'dl_resolution': fragment.dl_resolution,
+            'uv_resolution': fragment.uv_resolution,
             'dlImg': os.path.basename(dlImg.name),
             'uvImg': os.path.basename(uvImg.name),
         })
@@ -316,6 +320,7 @@ def css_status(request):
 
     return Response({'statuses': statuses}, status=HTTP_200_OK)
 
+
 @csrf_exempt
 @api_view(["GET"])
 def cs_markup_get(request, csId):
@@ -336,20 +341,22 @@ def cs_markup_get(request, csId):
             'rock': [],
             'oil': [],
             'carbon': [],
-            'disruption': []
+            'ruin': []
         }
     }
     fragments = models.Fragment.objects.filter(cs=core_sample)
     for fragment in fragments:
         data['uvImages'].append({
             'src': fragment.uv_src,
-            'uv_density': fragment.uv_density,
+            'uv_height': fragment.uv_height,
+            'uv_width': fragment.uv_width,
             'top': fragment.top,
             'bottom': fragment.bottom
         })
         data['dlImages'].append({
             'src': fragment.dl_src,
-            'dl_density': fragment.dl_density,
+            'dl_height': fragment.dl_height,
+            'dl_width': fragment.dl_width,
             'top': fragment.top,
             'bottom': fragment.bottom
         })
@@ -375,10 +382,10 @@ def cs_markup_get(request, csId):
             'top': carbon_layer.top,
             'bottom': carbon_layer.bottom
         })
-    disruption_layers = models.Disruption_layer.objects.filter(markup=markup)
+    disruption_layers = models.Ruin_layer.objects.filter(markup=markup)
     for disruption_layer in disruption_layers:
-        data['markup']['disruption'].append({
-            'class': models.Disruption_layer.CLASS_LABELS_NAME[disruption_layer.class_label],
+        data['markup']['ruin'].append({
+            'class': models.Ruin_layer.CLASS_LABELS_NAME[disruption_layer.class_label],
             'top': disruption_layer.top,
             'bottom': disruption_layer.bottom
         })
@@ -469,8 +476,8 @@ def _validate_markup(markup_data, core_sample):
                                status=HTTP_400_BAD_REQUEST)
 
     disruption_general_height = 0
-    if 'disruption' in markup_data:
-        for disruption_layer in markup_data['disruption']:
+    if 'ruin' in markup_data:
+        for disruption_layer in markup_data['ruin']:
             if 'top' not in disruption_layer:
                 return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('top', 'disruption_layer')},
                                        status=HTTP_400_BAD_REQUEST)
@@ -485,15 +492,15 @@ def _validate_markup(markup_data, core_sample):
             else:
                 return False, Response({'message': ERROR_VALUES_ORDER.format('top', 'bottom')},
                                        status=HTTP_400_BAD_REQUEST)
-            if disruption_layer['class'] not in models.Disruption_layer.CLASS_LABELS_NUMBER:
+            if disruption_layer['class'] not in models.Ruin_layer.CLASS_LABELS_NUMBER:
                 return False, Response({'message': ERROR_VALUE.format('class')},
                                        status=HTTP_400_BAD_REQUEST)
     else:
-        return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('disruption', 'markup')},
+        return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('ruin', 'markup')},
                                status=HTTP_400_BAD_REQUEST)
 
     if disruption_general_height != core_sample.bottom - core_sample.top:
-        return False, Response({'message': ERROR_VALUES_SUM.format('height layers of disruption')},
+        return False, Response({'message': ERROR_VALUES_SUM.format('height layers of ruin')},
                                status=HTTP_400_BAD_REQUEST)
 
     return True, None

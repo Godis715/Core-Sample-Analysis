@@ -1,6 +1,13 @@
 from django.contrib import admin
 
-from .models import Core_sample, Fragment, Markup, Oil_layer, Rock_layer, Carbon_layer, Disruption_layer
+from .models import \
+    Core_sample, \
+    Fragment, \
+    Markup, \
+    Oil_layer, \
+    Rock_layer, \
+    Carbon_layer, \
+    Ruin_layer
 
 
 class Core_sample_admin(admin.ModelAdmin):
@@ -71,13 +78,13 @@ class Carbon_layer_admin(admin.ModelAdmin):
 
 class Disruption_layer_admin(admin.ModelAdmin):
     """Слой разрушенности"""
-    list_display = [field.name for field in Disruption_layer._meta.fields]
+    list_display = [field.name for field in Ruin_layer._meta.fields]
 
     list_filter = ['markup_id']
     search_fields = ['id']
 
     class Meta:
-        model = Disruption_layer
+        model = Ruin_layer
 
 
 admin.site.register(Core_sample, Core_sample_admin)
@@ -86,6 +93,6 @@ admin.site.register(Markup, Markup_admin)
 admin.site.register(Oil_layer, Oil_layer_admin)
 admin.site.register(Rock_layer, Rock_layer_admin)
 admin.site.register(Carbon_layer, Carbon_layer_admin)
-admin.site.register(Disruption_layer, Disruption_layer_admin)
+admin.site.register(Ruin_layer, Disruption_layer_admin)
 
 
