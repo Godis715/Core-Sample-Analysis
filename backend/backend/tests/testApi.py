@@ -76,7 +76,7 @@ if token:
     data = json.loads(file.read())
     file.close()
 
-    response = requests.put(f"{url}core_sample/markup/{csId}", data={'markup': json.dumps(data['markup'])}, headers=headers)
+    response = requests.put(f"{url}core_sample/{csId}/put_markup", data={'markup': json.dumps(data['markup'])}, headers=headers)
     print(response.status_code)
     print(response.text)
 
