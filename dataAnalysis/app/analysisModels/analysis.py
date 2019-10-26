@@ -2,10 +2,10 @@ from analysisModels import mock
 from oil_model import predict
 
 
-STEP_ROCK = 40
-STEP_OIL = 20
+STEP_ROCK = 20
+STEP_OIL = 10
 STEP_CARBON = 10
-STEP_DISRUPTION = 10
+STEP_DISRUPTION = 5
 
 CLASSES = {
     'rock': ['mudstone', 'siltstone', 'sandstone'],
