@@ -16,6 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+
 from .views import login, logout
 
 urlpatterns = [
@@ -26,3 +28,5 @@ urlpatterns = [
     path('api/workstation/', include('workstation.urls')),
     path('admin/', admin.site.urls),
 ]
+
+urlpatterns += staticfiles_urlpatterns()
