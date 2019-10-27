@@ -1,11 +1,11 @@
 from analysisModels import mock
-from oil_model import predict
+import oil_model
 
 
 STEP_ROCK = 20
 STEP_OIL = 10
 STEP_CARBON = 10
-STEP_DISRUPTION = 5
+STEP_RUIN = 5
 
 CLASSES = {
     'rock': ['mudstone', 'siltstone', 'sandstone'],
@@ -14,30 +14,35 @@ CLASSES = {
     'ruin': ['none', 'low', 'high']
 }
 
-MODELS = {
-    'oil': oil_model.predict
-}
 
-
-def _analyse_param(fragments, size_step, name_param):
+def _oil_model(fragments):
     markup_fragments = []
     for fragment in fragments:
-        markup_fragment = []
-        size_step_fragment = size_step * fragment['dl_resolution']
-        current_height = size_step_fragment
-        while current_height < fragment['dlImg'].size[1]:
-            markup_fragment.append({
-                'class':'',
-                'top': current_height - size_step_fragment,
-                'bottom': current_height
-            })
-            current_height += size_step_fragment
-        if current_height > fragment['dlImg'].size[1]:
-            markup_fragment.append({
-                'class': '',
-                'top': current_height - size_step_fragment,
-                'bottom': fragment['dlImg'].size[1]
-            })
+        markup_fragment = [{
+            'class': oil_model.predict(fragment['uvImg'], False),
+            'top': 0,
+            'bottom': fragment['uvImg'].size[1]
+        }]
+        # markup_fragment = []
+        # size_step_fragment = STEP_OIL * fragment['uv_resolution']
+        # current_height = size_step_fragment
+        # while current_height < fragment['uvImg'].size[1]:
+        #     windowImg = fragment['uvImg'].crop((0, current_height - size_step_fragment,
+        #                                         fragment['uvImg'].size[0], current_height))
+        #     markup_fragment.append({
+        #         'class': oil_model.predict(windowImg, False),
+        #         'top': current_height - size_step_fragment,
+        #         'bottom': current_height
+        #     })
+        #     current_height += size_step_fragment
+        # if current_height > fragment['uvImg'].size[1]:
+        #     windowImg = fragment['uvImg'].crop((0, current_height - size_step_fragment,
+        #                                         fragment['uvImg'].size[0], fragment['uvImg'].size[1]))
+        #     markup_fragment.append({
+        #         'class': oil_model.predict(windowImg, False),
+        #         'top': current_height - size_step_fragment,
+        #         'bottom': fragment['uvImg'].size[1]
+        #     })
         markup_fragments.append(markup_fragment)
 
     return markup_fragments
@@ -88,9 +93,9 @@ def _merge_windows(markup):
 
 def analyse(data):
     markup_fragments_rock = mock.analyse_param(data['fragments'], STEP_ROCK, 'rock')
-    markup_fragments_oil = _analyse_param(data['fragments'], STEP_OIL, 'oil')
+    markup_fragments_oil = _oil_model(data['fragments'])
     markup_fragments_carbon = mock.analyse_param(data['fragments'], STEP_CARBON, 'carbon')
-    markup_fragments_disruption = _analyse_param(data['fragments'], STEP_DISRUPTION, 'ruin')
+    markup_fragments_disruption = mock.analyse_param(data['fragments'], STEP_RUIN, 'ruin')
 
     markup_rock = _merge_markups(markup_fragments_rock, data['fragments'])
     markup_oil = _merge_markups(markup_fragments_oil, data['fragments'])
