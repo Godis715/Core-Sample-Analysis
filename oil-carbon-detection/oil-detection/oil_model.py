@@ -22,7 +22,7 @@ def predict(pil_img, ruin):
     area = sum([sum([0 if pxl == 0 else 1 for pxl in row])for row in img_yel])
     feature = [
         area / size,
-        sum([sum(row) for row in img_yel]) / (area*mean_val),
+        sum([sum(row) for row in img_yel]) / (area*mean_val) if area != 0 else 0,
         mean_hue,
         mean_sat,
         mean_val,
