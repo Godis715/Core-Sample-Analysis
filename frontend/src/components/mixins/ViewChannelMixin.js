@@ -1,5 +1,11 @@
 export const viewChannelMixin = {
-    props: ["res", "absWidth", "absHeight", "data"],
+    props: [
+        "res",
+        "absWidth",
+        "absHeight",
+        "data",
+        "settings"
+    ],
     mounted() {
         this.redraw();
     },

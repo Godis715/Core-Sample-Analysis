@@ -2,43 +2,100 @@
 <div>
     <site-header />
     <div id="main">
-        <view-channel-img
-            v-if="!!markup"
-            v-bind:res="resolution"
-            v-bind:absHeight="absHeight"
-            v-bind:absWidth="absWidthDL"
-            v-bind:data="markup.dlImages"
-        ></view-channel-img>
+        <div class="channel-wrapper">
+            <view-channel-img
+                v-if="!!markup"
+                v-bind:res="resolution"
+                v-bind:absHeight="absHeight"
+                v-bind:absWidth="absWidthDL"
+                v-bind:data="markup.dlImages"
+                v-bind:settings="channels[0].settings"
+                name="DL"
+            />
+        </div>
 
-        <view-channel-img
-            v-if="!!markup"
-            v-bind:res="resolution"
-            v-bind:absHeight="absHeight"
-            v-bind:absWidth="absWidthUV"
-            v-bind:data="markup.uvImages"
-        ></view-channel-img>
+        <div class="channel-wrapper">
+            <view-channel-img
+                v-if="!!markup"
+                v-bind:res="resolution"
+                v-bind:absHeight="absHeight"
+                v-bind:absWidth="absWidthUV"
+                v-bind:data="markup.uvImages"
+                v-bind:settings="channels[1].settings"
+                name="UV"
+            />
+        </div>
+
+        <div class="channel-wrapper">
+            <view-channel-line-markup
+                v-if="!!markup"
+                v-bind:res="resolution"
+                v-bind:absHeight="absHeight"
+                v-bind:absWidth="absWidthDL"
+                v-bind:data="markup.markup.oil"
+                name="oil"
+            />
+        </div>
+
+        <div class="channel-wrapper">
+            <view-channel-line-markup
+                v-if="!!markup"
+                v-bind:res="resolution"
+                v-bind:absHeight="absHeight"
+                v-bind:absWidth="absWidthDL"
+                v-bind:data="markup.markup.carbon"
+                name="carbon"
+            />
+        </div>
     </div>
 </div>
 </template>
 
 <style>
     #main {
+        margin-left: 25px;
+        margin-bottom: 500px;
         display: flex;
         flex-direction: row;
+    }
+
+    .channel-wrapper {
+        margin: 3px;
+        border: 2px solid gray;
     }
 </style>
 
 <script>
 import SiteHeader from "../fragments/Header"
 import ViewChannelImg from "../fragments/ViewChannelImg"
+import ViewChannelLineMarkup from "../fragments/ViewChannelLineMarkup"
 
 export default {
     name: "Viewer",
-    components: { SiteHeader, ViewChannelImg },
+    components: {
+        SiteHeader,
+        ViewChannelImg,
+        ViewChannelLineMarkup
+    },
     data() {
         return {
             markup: undefined,
-            resolution: 20
+            resolution: 10,
+            channels: [
+                {
+                    type: "DL",
+                    settings: {
+                        fragmentsWidthFit: "stretch"
+                    }
+                },
+
+                {
+                    type: "UV",
+                    settings: {
+                        fragmentsWidthFit: "stretch"
+                    }
+                }
+            ]
         }
     },
     created() {
