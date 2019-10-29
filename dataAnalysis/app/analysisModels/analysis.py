@@ -2,6 +2,8 @@ from analysisModels import mock
 import oil_model
 import ruin_model_cpu
 
+import threading
+
 
 STEP_ROCK = 20
 STEP_OIL = 10
@@ -16,70 +18,76 @@ CLASSES = {
 }
 
 
-def _oil_model(fragments):
-    markup_fragments = []
-    for fragment in fragments:
-        # markup_fragment = [{
-        #     'class': oil_model.predict(fragment['uvImg'], False),
-        #     'top': 0,
-        #     'bottom': fragment['uvImg'].size[1]
-        # }]
-        markup_fragment = []
-        size_step_fragment = STEP_OIL * fragment['uv_resolution']
-        current_height = size_step_fragment
-        while current_height < fragment['uvImg'].size[1]:
-            windowImg = fragment['uvImg'].crop((0, current_height - size_step_fragment,
-                                                fragment['uvImg'].size[0], current_height))
-            markup_fragment.append({
-                'class': oil_model.predict(windowImg, False),
-                'top': current_height - size_step_fragment,
-                'bottom': current_height
-            })
-            current_height += size_step_fragment
-        if current_height > fragment['uvImg'].size[1]:
-            windowImg = fragment['uvImg'].crop((0, current_height - size_step_fragment,
-                                                fragment['uvImg'].size[0], fragment['uvImg'].size[1]))
-            markup_fragment.append({
-                'class': oil_model.predict(windowImg, False),
-                'top': current_height - size_step_fragment,
-                'bottom': fragment['uvImg'].size[1]
-            })
-        markup_fragments.append(markup_fragment)
+class oilModel_thread(threading.Thread):
+    def __init__(self, fragments):
+        threading.Thread.__init__(self)
+        self.fragments = fragments
+        self.markup_fragments = []
 
-    return markup_fragments
+    def run(self):
+        for fragment in self.fragments:
+            # markup_fragment = [{
+            #     'class': oil_model.predict(fragment['uvImg'], False),
+            #     'top': 0,
+            #     'bottom': fragment['uvImg'].size[1]
+            # }]
+            markup_fragment = []
+            size_step_fragment = STEP_OIL * fragment['uv_resolution']
+            current_height = size_step_fragment
+            while current_height < fragment['uvImg'].size[1]:
+                windowImg = fragment['uvImg'].crop((0, current_height - size_step_fragment,
+                                                    fragment['uvImg'].size[0], current_height))
+                markup_fragment.append({
+                    'class': oil_model.predict(windowImg, False),
+                    'top': current_height - size_step_fragment,
+                    'bottom': current_height
+                })
+                current_height += size_step_fragment
+            if current_height > fragment['uvImg'].size[1]:
+                windowImg = fragment['uvImg'].crop((0, current_height - size_step_fragment,
+                                                    fragment['uvImg'].size[0], fragment['uvImg'].size[1]))
+                markup_fragment.append({
+                    'class': oil_model.predict(windowImg, False),
+                    'top': current_height - size_step_fragment,
+                    'bottom': fragment['uvImg'].size[1]
+                })
+            self.markup_fragments.append(markup_fragment)
 
 
-def _ruin_model(fragments):
-    markup_fragments = []
-    for fragment in fragments:
-        # markup_fragment = [{
-        #     'class': oil_model.predict(fragment['uvImg'], False),
-        #     'top': 0,
-        #     'bottom': fragment['uvImg'].size[1]
-        # }]
-        markup_fragment = []
-        size_step_fragment = STEP_RUIN * fragment['dl_resolution']
-        current_height = size_step_fragment
-        while current_height < fragment['dlImg'].size[1]:
-            windowImg = fragment['dlImg'].crop((0, current_height - size_step_fragment,
-                                                fragment['dlImg'].size[0], current_height))
-            markup_fragment.append({
-                'class': ruin_model_cpu.predict(windowImg),
-                'top': current_height - size_step_fragment,
-                'bottom': current_height
-            })
-            current_height += size_step_fragment
-        if current_height > fragment['dlImg'].size[1]:
-            windowImg = fragment['dlImg'].crop((0, current_height - size_step_fragment,
-                                                fragment['dlImg'].size[0], fragment['dlImg'].size[1]))
-            markup_fragment.append({
-                'class': ruin_model_cpu.predict(windowImg),
-                'top': current_height - size_step_fragment,
-                'bottom': fragment['dlImg'].size[1]
-            })
-        markup_fragments.append(markup_fragment)
+class ruinModel_thread(threading.Thread):
+    def __init__(self, fragments):
+        threading.Thread.__init__(self)
+        self.fragments = fragments
+        self.markup_fragments = []
 
-    return markup_fragments
+    def run(self):
+        for fragment in self.fragments:
+            # markup_fragment = [{
+            #     'class': oil_model.predict(fragment['uvImg'], False),
+            #     'top': 0,
+            #     'bottom': fragment['uvImg'].size[1]
+            # }]
+            markup_fragment = []
+            size_step_fragment = STEP_RUIN * fragment['dl_resolution']
+            current_height = size_step_fragment
+            while current_height < fragment['dlImg'].size[1]:
+                windowImg = fragment['dlImg'].crop((0, current_height - size_step_fragment,
+                                                    fragment['dlImg'].size[0], current_height))
+                markup_fragment.append({
+                    'class': ruin_model_cpu.predict(windowImg),
+                    'top': current_height - size_step_fragment,
+                    'bottom': current_height
+                })
+                current_height += size_step_fragment
+            if current_height > fragment['dlImg'].size[1]:
+                windowImg = fragment['dlImg'].crop((0, current_height - size_step_fragment,
+                                                    fragment['dlImg'].size[0], fragment['dlImg'].size[1]))
+                markup_fragment.append({
+                    'class': ruin_model_cpu.predict(windowImg),
+                    'top': current_height - size_step_fragment,
+                    'bottom': fragment['dlImg'].size[1]
+                })
+            self.markup_fragments.append(markup_fragment)
 
 
 def _merge_markups(markup_fragments, fragments):
@@ -127,9 +135,17 @@ def _merge_windows(markup):
 
 def analyse(data):
     markup_fragments_rock = mock.analyse_param(data['fragments'], STEP_ROCK, 'rock')
-    markup_fragments_oil = _oil_model(data['fragments'])
     markup_fragments_carbon = mock.analyse_param(data['fragments'], STEP_CARBON, 'carbon')
-    markup_fragments_ruin = _ruin_model(data['fragments'])
+
+    oil_model_thread = oilModel_thread(data['fragments'])
+    ruin_model_thread = ruinModel_thread(data['fragments'])
+    oil_model_thread.start()
+    ruin_model_thread.start()
+    oil_model_thread.join()
+    ruin_model_thread.join()
+
+    markup_fragments_oil = oil_model_thread.markup_fragments
+    markup_fragments_ruin = ruin_model_thread.markup_fragments
 
     markup_rock = _merge_markups(markup_fragments_rock, data['fragments'])
     markup_oil = _merge_markups(markup_fragments_oil, data['fragments'])
