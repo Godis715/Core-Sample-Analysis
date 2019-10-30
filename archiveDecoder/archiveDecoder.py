@@ -67,7 +67,7 @@ def decode_archive(archive):
     warnings = []
     use_path_images = []
 
-    root_folder = archive.namelist()[0]
+    root_folder = archive.namelist()[0].split('/')[0] + '/'
     path_file_description = f'{root_folder}description'
     if f'{path_file_description}.json' in archive.namelist():
         with archive.open(f'{path_file_description}.json') as file_description_json:
