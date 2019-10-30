@@ -152,7 +152,9 @@ def decode_archive(archive):
         return {'Type': 'Error', 'Message': ERROR_NOT_EXIST_FILE.format('description.(json/xlsx)')}  # <--- Error
 
     all_path_images = archive.namelist()
-    all_path_images.remove(root_folder)
+    if root_folder in archive.namelist():
+        all_path_images.remove(root_folder)
+
     if f'{root_folder}description.json' in archive.namelist():
         all_path_images.remove(f'{root_folder}description.json')
     if f'{root_folder}description.xlsx' in archive.namelist():
@@ -164,7 +166,7 @@ def decode_archive(archive):
 
 
 if __name__ == "__main__":
-    zip_archive = ZipFile(os.path.join(os.path.dirname(__file__), 'tests/sample.zip'))
+    zip_archive = ZipFile(os.path.join(os.path.dirname(__file__), 'tests/sample_archive_40.zip'))
     data = decode_archive(zip_archive)
     zip_archive.close()
     print(data)
