@@ -17,7 +17,7 @@
 <style>
     .class-label {
         position: fixed;
-        background-color: cadetblue;
+        background-color: rgb(173, 215, 216);
         padding: 5px;
         top: 0;
         font-size: 20px
@@ -44,10 +44,11 @@ export default {
             let ctx = canvas.getContext("2d");
 
             setTimeout(() => {
-                ctx.fillStyle = "#ffffff";
+                ctx.fillStyle = this.settings ? this.settings.backgroundColor || "#ffffff" : "#ffffff";
                 ctx.fillRect(0, 0, this.width, this.height);
 
-                ctx.fillStyle = "#000000";
+                ctx.fillStyle = this.settings ? this.settings.color || "#000000" : "#000000";
+                ctx.strokeStyle = this.settings ? this.settings.color || "#000000" : "#000000";
                 for (let i = 0; i < layers.length; ++i) {
                     let topPx = layers[i].top * this.res;
                     ctx.beginPath();

@@ -2,49 +2,55 @@
 <div>
     <site-header />
     <div id="main">
-        <div class="channel-wrapper">
+
+        <div v-for="(ch, index) in channels" v-bind:key="index">
             <view-channel-img
-                v-if="!!markup"
+                v-if="!!markup && ch.type==='DL'"
                 v-bind:res="resolution"
                 v-bind:absHeight="absHeight"
                 v-bind:absWidth="absWidthDL"
                 v-bind:data="markup.dlImages"
-                v-bind:settings="channels[0].settings"
-                name="DL"
+                v-bind:settings="ch.settings"
             />
-        </div>
-
-        <div class="channel-wrapper">
             <view-channel-img
-                v-if="!!markup"
+                v-else-if="!!markup && ch.type==='UV'"
                 v-bind:res="resolution"
                 v-bind:absHeight="absHeight"
                 v-bind:absWidth="absWidthUV"
                 v-bind:data="markup.uvImages"
-                v-bind:settings="channels[1].settings"
-                name="UV"
+                v-bind:settings="ch.settings"
             />
-        </div>
-
-        <div class="channel-wrapper">
             <view-channel-line-markup
-                v-if="!!markup"
+                v-else-if="!!markup && ch.type==='oil'"
                 v-bind:res="resolution"
                 v-bind:absHeight="absHeight"
                 v-bind:absWidth="absWidthDL"
                 v-bind:data="markup.markup.oil"
-                name="oil"
+                v-bind:settings="ch.settings"
             />
-        </div>
-
-        <div class="channel-wrapper">
             <view-channel-line-markup
-                v-if="!!markup"
+                v-else-if="!!markup && ch.type==='carbon'"
                 v-bind:res="resolution"
                 v-bind:absHeight="absHeight"
                 v-bind:absWidth="absWidthDL"
                 v-bind:data="markup.markup.carbon"
-                name="carbon"
+                v-bind:settings="ch.settings"
+            />
+            <view-channel-line-markup
+                v-else-if="!!markup && ch.type==='ruin'"
+                v-bind:res="resolution"
+                v-bind:absHeight="absHeight"
+                v-bind:absWidth="absWidthDL"
+                v-bind:data="markup.markup.ruin"
+                v-bind:settings="ch.settings"
+            />
+            <view-channel-line-markup
+                v-else-if="!!markup && ch.type==='rock'"
+                v-bind:res="resolution"
+                v-bind:absHeight="absHeight"
+                v-bind:absWidth="absWidthDL"
+                v-bind:data="markup.markup.rock"
+                v-bind:settings="ch.settings"
             />
         </div>
     </div>
@@ -93,6 +99,45 @@ export default {
                     type: "UV",
                     settings: {
                         fragmentsWidthFit: "stretch"
+                    }
+                },
+                
+                {
+                    type: "oil",
+                    settings: {
+                        backgroundColor: "white",
+                        color: "red"
+                    }
+                },
+
+                {
+                    type: "carbon",
+                    settings: {
+                        backgroundColor: "cyan",
+                        color: "white"
+                    }
+                },
+
+                {
+                    type: "rock",
+                    settings: {
+                        backgroundColor: "black",
+                        color: "green"
+                    }
+                },
+
+                {
+                    type: "ruin",
+                    settings: {
+                        backgroundColor: "black",
+                        color: "white"
+                    }
+                },
+
+                {
+                    type: "DL",
+                    settings: {
+                        fragmentsWidthFit: "alignLeft"
                     }
                 }
             ]
