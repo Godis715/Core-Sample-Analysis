@@ -2,57 +2,19 @@
 <div>
     <site-header />
     <div id="main">
-
-        <div v-for="(ch, index) in channels" v-bind:key="index">
-            <view-channel-img
-                v-if="!!markup && ch.type==='DL'"
+        <div
+            v-for="(ch, index) in channels"
+            v-bind:key="index"
+        >
+            <view-channel-multiple
+                v-if="!!ch"
+                v-bind:layers="ch.layers"
                 v-bind:res="resolution"
                 v-bind:absHeight="absHeight"
                 v-bind:absWidth="absWidthDL"
-                v-bind:data="markup.dlImages"
-                v-bind:settings="ch.settings"
-            />
-            <view-channel-img
-                v-else-if="!!markup && ch.type==='UV'"
-                v-bind:res="resolution"
-                v-bind:absHeight="absHeight"
-                v-bind:absWidth="absWidthUV"
-                v-bind:data="markup.uvImages"
-                v-bind:settings="ch.settings"
-            />
-            <view-channel-line-markup
-                v-else-if="!!markup && ch.type==='oil'"
-                v-bind:res="resolution"
-                v-bind:absHeight="absHeight"
-                v-bind:absWidth="absWidthDL"
-                v-bind:data="markup.markup.oil"
-                v-bind:settings="ch.settings"
-            />
-            <view-channel-line-markup
-                v-else-if="!!markup && ch.type==='carbon'"
-                v-bind:res="resolution"
-                v-bind:absHeight="absHeight"
-                v-bind:absWidth="absWidthDL"
-                v-bind:data="markup.markup.carbon"
-                v-bind:settings="ch.settings"
-            />
-            <view-channel-line-markup
-                v-else-if="!!markup && ch.type==='ruin'"
-                v-bind:res="resolution"
-                v-bind:absHeight="absHeight"
-                v-bind:absWidth="absWidthDL"
-                v-bind:data="markup.markup.ruin"
-                v-bind:settings="ch.settings"
-            />
-            <view-channel-line-markup
-                v-else-if="!!markup && ch.type==='rock'"
-                v-bind:res="resolution"
-                v-bind:absHeight="absHeight"
-                v-bind:absWidth="absWidthDL"
-                v-bind:data="markup.markup.rock"
-                v-bind:settings="ch.settings"
             />
         </div>
+
     </div>
 </div>
 </template>
@@ -73,81 +35,91 @@
 
 <script>
 import SiteHeader from "../fragments/Header"
-import ViewChannelImg from "../fragments/ViewChannelImg"
-import ViewChannelLineMarkup from "../fragments/ViewChannelLineMarkup"
+import ViewChannelMultiple from "../fragments/ViewChannelMultiple"
+
 
 export default {
     name: "Viewer",
     components: {
         SiteHeader,
-        ViewChannelImg,
-        ViewChannelLineMarkup
+        ViewChannelMultiple
     },
     data() {
         return {
             markup: undefined,
-            resolution: 10,
-            channels: [
-                {
-                    type: "DL",
-                    settings: {
-                        fragmentsWidthFit: "stretch"
-                    }
-                },
-
-                {
-                    type: "UV",
-                    settings: {
-                        fragmentsWidthFit: "stretch"
-                    }
-                },
-                
-                {
-                    type: "oil",
-                    settings: {
-                        backgroundColor: "white",
-                        color: "red"
-                    }
-                },
-
-                {
-                    type: "carbon",
-                    settings: {
-                        backgroundColor: "cyan",
-                        color: "white"
-                    }
-                },
-
-                {
-                    type: "rock",
-                    settings: {
-                        backgroundColor: "black",
-                        color: "green"
-                    }
-                },
-
-                {
-                    type: "ruin",
-                    settings: {
-                        backgroundColor: "black",
-                        color: "white"
-                    }
-                },
-
-                {
-                    type: "DL",
-                    settings: {
-                        fragmentsWidthFit: "alignLeft"
-                    }
-                }
-            ]
+            channels: undefined,
+            resolution: 20
         }
     },
     created() {
         let csId = this.$route.params.csId;
         this.$axios.get(`api/core_sample/${csId}/markup`).then(resp => {
-            console.log("Markup is got");
             this.markup = resp.data;
+            this.channels = [
+                {
+                    layers: [
+                        {
+                            type: "img",
+                            settings: {
+                                fragmentsWidthFit: "stretch"
+                            },
+                            data: this.markup.dlImages
+                        },
+
+                        {
+                            type: "line",
+                            settings: {
+                                lineColor: "white",
+                                fontColor: "white"
+                            },
+                            data: {
+                                oil: this.markup.markup.oil,
+                            }
+                        }
+                    ]
+                },
+
+                {
+                    layers: [
+                        {
+                            type: "img",
+                            settings: {
+                                fragmentsWidthFit: "stretch"
+                            },
+                            data: this.markup.uvImages
+                        },
+
+                        {
+                            type: "line",
+                            settings: {
+                                lineColor: "white",
+                                showText: false
+                            },
+                            data: {
+                                oil: this.markup.markup.oil,
+                                carbon: this.markup.markup.carbon
+                            }
+                        }
+                    ]
+                },
+
+                {
+                    layers: [
+                        {
+                            type: "line",
+                            settings: {
+                                lineColor: "black",
+                                fontColor: "red"
+                            },
+                            data: {
+                                oil: this.markup.markup.oil,
+                                carbon: this.markup.markup.carbon
+                            }
+                        }
+                    ]
+                }
+            ];
+             
         }).catch(err => {
             console.error(err);
         });
