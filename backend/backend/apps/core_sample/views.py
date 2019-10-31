@@ -348,15 +348,15 @@ def cs_markup_get(request, csId):
     for fragment in fragments:
         data['uvImages'].append({
             'src': fragment.uv_src,
-            'uv_height': fragment.uv_height,
-            'uv_width': fragment.uv_width,
+            'height': fragment.uv_height,
+            'width': fragment.uv_width,
             'top': fragment.top,
             'bottom': fragment.bottom
         })
         data['dlImages'].append({
             'src': fragment.dl_src,
-            'dl_height': fragment.dl_height,
-            'dl_width': fragment.dl_width,
+            'height': fragment.dl_height,
+            'width': fragment.dl_width,
             'top': fragment.top,
             'bottom': fragment.bottom
         })
