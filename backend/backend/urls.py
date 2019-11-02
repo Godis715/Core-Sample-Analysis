@@ -22,8 +22,8 @@ from .views import login, logout
 
 urlpatterns = [
     path('', TemplateView.as_view(template_name='index.html')),
-    path('api/login', login),
-    path('api/logout', logout),
+    path('api/login', login, name='login'),
+    path('api/logout', logout, name='logout'),
     path('api/core_sample/', include('core_sample.urls')),
     path('api/workstation/', include('workstation.urls')),
     path('admin/', admin.site.urls),
