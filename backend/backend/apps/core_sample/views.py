@@ -29,22 +29,23 @@ import json
 
 ROOT_STATIC_APP = f'{settings.PROJECT_ROOT}\\static\\core_sample'
 
-ERROR_IS_NOT_ATTACHED = "{} is not attached!"
-ERROR_FORMAT_FILE = "File format error (Expected .zip)!"
-ERROR_INVALID_ID = "Invalid id: {} not found!"
-ERROR_NOT_AUTHOR = "The user is not author of this {}!"
-ERROR_NOT_FOUND_FOLDER = "Not found {} folder!"
-ERROR_NOT_ANALYSED = "This core sample hasn't be!"
+ERROR_IS_NOT_ATTACHED = {'message': 'Data is not attached', 'detail': "{} is not attached!"}
+ERROR_FORMAT_FILE = {'message': 'File format error', 'detail': "File format error (Expected {})!"}
+ERROR_INVALID_ID = {'message': 'Invalid id', 'detail': "Invalid id: {} not found!"}
+ERROR_NOT_ACCESS = {'message': 'Not access', 'detail': "The user is not author of this {}!"}
+ERROR_NOT_FOUND_FOLDER = {'message': 'Not found folder', 'detail': "Not found {} folder!"}
+ERROR_STATUS_ANALYSIS = {'message': 'Status of analysis ', 'detail': "This core sample {}"}
 
-ERROR_STRUCT_NOT_INCLUDED = "'{}' is not included in '{}'!"
-ERROR_VALUES_ORDER = "Values of {} and {} have the wrong order!"
-ERROR_VALUES_SUM = "Sum of {} is not correct!"
-ERROR_VALUE = "{} have the wrong value!"
+VALIDATE_STRUCT_DATA = {'message': 'Struct of data', 'detail': "'{}' is not included in '{}'!"}
+VALIDATE_VALUES_ORDER = {'message': 'Order of values', 'detail': "Values of {} and {} have the wrong order!"}
+VALIDATE_VALUES_SUM = {'message': 'Sum of values', 'detail': "Sum of {} is not correct!"}
+VALIDATE_VALUE = {'message': 'The wrong value', 'detail': "{} have the wrong value!"}
 
-
-CONFLICT_FILE_UPLOADED_BEFORE = "This file has been uploaded before"
-CONFLICT_CORE_SAMPLE_ANALYSED_BEFORE = "This core sample has been analysed before"
-CONFLICT_CORE_SAMPLE_IN_PROCESS_ANALYSE = "This core sample is analysing now"
+STATUS_ANALYSED = "has been analysed before"
+STATUS_NOT_ANALYSED = "hasn't analysed!"
+STATUS_IN_PROCESS = "is analysing now"
+CONFLICT_STATUS_ANALYSIS = {'message': 'Status of analysis ', 'detail': "This core sample {}"}
+CONFLICT_FILE_UPLOADED_BEFORE = {'message': 'Uploaded before', 'detail': "This file has been uploaded before"}
 
 OK_ANALYSIS_RUN = "The analysis is run"
 
@@ -106,13 +107,27 @@ def cs_upload(request):
     try:
         file = request.FILES['archive']
     except:
-        return Response({'message': ERROR_IS_NOT_ATTACHED.format('File')}, status=HTTP_400_BAD_REQUEST)
+        return Response({
+            'errors': [
+                {
+                    'message': ERROR_IS_NOT_ATTACHED['message'],
+                    'details': [ERROR_IS_NOT_ATTACHED['detail'].format('Archive')]
+                 }
+            ]
+        }, status=HTTP_400_BAD_REQUEST)
 
     control_sum = hashlib.md5(file.read()).hexdigest()
     try:
         core_sample = models.Core_sample.objects.filter(control_sum=control_sum)[0]
-        return Response({'csId': core_sample.global_id, 'message': CONFLICT_FILE_UPLOADED_BEFORE},
-                        status=HTTP_409_CONFLICT)
+        return Response({
+            'csId': core_sample.global_id,
+            'conflicts': [
+                {
+                    'message': CONFLICT_FILE_UPLOADED_BEFORE['message'],
+                    'details': [CONFLICT_FILE_UPLOADED_BEFORE['detail']]
+                }
+            ]
+        }, status=HTTP_409_CONFLICT)
     except:
         ...
 
@@ -128,7 +143,14 @@ def cs_upload(request):
         else:
             raise Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
 
-    return Response({'message': ERROR_FORMAT_FILE}, status=HTTP_400_BAD_REQUEST)
+    return Response({
+        'errors': [
+            {
+                'message': ERROR_FORMAT_FILE['message'],
+                'details': [ERROR_FORMAT_FILE['detail'].format('.zip')]
+            }
+        ]
+    }, status=HTTP_400_BAD_REQUEST)
 
 
 @csrf_exempt
@@ -137,12 +159,24 @@ def cs_delete(request, csId):
     try:
         core_sample = models.Core_sample.objects.get(global_id=csId)
     except:
-        return Response({'message': ERROR_INVALID_ID.format('core sample')},
-                        status=HTTP_404_NOT_FOUND)
+        return Response({
+            'errors': [
+                {
+                    'message': ERROR_INVALID_ID['message'],
+                    'details': [ERROR_INVALID_ID['detail'].format('core sample')]
+                }
+            ]
+        }, status=HTTP_404_NOT_FOUND)
 
     if request.user != core_sample.user:
-        return Response({'message': ERROR_NOT_AUTHOR.format('core sample')},
-                        status=HTTP_403_FORBIDDEN)
+        return Response({
+            'errors': [
+                {
+                    'message': ERROR_NOT_ACCESS['message'],
+                    'details': [ERROR_NOT_ACCESS['detail'].format('core sample')]
+                }
+            ]
+        }, status=HTTP_403_FORBIDDEN)
 
     if f'user_{request.user.username}' in os.listdir(ROOT_STATIC_APP):
         if f'cs_{csId}' in os.listdir(f'{ROOT_STATIC_APP}\\user_{request.user.username}'):
@@ -150,11 +184,23 @@ def cs_delete(request, csId):
             core_sample.delete()
             return Response(status=HTTP_200_OK)
         else:
-            return Response({'message': ERROR_NOT_FOUND_FOLDER.format('core sample')},
-                            status=HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({
+                'errors': [
+                    {
+                        'message': ERROR_NOT_FOUND_FOLDER['message'],
+                        'details': [ERROR_NOT_FOUND_FOLDER['detail'].format('core sample')]
+                    }
+                ]
+            }, status=HTTP_500_INTERNAL_SERVER_ERROR)
     else:
-        return Response({'message': ERROR_NOT_FOUND_FOLDER.format('user')},
-                        status=HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({
+                'errors': [
+                    {
+                        'message': ERROR_NOT_FOUND_FOLDER['message'],
+                        'details': [ERROR_NOT_FOUND_FOLDER['detail'].format('user')]
+                    }
+                ]
+            }, status=HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @csrf_exempt
@@ -163,12 +209,24 @@ def cs_get(request, csId):
     try:
         core_sample = models.Core_sample.objects.get(global_id=csId)
     except:
-        return Response({'message': ERROR_INVALID_ID.format('core sample')},
-                        status=HTTP_404_NOT_FOUND)
+        return Response({
+            'errors': [
+                {
+                    'message': ERROR_INVALID_ID['message'],
+                    'details': [ERROR_INVALID_ID['detail'].format('core sample')]
+                }
+            ]
+        }, status=HTTP_404_NOT_FOUND)
 
     if request.user != core_sample.user:
-        return Response({'message': ERROR_NOT_AUTHOR.format('core sample')},
-                        status=HTTP_403_FORBIDDEN)
+        return Response({
+            'errors': [
+                {
+                    'message': ERROR_NOT_ACCESS['message'],
+                    'details': [ERROR_NOT_ACCESS['detail'].format('core sample')]
+                }
+            ]
+        }, status=HTTP_403_FORBIDDEN)
 
     return Response({
         'csName': core_sample.name,
@@ -280,14 +338,33 @@ def cs_analyse(request, csId):
     try:
         core_sample = models.Core_sample.objects.get(global_id=csId)
     except:
-        return Response({'message': ERROR_INVALID_ID.format('core sample')},
-                        status=HTTP_404_NOT_FOUND)
+        return Response({
+            'errors': [
+                {
+                    'message': ERROR_INVALID_ID['message'],
+                    'details': [ERROR_INVALID_ID['detail'].format('core sample')]
+                }
+            ]
+        }, status=HTTP_404_NOT_FOUND)
+
     if core_sample.status == models.Core_sample.ANALYSED:
-        return Response({'message': CONFLICT_CORE_SAMPLE_ANALYSED_BEFORE},
-                        status=HTTP_409_CONFLICT)
+        return Response({
+            'conflicts': [
+                {
+                    'message': CONFLICT_STATUS_ANALYSIS['message'],
+                    'details': [CONFLICT_STATUS_ANALYSIS['detail'].format(STATUS_ANALYSED)]
+                }
+            ]
+        }, status=HTTP_409_CONFLICT)
     if core_sample.status == models.Core_sample.IN_PROCESS:
-        return Response({'message': CONFLICT_CORE_SAMPLE_IN_PROCESS_ANALYSE},
-                        status=HTTP_409_CONFLICT)
+        return Response({
+            'conflicts': [
+                {
+                    'message': CONFLICT_STATUS_ANALYSIS['message'],
+                    'details': [CONFLICT_STATUS_ANALYSIS['detail'].format(STATUS_IN_PROCESS)]
+                }
+            ]
+        }, status=HTTP_409_CONFLICT)
 
     core_sample.status = models.Core_sample.IN_PROCESS
     core_sample.save()
@@ -304,18 +381,37 @@ def css_status(request):
     try:
         csIds = json.loads(QueryDict(request.body).get('csIds'))
     except:
-        return Response({'message': ERROR_IS_NOT_ATTACHED.format('csIds')}, status=HTTP_400_BAD_REQUEST)
+        return Response({
+            'errors': [
+                {
+                    'message': ERROR_IS_NOT_ATTACHED['message'],
+                    'details': [ERROR_IS_NOT_ATTACHED['detail'].format('csIds')]
+                 }
+            ]
+        }, status=HTTP_400_BAD_REQUEST)
 
     statuses = {}
     for csId in csIds:
         try:
             core_sample = models.Core_sample.objects.get(global_id=csId)
         except:
-            return Response({'message': ERROR_INVALID_ID.format('core sample')},
-                            status=HTTP_404_NOT_FOUND)
+            return Response({
+                'errors': [
+                    {
+                        'message': ERROR_INVALID_ID['message'],
+                        'details': [ERROR_INVALID_ID['detail'].format('core sample')]
+                    }
+                ]
+            }, status=HTTP_404_NOT_FOUND)
         if request.user != core_sample.user:
-            return Response({'message': ERROR_NOT_AUTHOR.format('core sample')},
-                            status=HTTP_403_FORBIDDEN)
+            return Response({
+                'errors': [
+                    {
+                        'message': ERROR_NOT_ACCESS['message'],
+                        'details': [ERROR_NOT_ACCESS['detail'].format('core sample')]
+                    }
+                ]
+            }, status=HTTP_403_FORBIDDEN)
         statuses[csId] = models.Core_sample.STATUS_TYPES_NAME[core_sample.status]
 
     return Response({'statuses': statuses}, status=HTTP_200_OK)
@@ -327,12 +423,24 @@ def cs_markup_get(request, csId):
     try:
         core_sample = models.Core_sample.objects.get(global_id=csId)
     except:
-        return Response({'message': ERROR_INVALID_ID.format('core sample')},
-                        status=HTTP_404_NOT_FOUND)
+        return Response({
+            'errors': [
+                {
+                    'message': ERROR_INVALID_ID['message'],
+                    'details': [ERROR_INVALID_ID['detail'].format('core sample')]
+                }
+            ]
+        }, status=HTTP_404_NOT_FOUND)
 
     if core_sample.status != core_sample.ANALYSED:
-        return Response({'message': ERROR_NOT_ANALYSED},
-                        status=HTTP_400_BAD_REQUEST)
+        return Response({
+            'errors': [
+                {
+                    'message': ERROR_STATUS_ANALYSIS['message'],
+                    'details': [ERROR_STATUS_ANALYSIS['detail'].format(STATUS_NOT_ANALYSED)]
+                }
+            ]
+        }, status=HTTP_400_BAD_REQUEST)
 
     data = {
         'dlImages': [],
@@ -398,55 +506,139 @@ def _validate_markup(markup_data, core_sample):
     if 'oil' in markup_data:
         for oil_layer in markup_data['oil']:
             if 'top' not in oil_layer:
-                return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('top', 'oil_layer')},
-                                       status=HTTP_400_BAD_REQUEST)
+                return False, Response({
+                    'errors': [
+                        {
+                            'message': VALIDATE_STRUCT_DATA['message'],
+                            'details': [VALIDATE_STRUCT_DATA['detail'].format('top', 'oil_layer')]
+                        }
+                    ]
+                }, status=HTTP_400_BAD_REQUEST)
             if 'bottom' not in oil_layer:
-                return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('bottom', 'oil_layer')},
-                                       status=HTTP_400_BAD_REQUEST)
+                return False, Response({
+                    'errors': [
+                        {
+                            'message': VALIDATE_STRUCT_DATA['message'],
+                            'details': [VALIDATE_STRUCT_DATA['detail'].format('bottom', 'oil_layer')]
+                        }
+                    ]
+                }, status=HTTP_400_BAD_REQUEST)
             if 'class' not in oil_layer:
-                return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('class', 'oil_layer')},
-                                       status=HTTP_400_BAD_REQUEST)
+                return False, Response({
+                    'errors': [
+                        {
+                            'message': VALIDATE_STRUCT_DATA['message'],
+                            'details': [VALIDATE_STRUCT_DATA['detail'].format('class', 'oil_layer')]
+                        }
+                    ]
+                }, status=HTTP_400_BAD_REQUEST)
             if oil_layer['bottom'] > oil_layer['top']:
                 oil_general_height += oil_layer['bottom'] - oil_layer['top']
             else:
-                return False, Response({'message': ERROR_VALUES_ORDER.format('top', 'bottom')},
-                                       status=HTTP_400_BAD_REQUEST)
+                return False, Response({
+                    'errors': [
+                        {
+                            'message': VALIDATE_VALUES_ORDER['message'],
+                            'details': [VALIDATE_VALUES_ORDER['detail'].format('top', 'bottom')]
+                        }
+                    ]
+                }, status=HTTP_400_BAD_REQUEST)
             if oil_layer['class'] not in models.Oil_layer.CLASS_LABELS_NUMBER:
-                return False, Response({'message': ERROR_VALUE.format('class')},
-                                       status=HTTP_400_BAD_REQUEST)
+                return False, Response({
+                    'errors': [
+                        {
+                            'message': VALIDATE_VALUES_ORDER['message'],
+                            'details': [VALIDATE_VALUES_ORDER['detail'].format('top', 'bottom')]
+                        }
+                    ]
+                }, status=HTTP_400_BAD_REQUEST)
     else:
-        return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('oil', 'markup')},
-                               status=HTTP_400_BAD_REQUEST)
+        return False, Response({
+                    'errors': [
+                        {
+                            'message': VALIDATE_STRUCT_DATA['message'],
+                            'details': [VALIDATE_STRUCT_DATA['detail'].format('oil', 'markup')]
+                        }
+                    ]
+                }, status=HTTP_400_BAD_REQUEST)
     if oil_general_height != core_sample.bottom - core_sample.top:
-        return False, Response({'message': ERROR_VALUES_SUM.format('height layers of oil')},
-                               status=HTTP_400_BAD_REQUEST)
+        return False, Response({
+                    'errors': [
+                        {
+                            'message': VALIDATE_VALUES_SUM['message'],
+                            'details': [VALIDATE_VALUES_SUM['detail'].format('height layers of oil')]
+                        }
+                    ]
+                }, status=HTTP_400_BAD_REQUEST)
 
     carbon_general_height = 0
     if 'carbon' in markup_data:
         for carbon_layer in markup_data['carbon']:
             if 'top' not in carbon_layer:
-                return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('top', 'carbon_layer')},
-                                       status=HTTP_400_BAD_REQUEST)
+                return False, Response({
+                    'errors': [
+                        {
+                            'message': VALIDATE_STRUCT_DATA['message'],
+                            'details': [VALIDATE_STRUCT_DATA['detail'].format('top', 'carbon_layer')]
+                        }
+                    ]
+                }, status=HTTP_400_BAD_REQUEST)
             if 'bottom' not in carbon_layer:
-                return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('bottom', 'carbon_layer')},
-                                       status=HTTP_400_BAD_REQUEST)
+                return False, Response({
+                    'errors': [
+                        {
+                            'message': VALIDATE_STRUCT_DATA['message'],
+                            'details': [VALIDATE_STRUCT_DATA['detail'].format('bottom', 'carbon_layer')]
+                        }
+                    ]
+                }, status=HTTP_400_BAD_REQUEST)
             if 'class' not in carbon_layer:
-                return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('class', 'carbon_layer')},
-                                       status=HTTP_400_BAD_REQUEST)
+                return False, Response({
+                    'errors': [
+                        {
+                            'message': VALIDATE_STRUCT_DATA['message'],
+                            'details': [VALIDATE_STRUCT_DATA['detail'].format('class', 'carbon_layer')]
+                        }
+                    ]
+                }, status=HTTP_400_BAD_REQUEST)
             if carbon_layer['bottom'] > carbon_layer['top']:
                 carbon_general_height += carbon_layer['bottom'] - carbon_layer['top']
             else:
-                return False, Response({'message': ERROR_VALUES_ORDER.format('top', 'bottom')},
-                                       status=HTTP_400_BAD_REQUEST)
+                return False, Response({
+                    'errors': [
+                        {
+                            'message': VALIDATE_VALUES_ORDER['message'],
+                            'details': [VALIDATE_VALUES_ORDER['detail'].format('top', 'bottom')]
+                        }
+                    ]
+                }, status=HTTP_400_BAD_REQUEST)
             if carbon_layer['class'] not in models.Carbon_layer.CLASS_LABELS_NUMBER:
-                return False, Response({'message': ERROR_VALUE.format('class')},
-                                       status=HTTP_400_BAD_REQUEST)
+                return False, Response({
+                    'errors': [
+                        {
+                            'message': VALIDATE_VALUES_ORDER['message'],
+                            'details': [VALIDATE_VALUES_ORDER['detail'].format('top', 'bottom')]
+                        }
+                    ]
+                }, status=HTTP_400_BAD_REQUEST)
     else:
-        return False, Response({'message': ERROR_STRUCT_NOT_INCLUDED.format('carbon', 'markup')},
-                               status=HTTP_400_BAD_REQUEST)
+        return False, Response({
+                    'errors': [
+                        {
+                            'message': VALIDATE_STRUCT_DATA['message'],
+                            'details': [VALIDATE_STRUCT_DATA['detail'].format('carbon', 'markup')]
+                        }
+                    ]
+                }, status=HTTP_400_BAD_REQUEST)
     if carbon_general_height != core_sample.bottom - core_sample.top:
-        return False, Response({'message': ERROR_VALUES_SUM.format('height layers of carbon')},
-                               status=HTTP_400_BAD_REQUEST)
+        return False, Response({
+                    'errors': [
+                        {
+                            'message': VALIDATE_VALUES_SUM['message'],
+                            'details': [VALIDATE_VALUES_SUM['detail'].format('height layers of carbon')]
+                        }
+                    ]
+                }, status=HTTP_400_BAD_REQUEST)
 
     rock_general_height = 0
     if 'rock' in markup_data:
