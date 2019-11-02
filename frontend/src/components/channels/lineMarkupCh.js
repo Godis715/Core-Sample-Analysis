@@ -83,6 +83,7 @@ export const lineMarkupCh = {
         }
         return merged;
     },
+    
     single2multiTypeLayers(layers) {
         layers.sort((l1, l2) => {
             return l1.top - l2.top;
