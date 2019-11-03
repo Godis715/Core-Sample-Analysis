@@ -13,7 +13,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 import sys
 
-sys.path.append(r'.\..\archiveDecoder') # path for import
+# Paths for import
+sys.path.append(r'.\..\archiveDecoder')
 
 # Build paths inside the workstation like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -35,21 +36,27 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 
-INSTALLED_APPS = [
+DJANGO_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+)
 
-    'workstation',
-    'core_sample',
-
+THIRD_PARTY_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
-]
+)
+
+LOCAL_APPS = (
+    'workstation',
+    'core_sample',
+)
+
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -88,7 +95,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-
+"""MailCloud"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -100,6 +107,7 @@ DATABASES = {
     }
 }
 
+"""SqLite3"""
 if 'test' in sys.argv:
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -108,22 +116,12 @@ if 'test' in sys.argv:
 
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'Core-Sample-Analysis',
-#         'USER': 'postgres',
-#         'PASSWORD': 'Flvby66!',
-#         'HOST': 'aws-rds-postgresql.cfxoin7bynly.us-east-1.rds.amazonaws.com',
-#         'PORT': '5432',
-#     }
-# }
-
-# DATABASES = {
-#     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
 #         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #     }
 # }
 
+"""AWS"""
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -178,7 +176,7 @@ STATICFILES_DIRS = [
     os.path.join(PROJECT_ROOT, 'static'),
 ]
 
-
+# Settings of rest_framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
@@ -187,7 +185,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated', )
 }
 
-# to allow all hosts.
+# To allow all hosts.
 CORS_ORIGIN_ALLOW_ALL = True
 
 # If ``True``, cookies will be allowed to be included in cross-site HTTP requests.
