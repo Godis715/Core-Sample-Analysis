@@ -169,3 +169,6 @@ typings/
 
 # static files
 backend/backend/static/
+
+# tests files
+border_cutter/tests/
