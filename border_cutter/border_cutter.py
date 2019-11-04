@@ -3,7 +3,6 @@ from PIL import Image, ImageDraw
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-EPS = 0.3
 BEGIN_CUT = 30
 STEP = 1
 
@@ -30,23 +29,32 @@ def draw_border(img, left_border, right_border):
 def cut(img):
     left_cut = BEGIN_CUT
     right_cut = BEGIN_CUT
-    luminance_left_border = _get_luminance(img, 1, 1)
-    luminance_right_border = _get_luminance(img, img.size[0] - 1, img.size[0] - 1)
+    luminance_left_border_prev = _get_luminance(img, 1, 1)
+    luminance_right_border_prev = _get_luminance(img, img.size[0] - 1, img.size[0] - 1)
+    luminance_left_dif = 0
+    luminance_right_dif = 0
     is_move_left = True
     is_move_right = True
-    while left_cut + right_cut < img.size[0] and (is_move_right or is_move_left):
+    while left_cut + right_cut < img.size[0] and (is_move_left or is_move_right):
+
         if is_move_left:
             luminance_left_border_cur = _get_luminance(img, 0, left_cut)
-            if luminance_left_border_cur - luminance_left_border >= EPS:
+            if luminance_left_border_cur - luminance_left_border_prev > luminance_left_dif:
+                luminance_left_dif = luminance_left_border_cur - luminance_left_border_prev
+                luminance_left_border_prev = luminance_left_border_cur
+                left_cut += STEP
+            else:
                 is_move_left = False
-            luminance_left_border = luminance_left_border_cur
-            left_cut += STEP
+
         if is_move_right:
             luminance_right_border_cur = _get_luminance(img, img.size[0] - right_cut, img.size[0] - 1)
-            if luminance_right_border_cur - luminance_right_border >= EPS:
+            if luminance_right_border_cur - luminance_right_border_prev > luminance_right_dif:
+                luminance_right_dif = luminance_right_border_cur - luminance_right_border_prev
+                luminance_right_border_prev = luminance_right_border_cur
+                right_cut += STEP
+            else:
                 is_move_right = False
-            luminance_right_border = luminance_right_border_cur
-            right_cut += STEP
+
     draw_border(img, left_cut, right_cut)
     if not left_cut + right_cut >= img.size[0]:
         return img.crop((left_cut + 1, 0, img.size[0] - right_cut, img.size[1]))
@@ -55,6 +63,6 @@ def cut(img):
 
 
 if __name__ == '__main__':
-    image = Image.open(f'{BASE_DIR}/tests/test4.jpeg')
+    image = Image.open(f'{BASE_DIR}/tests/test6.jpeg')
     image = cut(image)
     image.show()
