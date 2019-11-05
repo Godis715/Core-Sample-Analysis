@@ -26,6 +26,10 @@ export default {
             let lineChnl = this.layers.find(ch => ch.type === "line");
 
             let canvas = this.$refs.canvas;
+            let ctx = canvas.getContext("2d");
+            ctx.beginPath();
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 0, this.width, this.height);
 
             if (imgChnl)
                 imgCh.draw(canvas, imgChnl.data, this.width, this.res, imgChnl.settings);

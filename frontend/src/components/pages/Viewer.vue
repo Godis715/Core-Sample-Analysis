@@ -1,6 +1,12 @@
 <template>
 <div>
     <site-header />
+    <setting-group 
+        title="Global settings"
+        v-bind:settings="settings"
+        v-on:setting-changed="settingChanged($event)"
+    />
+
     <div id="main">
         <div
             v-for="(ch, index) in channels"
@@ -14,7 +20,6 @@
                 v-bind:absWidth="absWidthDL"
             />
         </div>
-
     </div>
 </div>
 </template>
@@ -36,19 +41,40 @@
 <script>
 import SiteHeader from "../fragments/Header"
 import ViewChannelMultiple from "../fragments/ViewChannelMultiple"
-
+import SettingGroup from "../fragments/SettingGroup"
 
 export default {
     name: "Viewer",
     components: {
         SiteHeader,
-        ViewChannelMultiple
+        ViewChannelMultiple,
+        SettingGroup
     },
     data() {
         return {
             markup: undefined,
             channels: undefined,
-            resolution: 20
+            resolution: 20,
+            settings: [
+                {
+                    type: "radio",
+                    title: "image width fit",
+                    options: [
+                        {
+                            name: "align left",
+                            value: "alignLeft"
+                        }, 
+                        {
+                            name: "align right",
+                            value: "alignRight"
+                        }, 
+                        {
+                            name: "stretch",
+                            value: "stretch"
+                        }
+                    ]       
+                }
+            ]
         }
     },
     created() {
@@ -151,6 +177,18 @@ export default {
             }
             return width;
         },
+    },
+    methods: {
+        settingChanged(ev) {
+            console.log(ev);
+            for(let i = 0; i < this.channels.length; ++i) {
+                let ch = this.channels[i];
+                for (let j = 0; j < ch.layers.length; j++) {
+                    let l = ch.layers[j];
+                    l.settings.fragmentsWidthFit = ev;
+                }
+            }
+        }
     }
 }
 </script>
