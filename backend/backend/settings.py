@@ -49,7 +49,6 @@ THIRD_PARTY_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
-    'django_jenkins'
 )
 
 LOCAL_APPS = (
@@ -109,7 +108,7 @@ DATABASES = {
 }
 
 """SqLite3"""
-if 'test' in sys.argv or 'jenkins' in sys.argv:
+if 'test' in sys.argv:
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3')
@@ -195,9 +194,3 @@ CORS_ALLOW_CREDENTIALS = True
 # CORS_ORIGIN_WHITELIST = (
 #    'http://localhost:8080',
 # )
-
-
-JENKINS_TASKS = (
-    'django_jenkins.tasks.run_pep8',
-    'django_jenkins.tasks.run_pyflakes'
-    )
