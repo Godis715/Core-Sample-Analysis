@@ -1,0 +1,26 @@
+venv\lib\site-packages\django\contrib\messages\__init__.py:1: [E] PYFLAKES:'from django.contrib.messages.api import *' used; unable to detect undefined names
+venv\lib\site-packages\django\contrib\messages\__init__.py:1: [E] PYFLAKES:'django.contrib.messages.api.*' imported but unused
+venv\lib\site-packages\django\contrib\messages\__init__.py:2: [E] PYFLAKES:'from django.contrib.messages.constants import *' used; unable to detect undefined names
+venv\lib\site-packages\django\contrib\messages\__init__.py:2: [E] PYFLAKES:'django.contrib.messages.constants.*' imported but unused
+venv\lib\site-packages\rest_framework\apps.py:10: [E] PYFLAKES:'.checks.pagination_system_check' imported but unused
+venv\lib\site-packages\rest_framework\compat.py:17: [E] PYFLAKES:'django.urls.RegexURLPattern as URLPattern' imported but unused
+venv\lib\site-packages\rest_framework\compat.py:224: [E] PYFLAKES:'django.conf.urls.include' imported but unused
+venv\lib\site-packages\rest_framework\serializers.py:53: [E] PYFLAKES:'rest_framework.fields.DictField' imported but unused
+venv\lib\site-packages\rest_framework\serializers.py:53: [E] PYFLAKES:'rest_framework.fields.MultipleChoiceField' imported but unused
+venv\lib\site-packages\rest_framework\serializers.py:53: [E] PYFLAKES:'rest_framework.fields.RegexField' imported but unused
+venv\lib\site-packages\rest_framework\serializers.py:53: [E] PYFLAKES:'rest_framework.fields.SerializerMethodField' imported but unused
+venv\lib\site-packages\rest_framework\serializers.py:60: [E] PYFLAKES:'rest_framework.relations.ManyRelatedField' imported but unused
+venv\lib\site-packages\rest_framework\serializers.py:60: [E] PYFLAKES:'rest_framework.relations.RelatedField' imported but unused
+venv\lib\site-packages\rest_framework\serializers.py:60: [E] PYFLAKES:'rest_framework.relations.StringRelatedField' imported but unused
+venv\lib\site-packages\rest_framework\serializers.py:66: [E] PYFLAKES:'rest_framework.fields.CurrentUserDefault' imported but unused
+venv\lib\site-packages\rest_framework\serializers.py:69: [E] PYFLAKES:'rest_framework.relations.Hyperlink' imported but unused
+venv\lib\site-packages\rest_framework\schemas\__init__.py:26: [E] PYFLAKES:'.inspectors.DefaultSchema' imported but unused
+venv\lib\site-packages\rest_framework\schemas\__init__.py:27: [E] PYFLAKES:'.coreapi.AutoSchema' imported but unused
+venv\lib\site-packages\rest_framework\schemas\__init__.py:27: [E] PYFLAKES:'.coreapi.ManualSchema' imported but unused
+venv\lib\site-packages\rest_framework\schemas\__init__.py:27: [E] PYFLAKES:'.coreapi.SchemaGenerator' imported but unused
+venv\lib\site-packages\corsheaders\__init__.py:1: [E] PYFLAKES:'corsheaders.checks.check_settings' imported but unused
+backend\apps\workstation\tests.py:1: [E] PYFLAKES:'django.test.TestCase' imported but unused
+backend\apps\workstation\views.py:1: [E] PYFLAKES:'rest_framework.permissions' imported but unused
+backend\apps\core_sample\urls.py:1: [E] PYFLAKES:'django.urls.include' imported but unused
+backend\apps\core_sample\urls.py:2: [E] PYFLAKES:'rest_framework.urlpatterns.format_suffix_patterns' imported but unused
+backend\apps\core_sample\urls.py:5: [E] PYFLAKES:'uuid' imported but unused
