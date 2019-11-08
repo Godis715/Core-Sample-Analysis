@@ -9,7 +9,7 @@ MY_PATH_IMPORT = 'H:/Data'
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
-def archive_generate(path_import, path_export, count_archives, isRand=False, step=1):
+def archiveGenerate(path_import, path_export, count_archives, isRand=False, step=1):
     # Import data
     data = pd.read_csv(f'{path_import}/data.csv')
     # Create folder of export
@@ -120,7 +120,7 @@ __________________________________________________
     step = int(step) if step != '' else 1
 
     print('------ List gen ------')
-    archive_generate(path_import, path_export, int(count_archives), isRand=isRand, step=step)
+    archiveGenerate(path_import, path_export, int(count_archives), isRand=isRand, step=step)
 
 
 if __name__ == '__main__':
