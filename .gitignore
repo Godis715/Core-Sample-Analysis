@@ -171,4 +171,5 @@ typings/
 backend/backend/static/
 
 # tests files
-border_cutter/tests/
+tools/archiveGenerator/sample_archives
+backend/archiveDecoder/tests/

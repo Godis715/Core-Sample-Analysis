@@ -1,6 +1,6 @@
 from PIL import Image, ImageStat
 
-def cut(image):
+def border_cut(image):
     w, h = image.size
     
     i = 5
