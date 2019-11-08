@@ -19,4 +19,6 @@ install:
   - pip install -r mainService/requirements.txt
 
 # Запуск тестов
-script: python mainService/manage.py test
+script:
+  - cd mainService
+  - python manage.py test
