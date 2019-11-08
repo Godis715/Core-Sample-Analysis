@@ -1,25 +1,28 @@
-from django.contrib.auth import authenticate
+"""   Import   """
+# Django packages
 from django.http import QueryDict
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.authtoken.models import Token
+# Rest_framework packages
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from rest_framework.status import (
     HTTP_500_INTERNAL_SERVER_ERROR,
     HTTP_409_CONFLICT,
     HTTP_404_NOT_FOUND,
     HTTP_403_FORBIDDEN,
-    HTTP_401_UNAUTHORIZED,
     HTTP_400_BAD_REQUEST,
     HTTP_200_OK
 )
-from rest_framework.response import Response
 
-from zipfile import ZipFile
+# Our packages
 from archiveDecoder import archiveDecode
 
+# This project's packages
 from django.conf import settings
 from . import models
 
+# Third party packages
+from zipfile import ZipFile
 import os
 import shutil
 import hashlib
@@ -27,8 +30,10 @@ import threading
 import requests
 import json
 
+# Path of fo;der with the static files
 ROOT_STATIC_APP = f'{settings.PROJECT_ROOT}\\static\\core_sample'
 
+# Response's messages
 ERROR_IS_NOT_ATTACHED = "{} is not attached!"
 ERROR_FORMAT_FILE = "File format error (Expected .zip)!"
 ERROR_INVALID_ID = "Invalid id: {} not found!"
@@ -41,7 +46,6 @@ ERROR_VALUES_ORDER = "Values of {} and {} have the wrong order!"
 ERROR_VALUES_SUM = "Sum of {} is not correct!"
 ERROR_VALUE = "{} have the wrong value!"
 
-
 CONFLICT_FILE_UPLOADED_BEFORE = "This file has been uploaded before"
 CONFLICT_CORE_SAMPLE_ANALYSED_BEFORE = "This core sample has been analysed before"
 CONFLICT_CORE_SAMPLE_IN_PROCESS_ANALYSE = "This core sample is analysing now"
@@ -50,6 +54,7 @@ OK_ANALYSIS_RUN = "The analysis is run"
 
 
 def _cs_count_top_bottom(fragments):
+    """Counting: top and bottom of the entire core sample"""
     cs_top, cs_bottom = 1e10, 0
     for fragment in fragments:
         cs_top = min(cs_top, float(fragment['top']))
@@ -58,7 +63,10 @@ def _cs_count_top_bottom(fragments):
 
 
 def _upload_on_server(csName, data, control_sum, user):
+
     cs_top, cs_bottom = _cs_count_top_bottom(data['fragments'])
+
+    # Loading: the core_sample in database
     core_sample_db = models.Core_sample(
         name=csName,
         user=user,
@@ -74,10 +82,12 @@ def _upload_on_server(csName, data, control_sum, user):
     src_abs = f'{ROOT_STATIC_APP}\\{src_rel}'
     os.makedirs(src_abs)
     for fragment in data['fragments']:
+        # Loading: the fragment of core_sample in the local storage
         dlImg_name = fragment['dlImg'].filename
         fragment['dlImg'].save(f'{src_abs}\\{dlImg_name}')
         uvImg_name = fragment['uvImg'].filename
         fragment['uvImg'].save(f'{src_abs}\\{uvImg_name}')
+        # Loading: the fragment of core_sample in database
         fragment_db = models.Fragment(
             cs=core_sample_db,
             dl_src=f'{src_rel}\\{dlImg_name}',
@@ -92,6 +102,7 @@ def _upload_on_server(csName, data, control_sum, user):
             uv_width=fragment['uvImg'].size[0],
         )
         fragment_db.save()
+
     return core_sample_db.global_id
 
 
@@ -102,12 +113,15 @@ def _allowed_file(filename):
 @csrf_exempt
 @api_view(["POST"])
 def cs_upload(request):
-    """Decoding archive -> load data -> response(json)"""
+    """Steps: 1) Decoding archive -> 2) load data -> 3) response(json)"""
+
+    # Checking: [exist] - [data of request]
     try:
         file = request.FILES['archive']
     except:
         return Response({'message': ERROR_IS_NOT_ATTACHED.format('File')}, status=HTTP_400_BAD_REQUEST)
 
+    # Checking: [exist] - [the same core sample]
     control_sum = hashlib.md5(file.read()).hexdigest()
     try:
         core_sample = models.Core_sample.objects.filter(control_sum=control_sum)[0]
@@ -116,37 +130,46 @@ def cs_upload(request):
     except:
         ...
 
+    # Checking: [correct] - [format of the load archive]
     if _allowed_file(file.name):
         zip_file = ZipFile(file, 'r')
+        # Step: 1)
         result_decode = archiveDecode(zip_file)
+        # Checking: [correct] - [decoding of the load archive]
         if result_decode['Type'] == 'Success':
+            # Step: 2)
             csId = _upload_on_server(request.POST['csName'], result_decode['Data'], control_sum, request.user)
-
+            # Step: 3)
             return Response({'csId': csId, 'warnings': result_decode['Warnings']}, status=HTTP_200_OK)
         elif result_decode['Type'] == 'Error':
             return Response({'message': result_decode['Message']}, status=HTTP_400_BAD_REQUEST)
         else:
             raise Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
-
-    return Response({'message': ERROR_FORMAT_FILE}, status=HTTP_400_BAD_REQUEST)
+    else:
+        return Response({'message': ERROR_FORMAT_FILE}, status=HTTP_400_BAD_REQUEST)
 
 
 @csrf_exempt
 @api_view(["DELETE"])
 def cs_delete(request, csId):
+    # Checking: [exist] - [the core sample]
     try:
         core_sample = models.Core_sample.objects.get(global_id=csId)
     except:
         return Response({'message': ERROR_INVALID_ID.format('core sample')},
                         status=HTTP_404_NOT_FOUND)
 
+    # Checking: [access] - [request's user == author of core sample]
     if request.user != core_sample.user:
         return Response({'message': ERROR_NOT_AUTHOR.format('core sample')},
                         status=HTTP_403_FORBIDDEN)
 
+    # Checking (server error): [exist] - [folders and files in the local storage]
     if f'user_{request.user.username}' in os.listdir(ROOT_STATIC_APP):
         if f'cs_{csId}' in os.listdir(f'{ROOT_STATIC_APP}\\user_{request.user.username}'):
+            # Deleting: in the local storage
             shutil.rmtree(f'{ROOT_STATIC_APP}\\user_{request.user.username}\\cs_{csId}')
+            # Deleting: in database
             core_sample.delete()
             return Response(status=HTTP_200_OK)
         else:
@@ -160,12 +183,14 @@ def cs_delete(request, csId):
 @csrf_exempt
 @api_view(["GET"])
 def cs_get(request, csId):
+    # Checking: [exist] - [the core sample]
     try:
         core_sample = models.Core_sample.objects.get(global_id=csId)
     except:
         return Response({'message': ERROR_INVALID_ID.format('core sample')},
                         status=HTTP_404_NOT_FOUND)
 
+    # Checking: [access] - [request's user == author of core sample]
     if request.user != core_sample.user:
         return Response({'message': ERROR_NOT_AUTHOR.format('core sample')},
                         status=HTTP_403_FORBIDDEN)
@@ -231,6 +256,7 @@ def _load_markup_on_server(markup_db, markup_data):
 
 
 def _analyse(core_sample, user):
+    # Preparing: data for request on analyse
     files = {}
     data = {
         'deposit': core_sample.deposit,
@@ -253,13 +279,16 @@ def _analyse(core_sample, user):
         files[os.path.basename(dlImg.name)] = dlImg
         files[os.path.basename(uvImg.name)] = uvImg
 
+    # Request on the server for analyse
     url = 'http://127.0.0.1:5050/api/analyse/'
     try:
         response_markup = requests.post(url, data={'data': json.dumps(data)}, files=files)
     except:
+        # Error
         core_sample.status = models.Core_sample.ERROR
         core_sample.save()
     else:
+        # Success
         markup_data = json.loads(response_markup.text)['markup']
 
         markup_db = models.Markup(
@@ -268,6 +297,7 @@ def _analyse(core_sample, user):
         )
         markup_db.save()
 
+        # Loading: markup in database
         _load_markup_on_server(markup_db, markup_data)
 
         core_sample.status = models.Core_sample.ANALYSED
@@ -277,11 +307,13 @@ def _analyse(core_sample, user):
 @csrf_exempt
 @api_view(["PUT"])
 def cs_analyse(request, csId):
+    # Checking: [exist] - [the core sample]
     try:
         core_sample = models.Core_sample.objects.get(global_id=csId)
     except:
         return Response({'message': ERROR_INVALID_ID.format('core sample')},
                         status=HTTP_404_NOT_FOUND)
+    # Checking: [correct] - [status of analysing]
     if core_sample.status == models.Core_sample.ANALYSED:
         return Response({'message': CONFLICT_CORE_SAMPLE_ANALYSED_BEFORE},
                         status=HTTP_409_CONFLICT)
@@ -301,6 +333,7 @@ def cs_analyse(request, csId):
 @csrf_exempt
 @api_view(["PUT"])
 def css_status(request):
+    # Checking: [exist] - [data of request]
     try:
         csIds = json.loads(QueryDict(request.body).get('csIds'))
     except:
@@ -308,11 +341,13 @@ def css_status(request):
 
     statuses = {}
     for csId in csIds:
+        # Checking: [exist] - [the core sample]
         try:
             core_sample = models.Core_sample.objects.get(global_id=csId)
         except:
             return Response({'message': ERROR_INVALID_ID.format('core sample')},
                             status=HTTP_404_NOT_FOUND)
+        # Checking: [access] - [request's user == author of core sample]
         if request.user != core_sample.user:
             return Response({'message': ERROR_NOT_AUTHOR.format('core sample')},
                             status=HTTP_403_FORBIDDEN)
@@ -324,12 +359,14 @@ def css_status(request):
 @csrf_exempt
 @api_view(["GET"])
 def cs_markup_get(request, csId):
+    # Checking: [exist] - [the core sample]
     try:
         core_sample = models.Core_sample.objects.get(global_id=csId)
     except:
         return Response({'message': ERROR_INVALID_ID.format('core sample')},
                         status=HTTP_404_NOT_FOUND)
 
+    # Checking: [correct] - [status of analysing]
     if core_sample.status != core_sample.ANALYSED:
         return Response({'message': ERROR_NOT_ANALYSED},
                         status=HTTP_400_BAD_REQUEST)
@@ -394,6 +431,14 @@ def cs_markup_get(request, csId):
 
 
 def _validate_markup(markup_data, core_sample):
+    """ Validation:
+    - Existing types of markup: 'oil', 'carbon', 'rock', 'ruin'
+    - Existing parameters of window: 'top', 'bottom', 'class'
+    - Correct values of parameters:
+        - Types of class
+        - Order of windows
+        - Sum of windows length
+    """
     oil_general_height = 0
     if 'oil' in markup_data:
         for oil_layer in markup_data['oil']:
@@ -509,20 +554,25 @@ def _validate_markup(markup_data, core_sample):
 @csrf_exempt
 @api_view(["PUT"])
 def cs_markup_put(request, csId):
+    # Checking: [exist] - [the core sample]
     try:
         core_sample = models.Core_sample.objects.get(global_id=csId)
     except:
         return Response({'message': ERROR_INVALID_ID.format('core sample')},
                         status=HTTP_404_NOT_FOUND)
 
+    # Checking: [correct] - [status of analysing]
     if core_sample.status != core_sample.ANALYSED:
         return Response({'message': ERROR_NOT_ANALYSED},
                         status=HTTP_400_BAD_REQUEST)
+
+    # Checking: [exist] - [data of request]
     try:
         new_markup_data = json.loads(QueryDict(request.body).get('markup'))
     except:
         return Response({'message': ERROR_IS_NOT_ATTACHED.format('Markup')}, status=HTTP_400_BAD_REQUEST)
 
+    # Checking: [correct] - [data of request]
     isCorrect, response = _validate_markup(new_markup_data, core_sample)
     if isCorrect:
         new_markup_db = models.Markup(
@@ -531,6 +581,7 @@ def cs_markup_put(request, csId):
         )
         new_markup_db.save()
 
+        # Loading: markup in database
         _load_markup_on_server(new_markup_db, new_markup_data)
         return Response(status=HTTP_200_OK)
     else:
