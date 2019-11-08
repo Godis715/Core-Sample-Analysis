@@ -15,7 +15,7 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
-@app.route('/api/data_analysis/', methods=['POST'])
+@app.route('/api/analyse/', methods=['POST'])
 def data_analysis():
     data = json.loads(request.form['data'])
 

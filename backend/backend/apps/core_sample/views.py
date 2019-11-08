@@ -253,7 +253,7 @@ def _analyse(core_sample, user):
         files[os.path.basename(dlImg.name)] = dlImg
         files[os.path.basename(uvImg.name)] = uvImg
 
-    url = 'http://127.0.0.1:5050/api/data_analysis/'
+    url = 'http://127.0.0.1:5050/api/analyse/'
     try:
         response_markup = requests.post(url, data={'data': json.dumps(data)}, files=files)
     except:

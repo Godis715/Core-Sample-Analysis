@@ -53,13 +53,13 @@ if token:
     token = f"Token {token}"
     headers = {"Authorization": token}
 
-    # file_obj = open(os.path.join(os.path.dirname(__file__), 'sample.zip'), 'rb')
-    # response = requests.post(f"{url}core_sample/upload",
-    #                          files={"archive": file_obj},
-    #                          data={'csName': 'Тест'},
-    #                          headers=headers)
-    # print(response.status_code)
-    # print(response.text)
+    file_obj = open(os.path.join(os.path.dirname(__file__), 'sample.zip'), 'rb')
+    response = requests.post(f"{url}core_sample/upload",
+                             files={"archive": file_obj},
+                             data={'csName': 'Тест'},
+                             headers=headers)
+    print(response.status_code)
+    print(response.text)
 
     csId = '93a352e2-c877-4715-a1ef-8865d7f9f075'
     # response = requests.get(f"{url}core_sample/{csId}/markup", headers=headers)
