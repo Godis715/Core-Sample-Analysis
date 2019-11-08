@@ -1,23 +1,50 @@
 <template>
 <div>
     <site-header />
-    <setting-group 
-        title="Global settings"
-        v-bind:settings="settings"
-        v-on:setting-changed="settingChanged($event)"
-    />
+    <!--
+        Workspace consists of columns, which display
+        information about the core sample. Also it has
+        setting panel on the top the workspace.
+
+        Each column is a combination of different layers.
+        Each layer has its own properties (they are named as settings in code).
+        This properties can be changed in setting panel.
+    -->
+    <div id="setting-panel">
+        <div
+            v-for="(col, colIndex) in columns"
+            v-bind:key="colIndex"
+        >
+            
+        </div>    
+    </div>
 
     <div id="main">
         <div
-            v-for="(ch, index) in channels"
-            v-bind:key="index"
+            v-for="(col, colIndex) in columns"
+            v-bind:key="colIndex"
+            v-on:contextmenu.prevent="showSettingList(colIndex)"
         >
-            <view-channel-multiple
-                v-if="!!ch"
-                v-bind:layers="ch.layers"
+            <div
+                v-if="settingToShow==colIndex"
+                class="setting-list"
+            >
+                <setting-group
+                    v-for="(layer, layerIndex) in col.layers"
+                    v-bind:key="layerIndex"
+                    v-bind:settings="layer.type | createSettingList"
+                    v-on:setting-changed="settingChanged($event, colIndex, layerIndex)"
+                />
+            </div>
+
+            <!-- Component, which combines and draws layers. -->
+            <multiple-layer-view
+                v-if="!!col"
+                v-bind:layers="col.layers"
                 v-bind:res="resolution"
                 v-bind:absHeight="absHeight"
                 v-bind:absWidth="absWidthDL"
+                class="column"
             />
         </div>
     </div>
@@ -32,56 +59,47 @@
         flex-direction: row;
     }
 
-    .channel-wrapper {
-        margin: 3px;
-        border: 2px solid gray;
+    .column {
+        outline: 2px solid lightgray;
+    }
+
+    .setting-list {
+        position: absolute;
+        left: 700px;
     }
 </style>
 
 <script>
-import SiteHeader from "../fragments/Header"
-import ViewChannelMultiple from "../fragments/ViewChannelMultiple"
+import MultipleLayerView from "../fragments/MultipleLayerView"
+import { SettingDetails } from '../layers/settingDetails'
 import SettingGroup from "../fragments/SettingGroup"
+import { MarkupLayer } from "../layers/markupLayer"
+import { ImageLayer } from "../layers/imageLayer"
+import SiteHeader from "../fragments/Header"
 
 export default {
     name: "Viewer",
     components: {
         SiteHeader,
-        ViewChannelMultiple,
+        MultipleLayerView,
         SettingGroup
     },
     data() {
         return {
             markup: undefined,
-            channels: undefined,
+            columns: undefined,
             resolution: 20,
-            settings: [
-                {
-                    type: "radio",
-                    title: "image width fit",
-                    options: [
-                        {
-                            name: "align left",
-                            value: "alignLeft"
-                        }, 
-                        {
-                            name: "align right",
-                            value: "alignRight"
-                        }, 
-                        {
-                            name: "stretch",
-                            value: "stretch"
-                        }
-                    ]       
-                }
-            ]
+            settingToShow: undefined
         }
     },
     created() {
+        // id of displaying core sample
         let csId = this.$route.params.csId;
+
+        // getting information to display
         this.$axios.get(`api/core_sample/${csId}/markup`).then(resp => {
             this.markup = resp.data;
-            this.channels = [
+            this.columns = [
                 {
                     layers: [
                         {
@@ -119,7 +137,8 @@ export default {
                             type: "line",
                             settings: {
                                 lineColor: "white",
-                                showText: false
+                                showText: false,
+                                fontColor: "red"
                             },
                             data: {
                                 oil: this.markup.markup.oil,
@@ -151,7 +170,7 @@ export default {
         });
     },
     computed: {
-        // it is the same for all channels
+        // it is the same for all columns
         // it can be found from, for example, dlImages
         absHeight() {
             return this.markup.dlImages.reduce((acc, img) => acc + (img.bottom - img.top), 0);
@@ -178,16 +197,41 @@ export default {
             return width;
         },
     },
+
     methods: {
-        settingChanged(ev) {
+        settingChanged(ev, columnIndex, layerIndex) {
             console.log(ev);
-            for(let i = 0; i < this.channels.length; ++i) {
-                let ch = this.channels[i];
-                for (let j = 0; j < ch.layers.length; j++) {
-                    let l = ch.layers[j];
-                    l.settings.fragmentsWidthFit = ev;
-                }
+
+            this.$set(this.columns[columnIndex].layers[layerIndex].settings, ev.settingName, ev.data);
+        },
+
+        showSettingList(colIndex) {
+            console.log(colIndex);
+
+            if (this.settingToShow === colIndex) {
+            this.settingToShow = undefined;
+            } else {
+                this.settingToShow = colIndex;
             }
+        }
+    },
+
+    filters: {
+        createSettingList(type) {
+            let settingNames =
+                (type === "img") ? ImageLayer.settingsList :
+                (type === "line") ? MarkupLayer.settingsList : [];
+
+            let settings = [];
+            for(let i = 0; i < settingNames.length; ++i) {
+                let name = settingNames[i];
+                settings.push({
+                    ...SettingDetails[name],
+                    settingName: name
+                });
+            }
+
+            return settings;
         }
     }
 }

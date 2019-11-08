@@ -1,40 +1,42 @@
 <template>
 <form v-on:change="onchanged">
     <h2>{{title}}</h2>
-    <div 
-        v-for="(item, index) in options"
-        v-bind:key="index"
-    >
+    <div>
         <input
-            type="radio"
-            name="radio"
-            v-bind:value="item.value"
-            v-model="selected"
-     />
-        <label>{{item.name}}</label>
+            v-model="checked"
+            type="checkbox"
+            name="checkbox"
+        />
+        <label>Enabled</label>
     </div>
 </form>
 </template>
 
 <script>
 export default {
-    name: "RadioSetting",
+    name: "CheckboxSetting",
     props: [
         "title",
         "options",
-        "settingName"
+        "settingName",
+        "default"
     ],
     data() {
         return {
-            selected: ""
+            checked: false
         };
     },
     methods: {
         onchanged() {
             this.$emit("selected-changed", {
-                data: this.selected,
+                data: this.checked,
                 settingName: this.settingName
             });
+        }
+    },
+    created() {
+        if (this.default !== undefined) {
+            this.checked = this.default;
         }
     }
 }

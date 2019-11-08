@@ -29,7 +29,17 @@ function getSettings(settings) {
     return { ...defaultSettings, ...settings }
 }
 
-export const lineMarkupCh = {
+export const MarkupLayer = {
+    settingsList: [
+        "fontColor",
+        "lineColor",
+        "fontSize",
+        "hideOverflow",
+        "textMargin",
+        "font",
+        "showText"
+    ],
+
     draw(canvas, data, width, res, _settings) {
         let layers = data;
         let ctx = canvas.getContext("2d");

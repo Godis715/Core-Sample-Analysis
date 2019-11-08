@@ -1,4 +1,8 @@
-export const imgCh = {
+export const ImageLayer = {
+    settingsList: [
+        "fragmentsWidthFit"
+    ],
+
     draw(canvas, data, width, res, settings) {
         let frags = data;
 

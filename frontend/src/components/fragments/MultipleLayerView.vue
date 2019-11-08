@@ -9,8 +9,8 @@
 </template>
 
 <script>
-import { imgCh } from "../channels/imgCh"
-import { lineMarkupCh } from "../channels/lineMarkupCh"
+import { ImageLayer } from "../layers/imageLayer"
+import { MarkupLayer } from "../layers/markupLayer"
 
 export default {
     name: "ViewChannelMultiple",
@@ -22,8 +22,8 @@ export default {
     ],
     methods: {
         redraw() {
-            let imgChnl = this.layers.find(ch => ch.type === "img");
-            let lineChnl = this.layers.find(ch => ch.type === "line");
+            let imgLayer = this.layers.find(ch => ch.type === "img");
+            let markupLayer = this.layers.find(ch => ch.type === "line");
 
             let canvas = this.$refs.canvas;
             let ctx = canvas.getContext("2d");
@@ -31,13 +31,13 @@ export default {
             ctx.fillStyle = "white";
             ctx.fillRect(0, 0, this.width, this.height);
 
-            if (imgChnl)
-                imgCh.draw(canvas, imgChnl.data, this.width, this.res, imgChnl.settings);
+            if (imgLayer)
+                ImageLayer.draw(canvas, imgLayer.data, this.width, this.res, imgLayer.settings);
 
-            if (lineChnl) {
-                let merged = lineMarkupCh.mergeMarkup(lineChnl.data);
-                let multi = lineMarkupCh.single2multiTypeLayers(merged);
-                lineMarkupCh.draw(canvas, multi, this.width, this.res, lineChnl.settings);
+            if (markupLayer) {
+                let merged = MarkupLayer.mergeMarkup(markupLayer.data);
+                let multi = MarkupLayer.single2multiTypeLayers(merged);
+                MarkupLayer.draw(canvas, multi, this.width, this.res, markupLayer.settings);
             }
         }
     },
