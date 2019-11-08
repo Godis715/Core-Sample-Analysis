@@ -79,7 +79,7 @@ class Archive_Generator:
         self.path_images = f'{self.path_root}/images'
 
     def _generate_images(self, count):
-        os.mkdir(self.path_images)
+        os.makedirs(self.path_images)
         path_images = []
         for i in range(count):
             size = (random.randint(100, 400), random.randint(100, 2000))
