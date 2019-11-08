@@ -14,7 +14,9 @@ import os
 import sys
 
 # Paths for import
-sys.path.append(r'.\archiveDecoder')
+sys.path.append(os.path.join(sys.path[0], 'archiveDecoder'))
+print(os.path.join(sys.path[0], 'archiveDecoder'))
+
 
 # Build paths inside the workstation like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
