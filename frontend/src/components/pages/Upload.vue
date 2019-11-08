@@ -219,7 +219,7 @@
                             text: 'This core sample has been already uploaded',
                             type: 'notification',
                             link: {
-                                where: `core_sample/${this.csId}`,
+                                where: `view/${this.csId}`,
                                 text: 'View this sample'
                             }
                         }];
