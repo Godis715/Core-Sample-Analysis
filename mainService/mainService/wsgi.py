@@ -1,5 +1,5 @@
 """
-WSGI config for backend workstation.
+WSGI config for mainService workstation.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mainService.settings')
 
 application = get_wsgi_application()
