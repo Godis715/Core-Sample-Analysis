@@ -31,7 +31,7 @@ import requests
 import json
 
 # Path of fo;der with the static files
-ROOT_STATIC_APP = f'{settings.PROJECT_ROOT}\\static\\core_sample'
+ROOT_STATIC_APP = f'{settings.PROJECT_ROOT}/static/core_sample'
 
 # Response's messages
 ERROR_IS_NOT_ATTACHED = "{} is not attached!"
@@ -78,20 +78,20 @@ def _upload_on_server(csName, data, control_sum, user):
     )
     core_sample_db.save()
 
-    src_rel = f'user_{user.username}\\cs_{core_sample_db.global_id}'
-    src_abs = f'{ROOT_STATIC_APP}\\{src_rel}'
+    src_rel = f'user_{user.username}/cs_{core_sample_db.global_id}'
+    src_abs = f'{ROOT_STATIC_APP}/{src_rel}'
     os.makedirs(src_abs)
     for fragment in data['fragments']:
         # Loading: the fragment of core_sample in the local storage
         dlImg_name = fragment['dlImg'].filename
-        fragment['dlImg'].save(f'{src_abs}\\{dlImg_name}')
+        fragment['dlImg'].save(f'{src_abs}/{dlImg_name}')
         uvImg_name = fragment['uvImg'].filename
-        fragment['uvImg'].save(f'{src_abs}\\{uvImg_name}')
+        fragment['uvImg'].save(f'{src_abs}/{uvImg_name}')
         # Loading: the fragment of core_sample in database
         fragment_db = models.Fragment(
             cs=core_sample_db,
-            dl_src=f'{src_rel}\\{dlImg_name}',
-            uv_src=f'{src_rel}\\{uvImg_name}',
+            dl_src=f'{src_rel}/{dlImg_name}',
+            uv_src=f'{src_rel}/{uvImg_name}',
             dl_resolution=fragment['dlImg'].size[1] / (fragment['bottom'] - fragment['top']),
             uv_resolution=fragment['uvImg'].size[1] / (fragment['bottom'] - fragment['top']),
             top=fragment['top'],
@@ -166,9 +166,9 @@ def cs_delete(request, csId):
 
     # Checking (server error): [exist] - [folders and files in the local storage]
     if f'user_{request.user.username}' in os.listdir(ROOT_STATIC_APP):
-        if f'cs_{csId}' in os.listdir(f'{ROOT_STATIC_APP}\\user_{request.user.username}'):
+        if f'cs_{csId}' in os.listdir(f'{ROOT_STATIC_APP}/user_{request.user.username}'):
             # Deleting: in the local storage
-            shutil.rmtree(f'{ROOT_STATIC_APP}\\user_{request.user.username}\\cs_{csId}')
+            shutil.rmtree(f'{ROOT_STATIC_APP}/user_{request.user.username}/cs_{csId}')
             # Deleting: in database
             core_sample.delete()
             return Response(status=HTTP_200_OK)
@@ -266,8 +266,8 @@ def _analyse(core_sample, user):
 
     fragments = models.Fragment.objects.filter(cs_id=core_sample)
     for fragment in fragments:
-        dlImg = open(f'{ROOT_STATIC_APP}\\{fragment.dl_src}', 'rb')
-        uvImg = open(f'{ROOT_STATIC_APP}\\{fragment.uv_src}', 'rb')
+        dlImg = open(f'{ROOT_STATIC_APP}/{fragment.dl_src}', 'rb')
+        uvImg = open(f'{ROOT_STATIC_APP}/{fragment.uv_src}', 'rb')
         data['fragments'].append({
             'top': fragment.top,
             'bottom': fragment.bottom,

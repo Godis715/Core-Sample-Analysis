@@ -196,3 +196,7 @@ CORS_ALLOW_CREDENTIALS = True
 # CORS_ORIGIN_WHITELIST = (
 #    'http://localhost:8080',
 # )
+
+#Created root static apps
+if not os.path.exists(f'{PROJECT_ROOT}/static/core_sample'):
+	os.makedirs(f'{PROJECT_ROOT}/static/core_sample')
