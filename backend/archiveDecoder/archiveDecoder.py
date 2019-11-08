@@ -33,7 +33,7 @@ def _use_all_images(list_all_paths_img,  list_use_path_img):
     return len(set(list_all_paths_img) - set(list_use_path_img)) == 0 and len(list_all_paths_img) == len(list_use_path_img)
 
 
-def archive_decode(archive):
+def archiveDecode(archive):
     """Decoding zip file with images of sample and file of description (.json or .xlsx format)"""
 
     """Expected struct:
@@ -167,7 +167,7 @@ def archive_decode(archive):
 
 if __name__ == "__main__":
     zip_archive = ZipFile(os.path.join(os.path.dirname(__file__), 'tests/sample_archive_40.zip'))
-    data = archive_decode(zip_archive)
+    data = archiveDecode(zip_archive)
     zip_archive.close()
     print(data)
     for warn in data['Warnings']:

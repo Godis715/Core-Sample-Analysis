@@ -15,7 +15,7 @@ from rest_framework.status import (
 from rest_framework.response import Response
 
 from zipfile import ZipFile
-from archive_decoder import archive_decode
+from archiveDecoder import archiveDecode
 
 from django.conf import settings
 from . import models
@@ -118,7 +118,7 @@ def cs_upload(request):
 
     if _allowed_file(file.name):
         zip_file = ZipFile(file, 'r')
-        result_decode = archive_decode(zip_file)
+        result_decode = archiveDecode(zip_file)
         if result_decode['Type'] == 'Success':
             csId = _upload_on_server(request.POST['csName'], result_decode['Data'], control_sum, request.user)
 
