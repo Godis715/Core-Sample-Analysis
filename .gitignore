@@ -169,3 +169,7 @@ typings/
 
 # static files
 backend/backend/static/
+
+# test files
+archive_decoder/tests
+archive_generator/sample_archives

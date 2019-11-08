@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 import sys
 
-sys.path.append(r'.\..\archiveDecoder') # path for import
+sys.path.append(r'.\..\archive_decoder') # path for import
 
 # Build paths inside the workstation like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -88,16 +88,16 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'CsAnalysis_db',
-        'USER': 'dima12101',
-        'PASSWORD': 'Flvby66!',
-        'HOST': '89.208.211.237',
-        'PORT': '5432',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'CsAnalysis_db',
+#         'USER': 'dima12101',
+#         'PASSWORD': 'Flvby66!',
+#         'HOST': '89.208.211.237',
+#         'PORT': '5432',
+#     }
+# }
 
 # DATABASES = {
 #     'default': {
@@ -110,12 +110,12 @@ DATABASES = {
 #     }
 # }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
 
 # DATABASES = {
 #     'default': {
