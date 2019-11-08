@@ -13,17 +13,12 @@ from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
     HTTP_200_OK
 )
-<<<<<<< HEAD:backend/backend/apps/core_sample/views.py
-# Our packages
-from archiveDecoder import decode_archive
-# This project's packages
-=======
+
 from rest_framework.response import Response
 
 from zipfile import ZipFile
 from archiveDecoder import archiveDecode
 
->>>>>>> rename:mainService/mainService/apps/core_sample/views.py
 from django.conf import settings
 from . import models
 # Third party packages
@@ -138,13 +133,9 @@ def cs_upload(request):
     # Checking: [correct] - [format of the load archive]
     if _allowed_file(file.name):
         zip_file = ZipFile(file, 'r')
-<<<<<<< HEAD:backend/backend/apps/core_sample/views.py
         # Step: 1)
-        result_decode = decode_archive(zip_file)
-        # Checking: [correct] - [decoding of the load archive]
-=======
         result_decode = archiveDecode(zip_file)
->>>>>>> rename:mainService/mainService/apps/core_sample/views.py
+        # Checking: [correct] - [decoding of the load archive]
         if result_decode['Type'] == 'Success':
             # Step: 2)
             csId = _upload_on_server(request.POST['csName'], result_decode['Data'], control_sum, request.user)
@@ -288,12 +279,8 @@ def _analyse(core_sample, user):
         files[os.path.basename(dlImg.name)] = dlImg
         files[os.path.basename(uvImg.name)] = uvImg
 
-<<<<<<< HEAD:backend/backend/apps/core_sample/views.py
     # Request on the server for analyse
-    url = 'http://127.0.0.1:5050/api/data_analysis/'
-=======
     url = 'http://127.0.0.1:5050/api/analyse/'
->>>>>>> rename:mainService/mainService/apps/core_sample/views.py
     try:
         response_markup = requests.post(url, data={'data': json.dumps(data)}, files=files)
     except:

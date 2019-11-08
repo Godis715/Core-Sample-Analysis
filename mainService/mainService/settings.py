@@ -13,12 +13,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 import sys
 
-<<<<<<< HEAD:backend/backend/settings.py
 # Paths for import
-sys.path.append(r'.\..\archiveDecoder')
-=======
-sys.path.append(r'.\archiveDecoder') # path for import
->>>>>>> rename:mainService/mainService/settings.py
+sys.path.append(r'.\archiveDecoder')
 
 # Build paths inside the workstation like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -99,21 +95,7 @@ WSGI_APPLICATION = 'mainService.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-<<<<<<< HEAD:backend/backend/settings.py
 """MailCloud"""
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'CsAnalysis_db',
-        'USER': 'dima12101',
-        'PASSWORD': 'Flvby66!',
-        'HOST': '89.208.211.237',
-        'PORT': '5432',
-    }
-}
-
-"""SqLite3"""
-=======
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -125,21 +107,7 @@ DATABASES = {
 #     }
 # }
 
->>>>>>> rename:mainService/mainService/settings.py
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'Core-Sample-Analysis',
-#         'USER': 'postgres',
-#         'PASSWORD': 'Flvby66!',
-#         'HOST': 'aws-rds-postgresql.cfxoin7bynly.us-east-1.rds.amazonaws.com',
-#         'PORT': '5432',
-#     }
-# }
-
-<<<<<<< HEAD:backend/backend/settings.py
-"""AWS"""
-=======
+"""SqLite3"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -147,7 +115,7 @@ DATABASES = {
     }
 }
 
->>>>>>> rename:mainService/mainService/settings.py
+"""AWS"""
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
