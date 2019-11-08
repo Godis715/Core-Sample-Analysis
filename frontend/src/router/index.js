@@ -7,7 +7,7 @@ import FAQ from '@/components/pages/FAQ'
 import Login from '@/components/pages/Login'
 import Search from '@/components/pages/Search'
 import Upload from '@/components/pages/Upload'
-import View from '@/components/pages/View'
+import Viewer from '@/components/pages/Viewer'
 import { store } from '@/../store'
 
 Vue.use(Router)
@@ -88,9 +88,9 @@ export default new Router({
     },
 
     {
-      path: '/view',
-      name: 'View',
-      component: View,
+      path: '/view/:csId',
+      name: 'Viewer',
+      component: Viewer,
       beforeEnter: ifAuthenticated
     }
   ]

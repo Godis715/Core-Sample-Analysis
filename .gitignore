@@ -168,4 +168,8 @@ typings/
 .next
 
 # static files
-backend/backend/static/
+mainService/mainService/static/
+
+# test files
+mainService/archiveDecoder/tests
+tools/archiveGenerator/sample_archives
