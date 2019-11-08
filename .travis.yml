@@ -8,8 +8,14 @@ branches:
 python:
   - "3.7"
 
+
+# Параметры окружения
+env:
+  - DJANGO_VERSION=2.2.6
+
 # Установка зависимостей в окружение
 install:
+  - pip install -q Django==$DJANGO_VERSION
   - pip install -r mainService/requirements.txt
 
 # Запуск тестов
