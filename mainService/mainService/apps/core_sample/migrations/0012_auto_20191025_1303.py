@@ -5,7 +5,7 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-	atomic = False
+    atomic = False
 
     dependencies = [
         ('core_sample', '0011_auto_20191025_1244'),
