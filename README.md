@@ -4,10 +4,8 @@ A web-based tool for geologists, which helps to analyse, keep and search core sa
 # About
 This project is developing as a part of educational practice by students from AM-CP faculty of St. Petersburg State University.
 
-# Structure of the repository
-
-- _backend_ - a backend of the web-application for the work with core samples. It provides a REST API for interaction.
-
-- _dataAnalisys_ - service for auto marking of core samples.
-
-- _frontend_ - a client part of the application, which provides user-friendly interface and tools for viewing markup of core samples.
+# Run application
+Currently, it is possible to run application in **development mode**. Just clone the repo and run all batch files in the root directory.
+Firstly, go to **mainService** and execute command `python manage.py migrate`
+Secondly, run command `python manage.py createsuperuser` and follow the instructions.
+Finally, visit localhost:8080/ in your browser and log in, using credentials, which you had specified when create superuser.
