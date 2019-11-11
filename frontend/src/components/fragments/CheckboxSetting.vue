@@ -1,6 +1,6 @@
 <template>
 <form v-on:change="onchanged">
-    <h2>{{title}}</h2>
+    <h4>{{title}}</h4>
     <div>
         <input
             v-model="checked"
@@ -19,12 +19,12 @@ export default {
         "title",
         "options",
         "settingName",
-        "default"
+        "value"
     ],
     data() {
         return {
-            checked: false
-        };
+            checked: undefined
+        }
     },
     methods: {
         onchanged() {
@@ -34,9 +34,14 @@ export default {
             });
         }
     },
+
     created() {
-        if (this.default !== undefined) {
-            this.checked = this.default;
+        this.checked = this.value;
+    },
+
+    watch: {
+        value() {
+            this.checked = this.value;
         }
     }
 }

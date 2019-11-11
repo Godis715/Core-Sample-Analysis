@@ -2,6 +2,7 @@ export const SettingDetails = Object.freeze({
     fragmentsWidthFit: {
         type: "radio",
         title: "Image width fit",
+        default: "stretch",
         options: [
             {
                 name: "align left",
@@ -21,6 +22,7 @@ export const SettingDetails = Object.freeze({
     lineColor: {
         title: "Line color",
         type: "radio",
+        default: "black",
         options: [
             {
                 name: "black",
@@ -48,6 +50,7 @@ export const SettingDetails = Object.freeze({
     fontColor: {
         title: "Font color",
         type: "radio",
+        default: "black",
         options: [
             {
                 name: "black",

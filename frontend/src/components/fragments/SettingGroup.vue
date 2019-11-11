@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>{{title}}</h1>
+        <h4>{{title}}</h4>
         <div
             v-for="(s, index) in settings"
             v-bind:key="index"
@@ -10,6 +10,7 @@
                 v-bind:title="s.title"
                 v-bind:settingName="s.settingName"
                 v-bind:options="s.options"
+                v-bind:value="s.value"
                 v-on:selected-changed="onchanged($event, index)"
             />
 
@@ -18,7 +19,7 @@
                 v-bind:title="s.title"
                 v-bind:settingName="s.settingName"
                 v-bind:options="s.options"
-                v-bind:default="s.default"
+                v-bind:value="s.value"
                 v-on:selected-changed="onchanged($event, index)"
             />
         </div>

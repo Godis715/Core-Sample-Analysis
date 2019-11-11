@@ -1,7 +1,7 @@
 export const ImageLayer = {
-    settingsList: [
-        "fragmentsWidthFit"
-    ],
+    defaultSettings: Object.freeze({
+        fragmentsWidthFit: "stretch"
+    }),
 
     draw(canvas, data, width, res, settings) {
         let frags = data;

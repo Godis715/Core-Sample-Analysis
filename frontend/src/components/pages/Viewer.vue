@@ -1,6 +1,6 @@
 <template>
 <div>
-    <site-header />
+    <site-header v-once/>
     <!--
         Workspace consists of columns, which display
         information about the core sample. Also it has
@@ -10,36 +10,33 @@
         Each layer has its own properties (they are named as settings in code).
         This properties can be changed in setting panel.
     -->
-    <div id="setting-panel">
-        <div
-            v-for="(col, colIndex) in columns"
-            v-bind:key="colIndex"
-        >
-            
-        </div>    
-    </div>
+
+    <draggable-menu
+        v-show="showMenu"
+        v-bind:title="`Column ${settingToShow+1}`"
+        v-on:close-menu="closeMenu"
+    >
+        <template>
+            <div>
+            <setting-group
+                v-for="(layer, layerIndex) in columns[settingToShow].layers"
+                v-on:setting-changed="settingChanged($event, settingToShow, layerIndex)"
+                v-bind:settings="layer.settings | createSettingList"
+                v-bind:key="layerIndex"
+                class="setting-group"
+            />
+            </div>
+        </template>
+    </draggable-menu>
 
     <div id="main">
         <div
             v-for="(col, colIndex) in columns"
             v-bind:key="colIndex"
-            v-on:contextmenu.prevent="showSettingList(colIndex)"
         >
-            <div
-                v-if="settingToShow==colIndex"
-                class="setting-list"
-            >
-                <setting-group
-                    v-for="(layer, layerIndex) in col.layers"
-                    v-bind:key="layerIndex"
-                    v-bind:settings="layer.type | createSettingList"
-                    v-on:setting-changed="settingChanged($event, colIndex, layerIndex)"
-                />
-            </div>
-
+            <button v-on:click="showSettingList(colIndex)">Show menu</button>
             <!-- Component, which combines and draws layers. -->
             <multiple-layer-view
-                v-if="!!col"
                 v-bind:layers="col.layers"
                 v-bind:res="resolution"
                 v-bind:absHeight="absHeight"
@@ -63,9 +60,16 @@
         outline: 2px solid lightgray;
     }
 
-    .setting-list {
-        position: absolute;
-        left: 700px;
+    .setting-group {
+        background-color: white;
+        padding: 5px;
+        padding-right: 2em;
+        padding-bottom: 1em;
+        margin: 5px 5px 0 5px;
+    }
+
+    .setting-group:first-child {
+        margin-top: 0;
     }
 </style>
 
@@ -75,6 +79,7 @@ import { SettingDetails } from '../layers/settingDetails'
 import SettingGroup from "../fragments/SettingGroup"
 import { MarkupLayer } from "../layers/markupLayer"
 import { ImageLayer } from "../layers/imageLayer"
+import DraggableMenu from "../fragments/DraggableMenu"
 import SiteHeader from "../fragments/Header"
 
 export default {
@@ -82,14 +87,17 @@ export default {
     components: {
         SiteHeader,
         MultipleLayerView,
-        SettingGroup
+        SettingGroup,
+        DraggableMenu
     },
     data() {
         return {
             markup: undefined,
-            columns: undefined,
+            columns: [],
             resolution: 20,
-            settingToShow: undefined
+            settingToShow: 0,
+            showMenu: false,
+            colSettingToShow: undefined
         }
     },
     created() {
@@ -104,21 +112,16 @@ export default {
                     layers: [
                         {
                             type: "img",
-                            settings: {
-                                fragmentsWidthFit: "stretch"
-                            },
-                            data: this.markup.dlImages
+                            data: this.markup.dlImages,
+                            settings: { ...ImageLayer.defaultSettings },
                         },
 
                         {
                             type: "line",
-                            settings: {
-                                lineColor: "white",
-                                fontColor: "white"
-                            },
                             data: {
                                 oil: this.markup.markup.oil,
-                            }
+                            },
+                            settings: { ...MarkupLayer.defaultSettings }
                         }
                     ]
                 },
@@ -127,23 +130,17 @@ export default {
                     layers: [
                         {
                             type: "img",
-                            settings: {
-                                fragmentsWidthFit: "stretch"
-                            },
-                            data: this.markup.uvImages
+                            data: this.markup.uvImages,
+                            settings: { ...ImageLayer.defaultSettings },
                         },
 
                         {
                             type: "line",
-                            settings: {
-                                lineColor: "white",
-                                showText: false,
-                                fontColor: "red"
-                            },
                             data: {
                                 oil: this.markup.markup.oil,
                                 carbon: this.markup.markup.carbon
-                            }
+                            },
+                            settings: { ...MarkupLayer.defaultSettings }
                         }
                     ]
                 },
@@ -152,14 +149,11 @@ export default {
                     layers: [
                         {
                             type: "line",
-                            settings: {
-                                lineColor: "black",
-                                fontColor: "red"
-                            },
                             data: {
                                 oil: this.markup.markup.oil,
                                 carbon: this.markup.markup.carbon
-                            }
+                            },
+                            settings: { ...MarkupLayer.defaultSettings }
                         }
                     ]
                 }
@@ -195,9 +189,8 @@ export default {
                     width = currWidth;
             }
             return width;
-        },
+        }
     },
-
     methods: {
         settingChanged(ev, columnIndex, layerIndex) {
             console.log(ev);
@@ -206,32 +199,32 @@ export default {
         },
 
         showSettingList(colIndex) {
-            console.log(colIndex);
-
-            if (this.settingToShow === colIndex) {
-            this.settingToShow = undefined;
+            if (this.showMenu && this.settingToShow === colIndex) {
+                this.showMenu = false;
             } else {
                 this.settingToShow = colIndex;
+                this.showMenu = true;
             }
+        },
+
+        closeMenu() {
+            this.showMenu = false;
         }
     },
-
     filters: {
-        createSettingList(type) {
-            let settingNames =
-                (type === "img") ? ImageLayer.settingsList :
-                (type === "line") ? MarkupLayer.settingsList : [];
-
-            let settings = [];
+        createSettingList(settings) {
+            let settingList = [];
+            let settingNames = Object.keys(settings);
             for(let i = 0; i < settingNames.length; ++i) {
                 let name = settingNames[i];
-                settings.push({
+                settingList.push({
                     ...SettingDetails[name],
-                    settingName: name
+                    settingName: name,
+                    value: settings[name]
                 });
             }
-
-            return settings;
+            console.log(settingList);
+            return settingList;
         }
     }
 }

@@ -12,39 +12,20 @@ function getMultilineHeight(lines, settings) {
     return lines.length * (settings.fontSize + settings.textMargin) - settings.textMargin;
 }
 
-function getSettings(settings) {
-    const defaultSettings = {
-        fontColor: "#000000",
-        lineColor: "#000000",
+export const MarkupLayer = {
+    defaultSettings: Object.freeze({
+        fontColor: "black",
+        lineColor: "black",
         fontSize: 20,
         hideOverflow: true,
         textMargin: 5,
         font: "Arial",
         showText: true
-    };
+    }),
 
-    if (!settings)
-        return defaultSettings;
-
-    return { ...defaultSettings, ...settings }
-}
-
-export const MarkupLayer = {
-    settingsList: [
-        "fontColor",
-        "lineColor",
-        "fontSize",
-        "hideOverflow",
-        "textMargin",
-        "font",
-        "showText"
-    ],
-
-    draw(canvas, data, width, res, _settings) {
+    draw(canvas, data, width, res, settings) {
         let layers = data;
         let ctx = canvas.getContext("2d");
-
-        let settings = getSettings(_settings);
 
         setTimeout(() => {
             ctx.fillStyle = settings.fontColor;

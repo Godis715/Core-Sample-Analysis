@@ -1,6 +1,6 @@
 <template>
 <form v-on:change="onchanged">
-    <h2>{{title}}</h2>
+    <h4>{{title}}</h4>
     <div 
         v-for="(item, index) in options"
         v-bind:key="index"
@@ -22,12 +22,13 @@ export default {
     props: [
         "title",
         "options",
-        "settingName"
+        "settingName",
+        "value"
     ],
     data() {
         return {
-            selected: ""
-        };
+            selected: undefined
+        }
     },
     methods: {
         onchanged() {
@@ -35,6 +36,17 @@ export default {
                 data: this.selected,
                 settingName: this.settingName
             });
+        }
+    },
+    
+    created() {
+        console.log(`${this.settingName}:${this.value}`);
+        this.selected = this.value;
+    },
+
+    watch: {
+        value() {
+            this.selected = this.value;
         }
     }
 }
