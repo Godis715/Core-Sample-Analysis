@@ -12,6 +12,7 @@
     -->
 
     <draggable-menu
+        v-if="settingToShow > -1"
         v-show="showMenu"
         v-bind:title="`Column ${settingToShow+1}`"
         v-on:close-menu="closeMenu"
@@ -22,7 +23,8 @@
                 v-for="(layer, layerIndex) in columns[settingToShow].layers"
                 v-on:setting-changed="settingChanged($event, settingToShow, layerIndex)"
                 v-bind:settings="layer.settings | createSettingList"
-                v-bind:key="layerIndex"
+                v-bind:key="layer.id"
+                v-bind:id="layer.id"
                 class="setting-group"
             />
             </div>
@@ -95,7 +97,7 @@ export default {
             markup: undefined,
             columns: [],
             resolution: 20,
-            settingToShow: 0,
+            settingToShow: -1,
             showMenu: false,
             colSettingToShow: undefined
         }
@@ -111,12 +113,14 @@ export default {
                 {
                     layers: [
                         {
+                            id: "layer-1",
                             type: "img",
                             data: this.markup.dlImages,
                             settings: { ...ImageLayer.defaultSettings },
                         },
 
                         {
+                            id: "layer-2",
                             type: "line",
                             data: {
                                 oil: this.markup.markup.oil,
@@ -129,12 +133,14 @@ export default {
                 {
                     layers: [
                         {
+                            id: "layer-1",
                             type: "img",
                             data: this.markup.uvImages,
                             settings: { ...ImageLayer.defaultSettings },
                         },
 
                         {
+                            id: "layer-2",
                             type: "line",
                             data: {
                                 oil: this.markup.markup.oil,
@@ -148,6 +154,7 @@ export default {
                 {
                     layers: [
                         {
+                            id: "layer-1",
                             type: "line",
                             data: {
                                 oil: this.markup.markup.oil,
@@ -193,8 +200,6 @@ export default {
     },
     methods: {
         settingChanged(ev, columnIndex, layerIndex) {
-            console.log(ev);
-
             this.$set(this.columns[columnIndex].layers[layerIndex].settings, ev.settingName, ev.data);
         },
 
@@ -223,7 +228,6 @@ export default {
                     value: settings[name]
                 });
             }
-            console.log(settingList);
             return settingList;
         }
     }

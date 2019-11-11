@@ -21,7 +21,7 @@ export const SettingDetails = Object.freeze({
 
     lineColor: {
         title: "Line color",
-        type: "radio",
+        type: "color",
         default: "black",
         options: [
             {
@@ -49,7 +49,7 @@ export const SettingDetails = Object.freeze({
 
     fontColor: {
         title: "Font color",
-        type: "radio",
+        type: "color",
         default: "black",
         options: [
             {

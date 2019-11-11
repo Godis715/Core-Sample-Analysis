@@ -1,5 +1,5 @@
 <template>
-<form v-on:change="onchanged">
+<form v-if="isMounted" v-on:change="onchanged">
     <h4>{{title}}</h4>
     <div 
         v-for="(item, index) in options"
@@ -10,24 +10,28 @@
             name="radio"
             v-bind:value="item.value"
             v-model="selected"
+            v-bind:id="`${id}-input-${index}`"
      />
-        <label>{{item.name}}</label>
+        <label v-bind:for="`${id}-input-${index}`">{{item.name}}</label>
     </div>
 </form>
 </template>
 
 <script>
+
 export default {
     name: "RadioSetting",
     props: [
         "title",
         "options",
         "settingName",
-        "value"
+        "value",
+        "id"
     ],
     data() {
         return {
-            selected: undefined
+            selected: undefined,
+            isMounted: false
         }
     },
     methods: {
@@ -38,10 +42,13 @@ export default {
             });
         }
     },
-    
+
     created() {
-        console.log(`${this.settingName}:${this.value}`);
         this.selected = this.value;
+    },
+
+    mounted() {
+        this.isMounted = true;
     },
 
     watch: {

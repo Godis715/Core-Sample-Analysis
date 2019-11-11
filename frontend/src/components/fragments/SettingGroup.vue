@@ -1,25 +1,17 @@
 <template>
-    <div>
+    <div v-if="isMounted">
         <h4>{{title}}</h4>
         <div
-            v-for="(s, index) in settings"
+            v-for="(setting, index) in settings"
             v-bind:key="index"
         >
-            <radio-setting
-                v-if="s.type==='radio'"
-                v-bind:title="s.title"
-                v-bind:settingName="s.settingName"
-                v-bind:options="s.options"
-                v-bind:value="s.value"
-                v-on:selected-changed="onchanged($event, index)"
-            />
-
-            <checkbox-setting 
-                v-if="s.type==='checkbox'"
-                v-bind:title="s.title"
-                v-bind:settingName="s.settingName"
-                v-bind:options="s.options"
-                v-bind:value="s.value"
+            <!-- some settings may have not type because of they are in developing 
+            so, it is neccessary to check, if type is defined-->
+            <component
+                v-if="!!setting.type"
+                v-bind:is="setting.type | componentName"
+                v-bind="setting"
+                v-bind:id="`${id}-setting-${index}`"
                 v-on:selected-changed="onchanged($event, index)"
             />
         </div>
@@ -29,16 +21,24 @@
 <script>
 import RadioSetting from "./RadioSetting"
 import CheckboxSetting from "./CheckboxSetting"
+import ColorSetting from "./ColorSetting"
 
 export default {
     name: "SettingGroup",
     components: { 
         RadioSetting,
-        CheckboxSetting
+        CheckboxSetting,
+        ColorSetting
+    },
+    data() {
+        return {
+            isMounted: false
+        }
     },
     props: [
         "title",
-        "settings"
+        "settings",
+        "id"
     ],
     methods: {
         onchanged(ev, index) {
@@ -47,6 +47,16 @@ export default {
                 settingName: ev.settingName,
                 targetIndex: index
             });
+        }
+    },
+
+    mounted() {
+        this.isMounted = true;
+    },
+
+    filters: {
+        componentName(type) {
+            return type + "-setting";
         }
     }
 }
