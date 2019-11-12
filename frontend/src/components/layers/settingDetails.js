@@ -79,5 +79,13 @@ export const SettingDetails = Object.freeze({
         title: "Show text",
         type: "checkbox",
         default: true
+    },
+
+    fontSize: {
+        title: "Font size",
+        type: "number",
+        default: 15,
+        min: 5,
+        max: 50,
     }
 });
