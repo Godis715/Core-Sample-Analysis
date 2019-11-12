@@ -227,7 +227,6 @@ export default {
                 if (currWidth > width)
                     width = currWidth;
             }
-            console.log("Abswidth is "+width);
             return width;
         },
         absWidthUV() {
