@@ -35,8 +35,12 @@
         <div
             v-for="(col, colIndex) in columns"
             v-bind:key="colIndex"
+            class="column-wrapper"
         >
-            <button v-on:click="showSettingList(colIndex)">Show menu</button>
+            <div class="column-wrapper-header">
+                <button class="show-settings-btn" v-on:click="showSettingList(colIndex)">...</button>
+                <button class="close-column-btn">x</button>
+            </div>
             <!-- Component, which combines and draws layers. -->
             <multiple-layer-view
                 v-bind:layers="col.layers"
@@ -54,12 +58,9 @@
     #main {
         margin-left: 25px;
         margin-bottom: 500px;
+        margin-top: 25px;
         display: flex;
         flex-direction: row;
-    }
-
-    .column {
-        outline: 2px solid lightgray;
     }
 
     .setting-group {
@@ -72,6 +73,48 @@
 
     .setting-group:first-child {
         margin-top: 0;
+    }
+
+    .column-wrapper {
+        padding-top: 0;
+        background-color: whitesmoke;
+        border: 1.3px solid lightgray;
+        margin: 5px;
+    }
+
+    .column-wrapper-header {
+        background-color: lightgray;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+    }
+
+    .column {
+        margin: 10px;
+        outline: 2px solid gray;
+    }
+
+    .show-settings-btn {
+        border: none;
+        outline: none;
+        cursor: pointer;
+        background: darkgray;
+        color: white;
+        text-align: center;
+        margin: 5px;
+        border-radius: 10%;
+    }
+
+    .close-column-btn {
+        border: none;
+        border-radius: 50%;
+        outline: none;
+        cursor: pointer;
+        background: darkgray;
+        color: white;
+        text-align: center;
+        margin: 5px;
+        margin-left: 0;
     }
 </style>
 
@@ -96,7 +139,7 @@ export default {
         return {
             markup: undefined,
             columns: [],
-            resolution: 20,
+            resolution: 15,
             settingToShow: -1,
             showMenu: false,
             colSettingToShow: undefined
