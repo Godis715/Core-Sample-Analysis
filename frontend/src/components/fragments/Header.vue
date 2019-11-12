@@ -3,10 +3,16 @@
     <div
         v-for="(linkName, li) in links"
         v-bind:key="'link-' + li">
-        <router-link v-bind:to="{ name: linkName }">{{linkName}}</router-link>
+        <router-link
+            v-bind:to="{ name: linkName }"
+        >{{linkName}}
+        </router-link>
     </div>
     <div>
-        <div class="nav-btn" v-on:click="logout">Logout</div>
+        <div
+            class="nav-btn"
+            v-on:click="logout"
+        >Logout</div>
     </div>
 </header>
 </template>
