@@ -16,8 +16,7 @@ env:
 # Установка зависимостей в окружение
 install:
   - pip install -q Django==$DJANGO_VERSION
-  - pip install -r mainService/requirements.txt
-  - npm install
+  - sh install.sh
 
 # Запуск тестов
 script:
