@@ -1,4 +1,8 @@
-export const imgCh = {
+export const ImageLayer = {
+    defaultSettings: Object.freeze({
+        fragmentsWidthFit: "stretch"
+    }),
+
     draw(canvas, data, width, res, settings) {
         let frags = data;
 
