@@ -20,8 +20,10 @@
     export default {
         name: 'Message',
         props: {
-            type: Object,
-            required: true
+            msgData: {
+                type: Object,
+                required: true
+            }
         },
         computed: {
             getClass() {

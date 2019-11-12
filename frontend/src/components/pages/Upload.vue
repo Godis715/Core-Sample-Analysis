@@ -28,7 +28,7 @@
             id="message-block">
             <Message
                 v-for="(msg, index) in messages"
-                v-on:msgData="msg"
+                v-bind:msgData="msg"
                 v-bind:key="'msg-' + index" />
         </div>
 
