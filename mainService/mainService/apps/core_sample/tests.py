@@ -191,9 +191,6 @@ class Upload_APITestCase(APITestCase):
         self.url = reverse('core_sample:cs_upload')
         self.archive_generator = Archive_Generator(f'{settings.PROJECT_ROOT}/static/tests')
 
-    def test__not_valid(self):
-        self.assertTrue(False)
-
     def test_success(self):
         """Test POST api/core_sample/upload with correct archive"""
         LOGIN(self.main_user)
