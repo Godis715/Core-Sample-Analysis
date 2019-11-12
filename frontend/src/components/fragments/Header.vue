@@ -1,11 +1,13 @@
 <template>
 <header>
-    <div><router-link :to="{name:'Account'}">Account</router-link></div>
-    <div><router-link :to="{name:'Upload'}">Upload</router-link></div>
-    <div><router-link :to="{name:'Search'}">Search</router-link></div>
-    <div><router-link :to="{name:'FAQ'}">FAQ</router-link></div>
-    <div><router-link :to="{name:'Search'}">About</router-link></div>
-    <div><div class="nav-btn" v-on:click="logout">Logout</div></div>
+    <div
+        v-for="(linkName, li) in links"
+        v-bind:key="'link-' + li">
+        <router-link v-bind:to="{ name: linkName }">{{linkName}}</router-link>
+    </div>
+    <div>
+        <div class="nav-btn" v-on:click="logout">Logout</div>
+    </div>
 </header>
 </template>
 
@@ -40,6 +42,17 @@
 <script>
     export default {
         name: 'site-header',
+        data() {
+            return {
+                links: [
+                    "Account",
+                    "Upload",
+                    "Search",
+                    "FAQ",
+                    "Search"
+                ]
+            };
+        },
         methods: {
             logout() {
                 let logoutProm = this.$store.dispatch('AUTH_LOGOUT').then(() => {
