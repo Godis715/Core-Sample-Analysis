@@ -20,5 +20,5 @@ install:
 
 # Запуск тестов
 script:
-  - test.sh
-  - build.sh
+  - sh test.sh
+  - sh build.sh
