@@ -22,13 +22,15 @@
 import RadioSetting from "./RadioSetting"
 import CheckboxSetting from "./CheckboxSetting"
 import ColorSetting from "./ColorSetting"
+import NumberSetting from "./NumberSetting"
 
 export default {
     name: "SettingGroup",
     components: { 
         RadioSetting,
         CheckboxSetting,
-        ColorSetting
+        ColorSetting,
+        NumberSetting
     },
     data() {
         return {

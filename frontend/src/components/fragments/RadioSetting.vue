@@ -11,7 +11,7 @@
             v-bind:value="item.value"
             v-model="selected"
             v-bind:id="`${id}-input-${index}`"
-     />
+        />
         <label v-bind:for="`${id}-input-${index}`">{{item.name}}</label>
     </div>
 </form>
