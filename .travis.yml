@@ -20,5 +20,5 @@ install:
 
 # Запуск тестов
 script:
-  - cd mainService
-  - python manage.py test
+  - test.sh
+  - build.sh

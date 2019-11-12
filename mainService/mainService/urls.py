@@ -14,19 +14,19 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, re_path, include
 from django.views.generic import TemplateView
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from .views import login, logout
 
 urlpatterns = [
-    path('', TemplateView.as_view(template_name='index.html')),
     path('api/login', login, name='login'),
     path('api/logout', logout, name='logout'),
     path('api/core_sample/', include('core_sample.urls')),
     path('api/workstation/', include('workstation.urls')),
     path('admin/', admin.site.urls),
+    re_path(r'^(?P<path>.*)$', TemplateView.as_view(template_name='index.html')),
 ]
 
 # Added the url of static files. For example: /static/core_sample/user_USERNAME/cs_UUID/FILENAME
