@@ -1,6 +1,18 @@
 import os
 import sys
 
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+PROJECT_ROOT = os.path.dirname(__file__)
+sys.path.insert(0, os.path.join(PROJECT_ROOT, 'apps'))
+
+
+DEBUG = False
+
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
+
+
 try:
 	from local_settings import *
 
@@ -27,14 +39,3 @@ except ImportError:
 	}
 
 	ALLOWED_HOSTS = ['*']
-
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-PROJECT_ROOT = os.path.dirname(__file__)
-sys.path.insert(0, os.path.join(PROJECT_ROOT, 'apps'))
-
-
-DEBUG = False
-
-STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')

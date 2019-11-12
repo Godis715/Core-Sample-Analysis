@@ -17,6 +17,7 @@ env:
 install:
   - pip install -q Django==$DJANGO_VERSION
   - pip install -r mainService/requirements.txt
+  - npm install
 
 # Запуск тестов
 script:
