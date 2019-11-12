@@ -4,26 +4,53 @@
     <div id="main-cont">
 
         <!-- Element, which provide file uploading -->
-        <div id="upload-cont" @click="triggerUpload">
-            <input type="file" id="uploader" ref="uploadedFile" @change="attachedFileChanged">
+        <div
+            id="upload-cont"
+            v-on:click="triggerUpload">
+
+            <input
+                type="file"
+                id="uploader"
+                ref="uploadedFile"
+                v-on:change="attachedFileChanged" />
+                
             <label for="uploader">Upload</label>
 
-            <span id="file-name" v-if="!noFileAttached">{{file.name}}</span>
+            <span
+                id="file-name"
+                v-if="!noFileAttached"
+            >{{file.name}}</span>
         </div>
 
         <!-- For showing diffrenet about file uploading messages -->
-        <div v-if="!noFileAttached" id="message-block">
-            <Message v-for="(msg, index) in messages" :msgData="msg" :key="index" />
+        <div
+            v-if="!noFileAttached"
+            id="message-block">
+            <Message
+                v-for="(msg, index) in messages"
+                v-on:msgData="msg"
+                v-bind:key="'msg-' + index" />
         </div>
 
         <!-- Buttons -->
-        <div v-if="!noFileAttached" id="btns-block">
+        <div
+            v-if="!noFileAttached"
+            id="btns-block">
             <div>
-                <button @click="startAnalysis" v-if="!isAnalysed" :disabled="!allowedAnalysis">Start analysis</button>
-                <button v-else :disabled="true">Analysing..</button>
+                <button
+                    v-on:click="startAnalysis"
+                    v-if="!isAnalysed"
+                    v-on:disabled="!allowedAnalysis"
+                >Start analysis</button>
+
+                <button
+                    v-else
+                    v-on:disabled="true"
+                >Analysing..</button>
             </div>
+
             <div>
-                <button @click="resetView">Reset</button>
+                <button v-on:click="resetView">Reset</button>
             </div>
         </div>
     </div>
