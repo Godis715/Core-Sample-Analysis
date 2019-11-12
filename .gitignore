@@ -173,3 +173,6 @@ mainService/mainService/static/
 # test files
 mainService/archiveDecoder/tests
 tools/archiveGenerator/sample_archives
+
+# local files
+mainService/mainService/local_settings.py
