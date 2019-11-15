@@ -59,8 +59,3 @@ with open(f"{TEMPLATE_ROOT}/index.html", 'w') as index_file:
 #END
 
 print('Success build!')
-
-print('Try read os.environ')
-if (os.environ['FTP_USER'] == 'ftp-admin'):
-	print('FTP_USER is Ok!')
-print(os.environ['FTP_PASSWORD'])
