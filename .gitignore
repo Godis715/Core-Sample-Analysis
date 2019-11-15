@@ -170,6 +170,4 @@ typings/
 # static files
 mainService/mainService/static/
 
-# test files
-mainService/archiveDecoder/tests
-tools/archiveGenerator/sample_archives
+# tests files

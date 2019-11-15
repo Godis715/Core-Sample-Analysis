@@ -29,4 +29,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 ]
 
+# Added the url of static files. For example: /static/core_sample/user_USERNAME/cs_UUID/FILENAME
 urlpatterns += staticfiles_urlpatterns()
