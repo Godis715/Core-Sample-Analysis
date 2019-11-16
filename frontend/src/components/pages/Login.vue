@@ -1,14 +1,26 @@
 <template>
 <div>
-    <form @submit.prevent="login">
+    <form v-on:submit.prevent="login">
         <h1>Sign in</h1>
         <div>
-            <input required id="username" v-model="username" type="text" placeholder="User42" />
+            <input 
+                id="username"
+                v-model="username"
+                type="text"
+                required
+                placeholder="User42"
+            />
             <label for="username">Login</label>
         </div>
 
         <div>
-            <input required id="password" v-model="password" type="password" placeholder="Password" />
+            <input
+                id="password"
+                v-model="password"
+                type="password"
+                required
+                placeholder="Password"
+            />
             <label for="password">Password</label>
         </div>
 
@@ -21,12 +33,12 @@
 
 <script>
 export default {
-    name: 'Login',
+    name: "Login",
     data() {
         return {
-            username: '',
-            password: '',
-            message: ''
+            username: "",
+            password: "",
+            message: ""
         }
     },
     methods: {

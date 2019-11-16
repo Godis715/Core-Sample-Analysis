@@ -1,6 +1,9 @@
 <template>
 <div>
-    <div class="moving" v-if="active"></div>
+    <div
+        class="moving"
+        v-if="active"
+    ></div>
 </div>
 </template>
 
@@ -23,7 +26,7 @@
 
 <script>
     export default {
-        name: 'progress-bar',
+        name: "ProgressBar",
         data() {
             return {
                 active: false
