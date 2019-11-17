@@ -1,3 +1,5 @@
+os: Windows
+
 language: python
 
 branches:
@@ -24,10 +26,4 @@ script: sh test.sh
 # Билд и деплой
 after_success: 
   - sh build.sh
-
-deploy:
-  skip_cleanup: true
-  provider: script
-  script: bash deploy.sh
-  on:
-    branch: project/feature/CI&CD
+  - sh deploy.sh
