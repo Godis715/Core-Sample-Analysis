@@ -10,7 +10,10 @@ import sys
 import environ
 
 # reading .env file and added variable in os.environ
-environ.Env.read_env('.env')
+try:
+	environ.Env.read_env('.env')
+except:
+	...
 
 
 # if 'INSTALL' not in os.environ or os.environ['INSTALL'] != 'Done':   
