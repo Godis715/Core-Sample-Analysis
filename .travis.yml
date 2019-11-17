@@ -24,4 +24,4 @@ script: sh test.sh
 # Билд и деплой
 after_success:
   - sh build.sh
-  - sh deploy.sh
+  - python deploy.py

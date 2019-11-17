@@ -9,9 +9,6 @@ import os
 import sys
 import environ
 
-# reading .env file and added variable in os.environ
-environ.Env.read_env('.env')
-
 
 # if 'INSTALL' not in os.environ or os.environ['INSTALL'] != 'Done':   
 #     # os.system ('pip install -r requirements.txt')
@@ -26,6 +23,12 @@ sys.path.insert(0, os.path.join(PROJECT_ROOT, 'apps'))
 
 # Paths for import
 sys.path.append(os.path.join(BASE_DIR, 'archiveDecoder'))
+
+
+# reading .env file and added variable in os.environ
+if os.path.exists(os.path.join(BASE_DIR, '.env')):
+	environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
 
 
 if 'IS_PRODACTION' in os.environ:
