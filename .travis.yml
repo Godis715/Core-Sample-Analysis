@@ -22,11 +22,12 @@ install:
 script: sh test.sh
 
 # Билд и деплой
-after_success: sh build.sh
+after_success: 
+  - sh build.sh
 
 deploy:
   skip_cleanup: true
   provider: script
-  script: sh deploy.sh
+  script: bash deploy.sh
   on:
     branch: project/feature/CI&CD
