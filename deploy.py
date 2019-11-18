@@ -142,7 +142,7 @@ if __name__ == '__main__':
 
 	print('Login in FTP-server ...')
 	# ftp.login(os.environ['FTP_USER'], os.environ['FTP_PASSWORD'])
-	ftp.login(os.environ['FTP_USER_TEST'], os.environ['FTP_PASSWORD_TEST'])
+	ftp.login(os.environ['FTP_USER_TEST'], os.environ['FTP_PASS_TEST'])
 
 	ftp.set_debuglevel(2)
 	print(ftp.nlst())
