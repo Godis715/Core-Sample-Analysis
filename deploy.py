@@ -141,8 +141,8 @@ if __name__ == '__main__':
 	print('')
 
 	print('Login in FTP-server ...')
-	print('>', ftp.login('ftp-admin', 'Flvby66!'))
-	#ftp.login(os.environ['FTP_USER'], os.environ['FTP_PASSWORD'])
+	ftp.login(os.environ['FTP_USER'], os.environ['FTP_PASSWORD'])
+	ftp.set_debuglevel(2)
 
 	print('')
 
