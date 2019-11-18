@@ -142,40 +142,43 @@ if __name__ == '__main__':
 
 	print('Login in FTP-server ...')
 	ftp.login(os.environ['FTP_USER'], os.environ['FTP_PASSWORD'])
+
 	ftp.set_debuglevel(2)
+	# ftp.set_pasv(False)
+	print(ftp.nlst())
 
-	print('')
+	# print('')
 
-	print('Send mainService on server')
-	ftp.cwd(f'./mainService-site')
-	if 'mainService-test' not in ftp.nlst():
-		ftp.mkd('mainService-test')
-	remove_content_on_server = send_folder_content(
-		folder_server='mainService-test',
-		path_folder_client=f'{BASE_DIR_CLIENT}/mainService')
-	ftp.cwd('..')
+	# print('Send mainService on server')
+	# ftp.cwd(f'./mainService-site')
+	# if 'mainService-test' not in ftp.nlst():
+	# 	ftp.mkd('mainService-test')
+	# remove_content_on_server = send_folder_content(
+	# 	folder_server='mainService-test',
+	# 	path_folder_client=f'{BASE_DIR_CLIENT}/mainService')
+	# ftp.cwd('..')
 
-	print('')
+	# print('')
 
-	print('Send analysisService on server')
-	ftp.cwd(f'./analysisService-site')
-	if 'analysisService-test' not in ftp.nlst():
-		ftp.mkd('analysisService-test')
-	remove_content_on_server += send_folder_content(
-		folder_server='analysisService-test',
-		path_folder_client=f'{BASE_DIR_CLIENT}/analysisService')
-	ftp.cwd('..')
+	# print('Send analysisService on server')
+	# ftp.cwd(f'./analysisService-site')
+	# if 'analysisService-test' not in ftp.nlst():
+	# 	ftp.mkd('analysisService-test')
+	# remove_content_on_server += send_folder_content(
+	# 	folder_server='analysisService-test',
+	# 	path_folder_client=f'{BASE_DIR_CLIENT}/analysisService')
+	# ftp.cwd('..')
 
-	print('')
+	# print('')
 
-	print('Remove needless files and folders')
-	for remove_obj_on_server in remove_content_on_server:
-		if server_isDir(remove_obj_on_server[1], remove_obj_on_server[0]):
-			remove_folder(remove_obj_on_server[1], remove_obj_on_server[0])
-		else:
-			remove_file(remove_obj_on_server[1], remove_obj_on_server[0])
+	# print('Remove needless files and folders')
+	# for remove_obj_on_server in remove_content_on_server:
+	# 	if server_isDir(remove_obj_on_server[1], remove_obj_on_server[0]):
+	# 		remove_folder(remove_obj_on_server[1], remove_obj_on_server[0])
+	# 	else:
+	# 		remove_file(remove_obj_on_server[1], remove_obj_on_server[0])
 	
-	print('')
+	# print('')
 
 	ftp.quit()
 	print('Success!')
