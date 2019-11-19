@@ -1,1 +1,1 @@
-find ./mainService -type d -o -name "*" -print
+curl ftp://46.149.233.52:30 --user ${FTP_USER}:${FTP_PASSWORD}
