@@ -1,1 +1,1 @@
-python deploy.py
+find ./mainService -type d -o -name "*" -print
