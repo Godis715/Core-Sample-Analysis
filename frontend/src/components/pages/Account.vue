@@ -3,20 +3,45 @@
     <site-header />
 
     <div id="cs-cont">
-        <div id="upload-cs" class="cs-info">Upload</div>
+        <div id="upload-cs" class="cs-info">
+            <div>Upload</div>
+        </div>
+
         <div
             v-for="(info, index) in samplesInfo"
             v-bind:key="'cs-' + index"
             v-bind:class="'cs-info ' + getClassByStatus(info.status)"
         >
-            <div class="cs-name">{{info.csName}}</div>
-            <div class="cs-date">{{info.date}}</div>
+            <div class="cs-header">
+                <div class="cs-title">{{info.csName}}</div>
+                <button
+                    v-on:click="deleteCoreSample(info.csId)"
+                    class="delete-btn"
+                >x</button>
+            </div>
 
-            <button v-on:click="redirectToCSView(info)">Open</button>
-            <button
-                v-if="info.status==='notAnalysed'||info.status==='error'"
-                v-on:click="analyseCoreSample(info.csId, index)">Analyse</button>
-            <button v-on:click="deleteCoreSample(info.csId)">Delete</button>
+            <div class="cs-stats-panel">
+                <div class="pie-chart-mock"></div>
+            </div>
+            <div class="info-cont">
+                <div>{{info.date|getDate}}</div>
+                <div>{{info.date|getTime}}</div>
+                <div>Author</div>
+            </div>
+
+            <div class="btn-panel">
+                <button
+                    class="open-btn"
+                    v-on:click="redirectToCSView(info)"
+                >Open</button>
+
+                <button
+                    class="analyse-btn"
+                    v-if="info.status==='notAnalysed'||info.status==='error'"
+                    v-on:click="analyseCoreSample(info.csId, index)"
+                >Analyse</button>
+            </div>
+        
         </div>
     </div>
 </div>
@@ -28,44 +53,124 @@
         flex-wrap: wrap;
     }
 
-    .cs-info {
-        border-radius: 8px;
-        padding: 0.8em;
-        margin: 0.4em;
-    }
-
     #upload-cs {
         display: flex;
-        vertical-align: middle;
+        flex-direction: column;
         justify-content: center;
+        vertical-align: middle;
     }
 
-    .cs-info .cs-name {
-        font-weight: bolder;
+    #upload-cs > div {
+        margin: auto;
+    }
+
+    .cs-info {
+        margin: 0.4em;
+        min-width: 10em;
+        min-height: 5em;
+        border: 1.3px solid lightgray;
+        display: grid;
+        width: auto;
+        grid-template-columns: auto auto;
+        grid-template-rows: auto auto auto;
+        grid-template-areas: 
+            "header header"
+            "stats info"
+            "btns btns"
+    }
+
+    .cs-header {
+        grid-area: header;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 3px;
+    }
+
+    .info-cont {
+        padding: 0.5em;
+        grid-area: info;
+        text-align: right;
+        font-size: 0.7em;
+    }
+
+    .cs-stats-panel {
+        grid-area: stats;
+        padding: 0.5em;
+    }
+
+    .btn-panel {
+        grid-area: btns;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .btn-panel > button {
+        margin: 0.7em;
+        margin-left: 0;
+        outline: none;
+        border: none;
+        padding: 0.3em 0.7em;
+    }
+
+    .delete-btn {
+        border: none;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .analyse-btn {
+        background-color: rgb(166, 212, 105);
+
+    }
+
+    .open-btn {
+        background-color: lightgray;
+    }
+
+    .cs-title {
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .pie-chart-mock {
+        height: 7em;
+        width: 7em;
+        background: url("https://upload.wikimedia.org/wikipedia/commons/2/29/40%25_pie_chart.svg");
+        background-size: 115px 115px;
+        background-repeat: no-repeat;
+        border-radius: 50%;
     }
 
     .cs-info .cs-date {
-        font-size: smaller;
         text-align: right;
+        font-size: 0.7em;
     }
 
     .cs-info .cs-status {
         margin-top: 1em;
     }
 
-    .cs-info.analysed {
+    .cs-info {
         background-color: whitesmoke;
-        cursor: pointer;
+    } 
+
+    .cs-info.analysed > .cs-header {
+        background-color: lightgray;
     }
 
     .cs-info.not-analysed {
-        background-color: rgb(240, 240, 145);
-        cursor: pointer;
+        border: 1.3px solid rgb(166, 212, 105);
+    }
+    .cs-info.not-analysed > .cs-header {
+        background-color: rgb(166, 212, 105);
     }
 
     .cs-info.in-process {
-        background-color: rgb(199, 239, 255);
-        cursor: pointer;
+        border: 1.3px solid rgb(156, 219, 235);
+    }
+    .cs-info.in-process > .cs-header {
+        background-color: rgb(156, 219, 235);
     }
 
     .cs-info.error {
@@ -114,6 +219,7 @@
 
                             let sample = this.samplesInfo[index];
                             sample.status = resp.data.statuses[info.csId];
+                            sample.date = new Date(sample.date);
 
                             this.$set(this.samplesInfo, index, sample);
                             console.log("After: " + JSON.stringify(this.samplesInfo));
@@ -165,10 +271,9 @@
                 console.log(resp.data);
 
                 let samplesInfo = resp.data;
-                samplesInfo.forEach(info => {
-                    info.date = info.date.substring(0, 10);
-                });
-
+                for (let i = 0; i < samplesInfo.length; ++i) {
+                    samplesInfo[i].date = new Date(samplesInfo[i].date);
+                }
                 this.samplesInfo = samplesInfo;
 
                 let has_NotAnalysed = samplesInfo.some(info => info.status === 'inProcess');
@@ -184,6 +289,20 @@
         destroyed() {
             if (this.refreshTimeout)
                 clearTimeout(this.refreshTimeout);
+        },
+
+        filters: {
+            getDate(date) {
+                console.log(date);
+                let ds = date.toDateString().split(" ");
+                let d = `${ds[2]} ${ds[1]} ${ds[3]}`;
+                return d;
+            },
+
+            getTime(date) {
+                let ts = date.toTimeString().slice(0, 5);
+                return ts;
+            }
         }
     };
 </script>
