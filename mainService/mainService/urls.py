@@ -26,8 +26,9 @@ urlpatterns = [
     path('api/core_sample/', include('core_sample.urls')),
     path('api/workstation/', include('workstation.urls')),
     path('admin/', admin.site.urls),
-    re_path(r'^(?P<path>.*)$', TemplateView.as_view(template_name='index.html')),
+    path('', TemplateView.as_view(template_name='index.html')),
+    # Added the url of static files. For example: /static/core_sample/user_USERNAME/cs_UUID/FILENAME
+    *staticfiles_urlpatterns(),
+    re_path(r'^(?P<path>.*)$', TemplateView.as_view(template_name='index.html'))
 ]
 
-# Added the url of static files. For example: /static/core_sample/user_USERNAME/cs_UUID/FILENAME
-urlpatterns += staticfiles_urlpatterns()

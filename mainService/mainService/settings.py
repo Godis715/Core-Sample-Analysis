@@ -33,9 +33,7 @@ if os.path.exists(os.path.join(BASE_DIR, '.env')):
 
 if 'IS_PRODACTION' in os.environ:
 
-	DEBUG = False
-
-	STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
+	DEBUG = True
 
 	ALLOWED_HOSTS = ['localhost', '46.149.233.52']
 
@@ -47,7 +45,7 @@ if 'IS_PRODACTION' in os.environ:
 		        'NAME': 'Core-Sample-Analysis-db-prod',
 		        'USER': os.environ['DATABASE_USER'],
 		        'PASSWORD': os.environ['DATABASE_PASSWORD'],
-		        'HOST': '46.149.233.52',
+		        'HOST': 'localhost',
 		        'PORT': 5432,
 		    }
 		}
@@ -61,10 +59,6 @@ if 'IS_PRODACTION' in os.environ:
 else:
 
 	DEBUG = True
-
-	STATICFILES_DIRS = [
-    	os.path.join(PROJECT_ROOT, 'static'),
-	]
 
 	ALLOWED_HOSTS = ['*']
 
@@ -202,6 +196,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+#STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
+
+STATICFILES_DIRS = [
+    	os.path.join(PROJECT_ROOT, 'static'),
+	]
+
 
 # Settings of rest_framework
 REST_FRAMEWORK = {
