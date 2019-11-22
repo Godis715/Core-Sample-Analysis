@@ -2,6 +2,11 @@
 <div>
     <site-header />
 
+    <div id="main">
+    <div>
+        <h1>Uploaded core samples</h1>
+    </div>
+
     <div id="cs-cont">
         <div id="upload-cs" class="cs-info">
             <div>Upload</div>
@@ -13,11 +18,14 @@
             v-bind:class="'cs-info ' + getClassByStatus(info.status)"
         >
             <div class="cs-header">
-                <div class="cs-title">{{info.csName}}</div>
+                <div
+                    class="cs-title"
+                    v-on:click="redirectToCSView(info)"
+                >{{info.csName}}</div>
                 <button
                     v-on:click="deleteCoreSample(info.csId)"
-                    class="delete-btn"
-                >x</button>
+                    class="round delete dark-alpha"
+                ></button>
             </div>
 
             <div class="cs-stats-panel">
@@ -27,16 +35,21 @@
                 <div>{{info.date|getDate}}</div>
                 <div>{{info.date|getTime}}</div>
                 <div>Author</div>
+
+                <div
+                    v-if="info.status==='notAnalysed'"
+                    class="not-analysed-sign"
+                >Not analysed</div>
+
+                <div
+                    v-if="info.status==='inProcess'"
+                    class="in-process-sign"
+                >Analysing..</div>
             </div>
 
             <div class="btn-panel">
                 <button
-                    class="open-btn"
-                    v-on:click="redirectToCSView(info)"
-                >Open</button>
-
-                <button
-                    class="analyse-btn"
+                    class="usual green"
                     v-if="info.status==='notAnalysed'||info.status==='error'"
                     v-on:click="analyseCoreSample(info.csId, index)"
                 >Analyse</button>
@@ -44,10 +57,15 @@
         
         </div>
     </div>
+    </div>
 </div>
 </template>
 
 <style>
+    #main {
+        margin: 20px;
+    }
+
     #cs-cont {
         display: flex;
         flex-wrap: wrap;
@@ -64,6 +82,32 @@
         margin: auto;
     }
 
+    .not-analysed-sign:before {
+        content: "";
+        display: block;
+        width: 20px;
+        height: 20px;
+        float: left;
+        margin-right: 5px;
+        background: var(--warning-icon);
+        background-size: 20px 20px;
+    }
+
+    .in-process-sign:before {
+        content: "";
+        display: block;
+        background: var(--loading-icon);
+        width: 20px;
+        height: 20px;
+        background-size: 20px 20px;
+        float: left;
+        margin-right: 5px;
+        
+        animation: 0.5s linear 0s infinite loading-icon;
+    }
+
+    @keyframes loading-icon { from { transform: rotate(0deg); } to { transform: rotate(360deg); }  }
+
     .cs-info {
         margin: 0.4em;
         min-width: 10em;
@@ -72,7 +116,7 @@
         display: grid;
         width: auto;
         grid-template-columns: auto auto;
-        grid-template-rows: auto auto auto;
+        grid-template-rows: auto 5fr auto;
         grid-template-areas: 
             "header header"
             "stats info"
@@ -85,13 +129,14 @@
         flex-direction: row;
         justify-content: space-between;
         padding: 3px;
+        border-bottom: 1px solid lightgray;
     }
 
     .info-cont {
         padding: 0.5em;
         grid-area: info;
         text-align: right;
-        font-size: 0.7em;
+        font-size: 1em;
     }
 
     .cs-stats-panel {
@@ -105,38 +150,33 @@
         justify-content: flex-end;
     }
 
-    .btn-panel > button {
-        margin: 0.7em;
-        margin-left: 0;
-        outline: none;
-        border: none;
-        padding: 0.3em 0.7em;
-    }
-
-    .delete-btn {
-        border: none;
-        border-radius: 50%;
-        background-color: rgba(255, 255, 255, 0.4);
-    }
-
-    .analyse-btn {
-        background-color: rgb(166, 212, 105);
-
-    }
-
-    .open-btn {
-        background-color: lightgray;
-    }
-
     .cs-title {
-        text-align: center;
-        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin: auto;
+        font-size: larger;
+        font-weight: 600;
+        color: rgb(99, 168, 52);
     }
 
-    .pie-chart-mock {
+    .cs-info.analysed .cs-title:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    .cs-info.analysed .pie-chart-mock {
         height: 7em;
         width: 7em;
-        background: url("https://upload.wikimedia.org/wikipedia/commons/2/29/40%25_pie_chart.svg");
+        background-color:rgb(99, 168, 52);
+        border-radius: 50%;
+    }
+
+    .cs-info:not(.analysed) .pie-chart-mock {
+        height: 7em;
+        width: 7em;
+        background: repeating-linear-gradient(45deg, white ,white 4px, lightgray 2px, lightgray 6px);
+        border: 2px solid lightgray;
         background-size: 115px 115px;
         background-repeat: no-repeat;
         border-radius: 50%;
@@ -145,36 +185,6 @@
     .cs-info .cs-date {
         text-align: right;
         font-size: 0.7em;
-    }
-
-    .cs-info .cs-status {
-        margin-top: 1em;
-    }
-
-    .cs-info {
-        background-color: whitesmoke;
-    } 
-
-    .cs-info.analysed > .cs-header {
-        background-color: lightgray;
-    }
-
-    .cs-info.not-analysed {
-        border: 1.3px solid rgb(166, 212, 105);
-    }
-    .cs-info.not-analysed > .cs-header {
-        background-color: rgb(166, 212, 105);
-    }
-
-    .cs-info.in-process {
-        border: 1.3px solid rgb(156, 219, 235);
-    }
-    .cs-info.in-process > .cs-header {
-        background-color: rgb(156, 219, 235);
-    }
-
-    .cs-info.error {
-        background-color: pink;
     }
 </style>
 
@@ -199,7 +209,7 @@
             },
 
             redirectToCSView(info) {
-                if (info.status === "error") return;
+                if (info.status !== "analysed") return;
                 this.$router.push(`view/${info.csId}`);
             },
 

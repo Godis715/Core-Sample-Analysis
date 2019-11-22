@@ -38,8 +38,8 @@
             class="column-wrapper"
         >
             <div class="column-wrapper-header">
-                <button class="show-settings-btn" v-on:click="showSettingList(colIndex)">...</button>
-                <button class="close-column-btn">x</button>
+                <button class="smooth-rect dark-alpha" v-on:click="showSettingList(colIndex)">...</button>
+                <button class="delete round dark-alpha"></button>
             </div>
             <!-- Component, which combines and draws layers. -->
             <multiple-layer-view
@@ -103,18 +103,6 @@
         text-align: center;
         margin: 5px;
         border-radius: 10%;
-    }
-
-    .close-column-btn {
-        border: none;
-        border-radius: 50%;
-        outline: none;
-        cursor: pointer;
-        background: darkgray;
-        color: white;
-        text-align: center;
-        margin: 5px;
-        margin-left: 0;
     }
 </style>
 

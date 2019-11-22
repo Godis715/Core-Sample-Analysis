@@ -1,0 +1,6 @@
+:root {
+    --base-green: rgb(166, 212, 105);
+    --base-light-gray: lightgray;
+    --warning-icon: url("https://icon-library.net/images/warning-icon-svg/warning-icon-svg-18.jpg");
+    --loading-icon: url("https://cdn.onlinewebfonts.com/svg/img_370451.png");
+}

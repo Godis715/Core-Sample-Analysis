@@ -2,7 +2,9 @@
 <div>
     <site-header />
     <div id="main-cont">
-
+        <div>
+            <h1>Upload core sample for analysis</h1>
+        </div>
         <!-- Element, which provide file uploading -->
         <div
             id="upload-cont"
@@ -52,6 +54,31 @@
             <div>
                 <button v-on:click="resetView">Reset</button>
             </div>
+        </div>
+
+        <div id="info-panel">
+            <h2>Files must match these rules:</h2>
+            <ul>
+                <li>
+                    File must be a .zip archive
+                </li>
+                <li>
+                    Structure description of the sample must be situated in a root of the archive in "description.json".<br/>
+                    To get detailed information about description structure and explore examples visit <a href="#">FAQ</a>
+                </li>
+                <li>
+                    Archive should contain only that files, that are refernced in description.json.
+                </li>
+                <li>
+                    Sizes of day-light and uv images of same fragments should match.
+                </li>
+            </ul>
+            <h2>Also</h2>
+            <ul>
+                <li>
+                    If the core sample has been already uploaded, service will provide a link to it.
+                </li>
+            </ul>
         </div>
     </div>
 </div>
@@ -113,6 +140,15 @@
     #file-name {
         font-size: 0.8em;
         color: darkgray;
+    }
+
+    #info-panel {
+        max-width: 500px;
+        text-align: justify;
+    }
+
+    #info-panel li {
+        margin-bottom: 1em;
     }
 
     .msg {

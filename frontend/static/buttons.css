@@ -1,0 +1,62 @@
+button {
+    cursor: pointer;
+    outline: none;
+    border: none;
+    margin: 5px;
+}
+
+button.light-alpha {
+    background-color: rgba(255, 255, 255, 0.4);
+    color: black;
+}
+
+button.light-alpha:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+    color: white;
+}
+
+button.dark-alpha {
+    background-color: rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+button.dark-alpha:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+button.red-alpha {
+    background-color: rgba(139, 0, 0, 0.4);
+    color: white;
+}
+
+button.red-alpha:hover {
+    background-color: rgba(155, 0, 0, 0.7);
+}
+
+button.round {
+    border-radius: 50%;
+    height: 1.5em;
+    width: 1.5em;
+}
+
+button.delete::before {
+    content: "x";
+}
+
+button.smooth-rect {
+    border: none;
+    border-radius: 10%;
+}
+
+button.usual {
+    padding: 0.5em 0.9em;
+    font-weight: 400;
+}
+
+button.green {
+    background-color: var(--base-green);
+}
+
+button.gray {
+    background-color: var(--base-light-gray);
+}
