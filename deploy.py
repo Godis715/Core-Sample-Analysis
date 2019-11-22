@@ -136,16 +136,18 @@ def send_folder_content(folder_server, path_folder_client):
 if __name__ == '__main__':
 
 	print('Connect to FTP-server ...')
-	print('>', ftp.connect('ftp2.sinergo.ru'))
+	print('>', ftp.connect('46.149.233.52', 30))
 
 	print('')
 
 	print('Login in FTP-server ...')
-	# ftp.login(os.environ['FTP_USER'], os.environ['FTP_PASSWORD'])
-	ftp.login(os.environ['FTP_USER_TEST'], os.environ['FTP_PASS_TEST'])
+	ftp.login(os.environ['FTP_USER'], os.environ['FTP_PASSWORD'])
+	#ftp.login(os.environ['FTP_USER_TEST'], os.environ['FTP_PASS_TEST'])
 
-	ftp.set_debuglevel(2)
-	print(ftp.nlst())
+	# ftp.set_debuglevel(2)
+	
+
+	send_file('./test-file.txt', 'test-file.txt')
 
 	# print('')
 
