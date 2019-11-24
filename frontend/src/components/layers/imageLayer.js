@@ -10,7 +10,6 @@ export const ImageLayer = {
 
         for (let i = 0; i < frags.length; ++i) {
             let img = new Image();
-            console.log(process.env);
             img.src = `${process.env.API_URL}:${process.env.API_PORT}\\static\\core_sample\\` + frags[i].src;
 
             let dHeight = (frags[i].bottom - frags[i].top) * res;
