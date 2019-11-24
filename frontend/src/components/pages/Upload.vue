@@ -1,7 +1,7 @@
 <template>
 <div>
     <site-header />
-    <div id="main-cont">
+    <div id="main-cont-upload">
         <div>
             <h1>Upload core sample for analysis</h1>
         </div>
@@ -85,12 +85,12 @@
 </template>
 
 <style>
-    #main-cont {
-        margin: 1em;
+    #main-cont-upload {
+        max-width: 500px;
         display: flex;
+        margin: auto;
         flex-direction: column;
-        justify-content: center;
-        align-items: center;
+        text-align: justify;
     }
 
     #main-cont > *:not(:last-child) {
@@ -107,6 +107,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        align-self: center;
         width: 200px;
         height: 100px;
         background-color: whitesmoke;

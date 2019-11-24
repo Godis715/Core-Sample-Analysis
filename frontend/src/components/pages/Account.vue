@@ -2,7 +2,7 @@
 <div>
     <site-header />
 
-    <div id="main">
+    <div id="main-cont-account">
     <div>
         <h1>Uploaded core samples</h1>
     </div>
@@ -29,7 +29,64 @@
             </div>
 
             <div class="cs-stats-panel">
-                <div class="pie-chart-mock"></div>
+                <multiple-pie-chart 
+                    v-if="info.status==='analysed'"
+                    v-bind:size="100"
+                    v-bind:chartData="[
+                        {
+                            slices: [
+                                { 
+                                    color: '#00fd13',
+                                    angle: 20 / 360 * 2 * Math.PI
+                                },
+                                {
+                                    color: '#15da48',
+                                    angle: 100 / 360 * 2 *Math.PI
+                                },
+                                { 
+                                    color: '#115a27',
+                                    angle: 240 / 360 * 2 *Math.PI
+                                }
+                            ]
+                        },
+                        {
+                            slices: [
+                                { 
+                                    color: '#ff4700',
+                                    angle: 50 / 360 * 2 *Math.PI
+                                },
+                                {
+                                    color: '#ffa500',
+                                    angle: 60 / 360 * 2 *Math.PI
+                                },
+                                {
+                                    color: '#671f09',
+                                    angle: 250 / 360 * 2 *Math.PI
+                                }
+                            ]
+                        },
+                        {
+                            slices: [
+                                {
+                                    color: 'black',
+                                    angle: 120 / 360 * 2 *Math.PI
+                                },
+                                {
+                                    color: 'gray',
+                                    angle: 120  / 360 * 2 *Math.PI
+                                },
+                                {
+                                    color: '#b3a590',
+                                    angle: 120 / 360 * 2 *Math.PI
+                                }
+                            ]
+                        }
+                    ]"
+                />
+                <div
+                    v-else
+                    class="pie-chart-mock"
+                ></div>
             </div>
             <div class="info-cont">
                 <div>{{info.date|getDate}}</div>
@@ -39,22 +96,23 @@
                 <div
                     v-if="info.status==='notAnalysed'"
                     class="not-analysed-sign"
-                >Not analysed</div>
+                    v-on:click="analyseCoreSample(info.csId, index)"
+                >Start analysis</div>
 
                 <div
                     v-if="info.status==='inProcess'"
                     class="in-process-sign"
                 >Analysing..</div>
-            </div>
 
-            <div class="btn-panel">
-                <button
-                    class="usual green"
-                    v-if="info.status==='notAnalysed'||info.status==='error'"
-                    v-on:click="analyseCoreSample(info.csId, index)"
-                >Analyse</button>
+                <div
+                    v-if="info.status==='analysed'"
+                    class="legend">
+                    <span class="oil">Oil</span>
+                    <span class="carbon">Carbon</span>
+                    <span class="rock">Rock</span>
+                    <span class="ruin">Ruin</span>
+                </div>
             </div>
-        
         </div>
     </div>
     </div>
@@ -62,7 +120,7 @@
 </template>
 
 <style>
-    #main {
+    #main-cont-account {
         margin: 20px;
     }
 
@@ -80,6 +138,11 @@
 
     #upload-cs > div {
         margin: auto;
+    }
+
+    .not-analysed-sign:hover {
+        cursor: pointer;
+        text-decoration: underline;
     }
 
     .not-analysed-sign:before {
@@ -116,12 +179,11 @@
         display: grid;
         width: auto;
         grid-template-columns: auto auto;
-        grid-template-rows: auto 5fr auto;
+        grid-template-rows: auto 5fr;
         grid-template-areas: 
             "header header"
             "stats info"
-            "btns btns"
-    }
+        }
 
     .cs-header {
         grid-area: header;
@@ -142,12 +204,6 @@
     .cs-stats-panel {
         grid-area: stats;
         padding: 0.5em;
-    }
-
-    .btn-panel {
-        grid-area: btns;
-        display: flex;
-        justify-content: flex-end;
     }
 
     .cs-title {
@@ -175,7 +231,6 @@
     .cs-info:not(.analysed) .pie-chart-mock {
         height: 7em;
         width: 7em;
-        background: repeating-linear-gradient(45deg, white ,white 4px, lightgray 2px, lightgray 6px);
         border: 2px solid lightgray;
         background-size: 115px 115px;
         background-repeat: no-repeat;
@@ -186,14 +241,48 @@
         text-align: right;
         font-size: 0.7em;
     }
+
+    .legend > span {
+        display: block;
+        text-align: left;
+    }
+    .legend > span::after {
+        display: block;
+        content: "";
+        height: 10px;
+        width: 10px;
+        border: 1px solid gray;
+        float: left;
+        margin-right: 5px;
+    }
+
+    .legend > .rock::after {
+        background-color: gray;
+    }
+
+    .legend > .oil::after {
+        background-color: green;
+    }
+
+    .legend > .carbon::after {
+        background-color: orange;
+    }
+
+    .legend > .ruin::after {
+        background-color: black;
+    }
 </style>
 
 <script>
-    import SiteHeader from "../fragments/Header.vue";
+    import SiteHeader from "../fragments/Header";
+    import MultiplePieChart from "../fragments/MultiplePieChart";
 
     export default {
         name: "Account",
-        components: { SiteHeader },
+        components: {
+            SiteHeader,
+            MultiplePieChart
+        },
         data() {
             return {
                 samplesInfo: [],

@@ -31,7 +31,7 @@
         </template>
     </draggable-menu>
 
-    <div id="main">
+    <div id="main-cont-viewer">
         <div
             v-for="(col, colIndex) in columns"
             v-bind:key="colIndex"
@@ -55,7 +55,7 @@
 </template>
 
 <style>
-    #main {
+    #main-cont-viewer {
         margin-left: 25px;
         margin-bottom: 500px;
         margin-top: 25px;

@@ -31,14 +31,18 @@ export default {
             ctx.fillStyle = "white";
             ctx.fillRect(0, 0, this.width, this.height);
 
-            if (imgLayer)
-                ImageLayer.draw(canvas, imgLayer.data, this.width, this.res, imgLayer.settings);
+            this.$nextTick(() => {
+                new Promise((res, rej) => {
+                    if (!imgLayer) res();
+                    ImageLayer.draw(canvas, imgLayer.data, this.width, this.res, imgLayer.settings).then(res);
+                }).then(() => {
+                    if (!markupLayer) return;
+                    let merged = MarkupLayer.mergeMarkup(markupLayer.data);
+                    let multi = MarkupLayer.single2multiTypeLayers(merged);
+                    MarkupLayer.draw(canvas, multi, this.width, this.res, markupLayer.settings);
+                });
+            });
 
-            if (markupLayer) {
-                let merged = MarkupLayer.mergeMarkup(markupLayer.data);
-                let multi = MarkupLayer.single2multiTypeLayers(merged);
-                MarkupLayer.draw(canvas, multi, this.width, this.res, markupLayer.settings);
-            }
         }
     },
     computed: {
