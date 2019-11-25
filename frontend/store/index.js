@@ -46,7 +46,7 @@ export const store = new Vuex.Store({
           return { ok: true };
         }).catch(err => {
           context.commit('AUTH_ERROR', err);
-          return { ok: false, message: err.message }
+          return { ok: false, err: err }
         });
     },
 

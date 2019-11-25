@@ -2,7 +2,6 @@ button {
     cursor: pointer;
     outline: none;
     border: none;
-    margin: 5px;
 }
 
 button.light-alpha {

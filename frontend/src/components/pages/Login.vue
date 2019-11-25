@@ -1,7 +1,12 @@
 <template>
-<div>
-    <form v-on:submit.prevent="login">
-        <h1>Sign in</h1>
+<div id="login-main">
+    <h1 align="center">Sign in</h1>
+    <hr/>
+    <span>Use login and password, which provided your system administrator.</span>
+    <form
+        id="signin-form"
+        v-on:submit.prevent="login"
+    >
         <div>
             <input 
                 id="username"
@@ -24,12 +29,54 @@
             <label for="password">Password</label>
         </div>
 
-        <button type="submit">Login</button>
+        <div class="err-message">{{message}}</div>
 
-        <div>{{message}}</div>
+        <button
+            class="usual"
+            type="submit"
+        >Login</button>
     </form>
 </div>
 </template>
+
+<style>
+    #login-main {
+        max-width: 400px;
+        margin: 2em auto;
+        padding: 1em;
+        border: 1.3px solid lightgray;
+        background-color: white;
+    }
+
+    #signin-form {
+        margin-top: 1em;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #login-main > hr {
+        border: none;
+        border-bottom: 1px solid lightgray;
+    }
+
+    #signin-form > button[type="submit"] {
+        margin-top: 1em;
+        font-size: 1em;
+        font-weight: 600;
+    }
+
+    #signin-form input[type="text"],
+    #signin-form input[type="password"] {
+        font-size: 1em;
+        margin-bottom: 5px;
+    }
+
+    .err-message {
+        color: brown;
+        white-space: pre;
+        margin-top: 1em;
+    }
+</style>
 
 <script>
 export default {
@@ -38,7 +85,7 @@ export default {
         return {
             username: "",
             password: "",
-            message: ""
+            message: " "
         }
     },
     methods: {
@@ -53,7 +100,13 @@ export default {
             
             var authRequest = this.$store.dispatch('AUTH_REQUEST', user).then(result => {
                 if (result.ok) this.$router.push('/');
-                else this.message = result.message;
+                else {
+                    if (result.err.response.status === 401) {
+                        this.message = "Incorrect login or password.";
+                    } else {
+                        this.message = "Some errors occured. Try again later."
+                    }
+                }
             }).catch(err => {
                 console.log(err);
             });
