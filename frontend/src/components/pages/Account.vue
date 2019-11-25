@@ -23,7 +23,7 @@
                     v-on:click="redirectToCSView(info)"
                 >{{info.csName}}</div>
                 <button
-                    v-on:click="deleteCoreSample(info.csId)"
+                    v-on:click="requestForDeleting(info.csId, info.csName)"
                     class="round delete dark-alpha"
                 ></button>
             </div>
@@ -331,6 +331,18 @@
                 }).catch(err => {
                     console.error(err.response);
                 });
+            },
+
+            requestForDeleting(csId, name) {
+                let nameToValidate = prompt("To delete core sample, enter the first 3 letters of its name", undefined);
+                let requiredStr = name.substring(0, 3);
+                if (!nameToValidate) return;
+
+                if (nameToValidate === requiredStr) {
+                    this.deleteCoreSample(csId);
+                } else {
+                    alert("Entered letters are not correct! Operation canceled");
+                }
             },
 
             deleteCoreSample(csId) {
