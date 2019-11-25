@@ -35,14 +35,16 @@
         },
         methods: {
             redraw() {
-                this.ctx.fillRect(0, 0, this.canvas.clientWidth, this.canvas.clientHeight, "white");
+                this.clearCanvas();
 
-                this.actualSize = Math.floor(this.size * window.devicePixelRatio);
-                console.log(this.actualSize);
+                let res = window.devicePixelRatio;
+                this.actualSize = Math.floor(this.size * res);
+
                 this.$nextTick(() => {
-                this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+                    this.ctx.scale(res, res);
                     for (let i = 0; i < this.chartData.length; ++i) {
                         let data = this.chartData[i];
+
                         let angle = 0;
                         let radius = this.size * (1 - i / (this.chartData.length + 1)) / 2;
                         for (let j = 0; j < data.slices.length; ++j) {
@@ -52,15 +54,19 @@
                             angle -= slice.angle;
                         }
                     }
+                    this.ctx.scale(1 / res, 1 / res);
                 });
-                this.ctx.scale(1/window.devicePixelRatio, 1/window.devicePixelRatio);
+            },
+
+            clearCanvas() {
+                this.ctx.fillStyle = "white";
+                this.ctx.fillRect(0, 0, this.canvas.clientWidth, this.canvas.clientHeight);
             }
         },
         mounted() {
             this.canvas.style.width = this.size+"px";
             this.canvas.style.height = this.size+"px";
             
-
             this.$nextTick(this.redraw());
             window.addEventListener("resize", this.redraw, false);
 
