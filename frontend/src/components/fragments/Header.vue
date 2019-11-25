@@ -2,7 +2,9 @@
 <header>
     <div
         v-for="(linkName, li) in links"
-        v-bind:key="'link-' + li">
+        v-bind:key="'link-' + li"
+        v-bind:class="parentComponentName === linkName ? 'current-page' : ''"
+    >
         <router-link
             v-bind:to="{ name: linkName }"
         >{{linkName}}
@@ -24,25 +26,36 @@
         justify-content: flex-start;
         background-color: rgb(245, 245, 245);
         width: 100%;
-        font-size: 0.8em;
+        font-size: 1.2em;
+        font-weight: 600;
     }
 
     header > div {
-        margin: 1em 1em;
+        margin: 0.5em;
+        padding: 0.5em 1em;
     }
 
     a {
         text-decoration: none;
     }
 
-    a:visited, .nav-btn {
-        color: rgb(173, 173, 173);
+    a:visited, a:not(:visited), .nav-btn {
+        color: rgb(160, 160, 160);
         cursor: pointer;
     }
 
     a:hover, .nav-btn:hover {
-        color: rgb(53, 53, 53);
+        color: gray;
     } 
+
+    .current-page {
+        background-color: lightgray;
+        height: 100%;
+    }
+
+    .current-page > a {
+        color: gray;
+    }
 </style>
 
 <script>
@@ -68,6 +81,11 @@
                 });
 
                 this.$root.$emit('start-loading', logoutProm);
+            }
+        },
+        computed: {
+            parentComponentName() {
+                return this.$parent.$options.name;
             }
         }
     };

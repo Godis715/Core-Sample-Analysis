@@ -1,7 +1,7 @@
 <template>
 <div id="login-main">
     <h1 align="center">Sign in</h1>
-    <hr/>
+    <hr>
     <span>Use login and password, which provided your system administrator.</span>
     <form
         id="signin-form"
