@@ -38,6 +38,10 @@ button.round {
     width: 1.5em;
 }
 
+button.delete {
+    margin: 5px;
+}
+
 button.delete::before {
     content: "x";
 }

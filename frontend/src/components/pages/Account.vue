@@ -3,8 +3,9 @@
     <site-header />
 
     <div id="main-cont-account">
-    <div>
-        <h1>Uploaded core samples</h1>
+    <div id="upper-label">
+        <span>Uploaded core samples</span>
+        <div></div>
     </div>
 
     <transition-group
@@ -130,6 +131,7 @@
     #cs-cont {
         display: flex;
         flex-wrap: wrap;
+        justify-content: space-between;
     }
 
     #upload-cs {
@@ -176,9 +178,9 @@
 
     .cs-info {
         transition: 2s;
-        margin: 0.4em;
         min-width: 10em;
         min-height: 13em;
+        margin: 0.4em 0;
         border: 1.3px solid lightgray;
         display: grid;
         width: auto;
@@ -187,7 +189,7 @@
         grid-template-areas: 
             "header header"
             "stats info"
-        }
+    }
 
     .cs-header {
         grid-area: header;
@@ -282,6 +284,19 @@
 
     .cs-info-appearing-enter {
         opacity: 0;
+    }
+
+    #upper-label {
+        display: flex;
+        flex-direction: column;
+        font-size: 1.3em;
+        margin-bottom: 1em;
+    }
+
+    #upper-label > div {
+        width: 100%;
+        height: 1.3px;
+        background-color: lightgray;
     }
 </style>
 
