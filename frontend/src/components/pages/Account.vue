@@ -7,8 +7,11 @@
         <h1>Uploaded core samples</h1>
     </div>
 
-    <div id="cs-cont">
-        <div id="upload-cs" class="cs-info">
+    <transition-group
+        name="cs-info-appearing"
+        id="cs-cont"
+    >
+        <div id="upload-cs" class="cs-info" key="upload">
             <div>Upload</div>
         </div>
 
@@ -114,7 +117,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </transition-group>
     </div>
 </div>
 </template>
@@ -172,9 +175,10 @@
     @keyframes loading-icon { from { transform: rotate(0deg); } to { transform: rotate(360deg); }  }
 
     .cs-info {
+        transition: 2s;
         margin: 0.4em;
         min-width: 10em;
-        min-height: 5em;
+        min-height: 13em;
         border: 1.3px solid lightgray;
         display: grid;
         width: auto;
@@ -270,6 +274,14 @@
 
     .legend > .ruin::after {
         background-color: black;
+    }
+
+    .cs-info-appearing-enter-active, .cs-info-appearing-leave-active {
+        transition: opacity .25s;
+    }
+
+    .cs-info-appearing-enter {
+        opacity: 0;
     }
 </style>
 
