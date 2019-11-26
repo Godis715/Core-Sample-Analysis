@@ -14,13 +14,13 @@ from rest_framework.status import (
     HTTP_200_OK
 )
 
-from rest_framework.response import Response
-
-from zipfile import ZipFile
+# Our packages
 from archiveDecoder import archiveDecode
 
+# This project's packages
 from django.conf import settings
 from . import models
+
 # Third party packages
 from zipfile import ZipFile
 import os
