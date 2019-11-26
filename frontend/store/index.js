@@ -41,7 +41,11 @@ export const store = new Vuex.Store({
   actions: {
     AUTH_REQUEST: async (context, user) => {
         context.commit('AUTH_REQUEST');
-        return await axios({ url: 'http://localhost:8000/api/login', data: user, method: 'POST' }).then(resp => {
+        return await axios({
+          url: `${process.env.API_URL}:${process.env.API_PORT}/api/login`,
+          data: user,
+          method: 'POST'
+        }).then(resp => {
           context.commit('AUTH_SUCCESS', resp.data.token);
           return { ok: true };
         }).catch(err => {
@@ -56,7 +60,11 @@ export const store = new Vuex.Store({
           if (context.state.token) 
             headers['Authorization'] = `Token ${context.state.token}`;
           
-          await axios({ url: 'http://localhost:8000/api/logout', method: 'POST', headers }).then(resp => {
+          await axios({
+            url: `${process.env.API_URL}:${process.env.API_PORT}/api/logout`,
+            method: 'POST',
+            headers
+          }).then(resp => {
             context.commit('AUTH_LOGOUT');
           }).catch(err => {
             console.error(err);
