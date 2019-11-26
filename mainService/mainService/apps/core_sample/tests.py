@@ -14,6 +14,7 @@ import shutil
 import random
 import json
 
+
 client = APIClient()
 
 
@@ -75,10 +76,10 @@ class Account_APITestCase(APITestCase):
 class Archive_Generator:
     def __init__(self, load_path):
         self.path_root = load_path
-        self.path_images = f'{self.path_root}\\images'
+        self.path_images = f'{self.path_root}/images'
 
     def _generate_images(self, count):
-        os.mkdir(self.path_images)
+        os.makedirs(self.path_images)
         path_images = []
         for i in range(count):
             size = (random.randint(100, 400), random.randint(100, 2000))
@@ -127,7 +128,7 @@ class Archive_Generator:
 
 
 def CREATE_CORE_SAMPLE():
-    archive_generator = Archive_Generator(f'{settings.PROJECT_ROOT}\\static\\tests')
+    archive_generator = Archive_Generator(f'{settings.PROJECT_ROOT}/static/tests')
     path_archive = archive_generator.correct()
     with open(path_archive, 'rb') as obj_archive:
         response = client.post(reverse('core_sample:cs_upload'), data={'archive': obj_archive,
@@ -188,7 +189,7 @@ class Upload_APITestCase(APITestCase):
         self.main_user = User.objects.create_user(
             username="username_test", email="TestUser@test.com", password="password_test")
         self.url = reverse('core_sample:cs_upload')
-        self.archive_generator = Archive_Generator(f'{settings.PROJECT_ROOT}\\static\\tests')
+        self.archive_generator = Archive_Generator(f'{settings.PROJECT_ROOT}/static/tests')
 
     def test_success(self):
         """Test POST api/core_sample/upload with correct archive"""
@@ -232,5 +233,3 @@ class Upload_APITestCase(APITestCase):
         LOGIN(self.main_user)
         response = client.post(self.url)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
-
-
