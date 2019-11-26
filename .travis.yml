@@ -1,0 +1,22 @@
+language: python
+
+branches:
+  only:
+  - production/project
+
+# Версии python для которых нужно производить сборки
+python:
+  - "3.7"
+
+
+# Параметры окружения
+env:
+  - DJANGO_VERSION=2.2.6
+
+# Установка зависимостей в окружение
+install:
+  - pip install -q Django==$DJANGO_VERSION
+  - sh install.sh
+
+# Запуск тестов
+script: sh test.sh
