@@ -19,4 +19,6 @@ install:
   - sh install.sh
 
 # Запуск тестов
-script: sh test.sh
+script: 
+  - cd mainService
+  - python manage.py test
