@@ -137,16 +137,16 @@
 
         console.log('Uploading photo...');
 
-        return await axiosInst.post('api/core_sample/upload', formData, headers);
+        return await axiosInst.post('api/core_sample/upload/', formData, headers);
     }
     async function deleteFile (axiosInst, csId) {
-        return axiosInst.delete(`api/core_sample/${csId}/delete`)
+        return axiosInst.delete(`api/core_sample/${csId}/delete/`)
         .catch(err => {
             console.log(err);
         });
     }
     async function analyseCoreSample(axiosInst, csId) {
-        return axiosInst.put(`api/core_sample/${csId}/analyse`);
+        return axiosInst.put(`api/core_sample/${csId}/analyse/`);
     }
 
     export default {

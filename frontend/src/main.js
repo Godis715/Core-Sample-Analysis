@@ -7,7 +7,7 @@ import {store} from '../store'
 
 import axios from 'axios';
 Vue.prototype.$axios = axios.create({
-  baseURL: 'http://localhost:8000/'
+  baseURL: `${process.env.API_URL}:${process.env.API_PORT}/`
 });
 
 Vue.config.productionTip = false
