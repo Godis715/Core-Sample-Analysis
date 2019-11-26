@@ -147,10 +147,10 @@ if __name__ == '__main__':
 
 	print('Send mainService on server')
 	ftp.cwd(f'./mainService-site')
-	if 'mainService-test' not in ftp.nlst():
-		ftp.mkd('mainService-test')
+	if 'mainService' not in ftp.nlst():
+		ftp.mkd('mainService')
 	remove_content_on_server = send_folder_content(
-		folder_server='mainService-test',
+		folder_server='mainService',
 		path_folder_client=f'{BASE_DIR_CLIENT}/mainService')
 	ftp.cwd('..')
 
@@ -158,10 +158,10 @@ if __name__ == '__main__':
 
 	print('Send analysisService on server')
 	ftp.cwd(f'./analysisService-site')
-	if 'analysisService-test' not in ftp.nlst():
-		ftp.mkd('analysisService-test')
+	if 'analysisService' not in ftp.nlst():
+		ftp.mkd('analysisService')
 	remove_content_on_server += send_folder_content(
-		folder_server='analysisService-test',
+		folder_server='analysisService',
 		path_folder_client=f'{BASE_DIR_CLIENT}/analysisService')
 	ftp.cwd('..')
 
