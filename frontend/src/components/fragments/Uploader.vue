@@ -2,7 +2,7 @@
 <div>
     <div
         class="uploader-container"
-        v-on:click="clickUpload">
+        v-on:click.prevent="clickUpload">
         <div class="delete-btn-panel">
             <button
                 v-show="state === State.fileAttached"
@@ -14,7 +14,10 @@
             type="file"
             id="uploader-element"
             ref="uploader"
-            v-on:change="attachedFileChanged" />
+            v-on:change="attachedFileChanged"
+            v-bind:disabled="disabled"
+            v-on:click.stop
+        />
             
         <label
             v-bind:class="labelClass"
@@ -25,6 +28,10 @@
             id="file-name"
             v-if="state === State.fileAttached"
         >{{file.name}}</span>
+        <span
+            v-else
+            align="center"
+        >Click here</span>
     </div>
 </div>
 </template>
@@ -79,6 +86,11 @@
         justify-content: flex-end;
         padding-right: var(--upload-cont-offset);
     }
+
+    .uploader-container span {
+        word-wrap: break-word;
+        margin: 0 calc(20px + var(--upload-cont-offset));
+    }
 </style>
 
 <script>
@@ -91,7 +103,11 @@
 
     export default {
         name: 'Uploader',
-        methods: {
+        props: {
+            disabled: {
+                type: Boolean,
+                required: false
+            }
         },
         data() {
             return {
