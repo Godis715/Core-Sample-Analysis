@@ -150,7 +150,7 @@ export default {
         let csId = this.$route.params.csId;
 
         // getting information to display
-        this.$axios.get(`api/core_sample/${csId}/markup`).then(resp => {
+        this.$axios.get(`api/core_sample/${csId}/markup/`).then(resp => {
             this.markup = resp.data;
             this.columns = [
                 {
