@@ -335,7 +335,7 @@ def cs_analyse(request, csId):
 def css_status(request):
     # Checking: [exist] - [data of request]
     try:
-        csIds = json.loads(QueryDict(request.body).get('csIds'))
+        csIds = json.loads(request.body)
     except:
         return Response({'message': ERROR_IS_NOT_ATTACHED.format('csIds')}, status=HTTP_400_BAD_REQUEST)
 
