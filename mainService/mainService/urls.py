@@ -20,8 +20,8 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from .views import login, logout
 
 urlpatterns = [
-    path('api/login', login, name='login'),
-    path('api/logout', logout, name='logout'),
+    path('api/login/', login, name='login'),
+    path('api/logout/', logout, name='logout'),
     path('api/core_sample/', include('core_sample.urls')),
     path('api/workstation/', include('workstation.urls')),
     path('admin/', admin.site.urls),
