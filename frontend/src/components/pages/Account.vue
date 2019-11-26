@@ -131,7 +131,6 @@
     #cs-cont {
         display: flex;
         flex-wrap: wrap;
-        justify-content: space-between;
     }
 
     #upload-cs {
@@ -178,9 +177,9 @@
 
     .cs-info {
         transition: 2s;
-        min-width: 10em;
+        min-width: 13em;
         min-height: 13em;
-        margin: 0.4em 0;
+        margin: 0.4em;
         border: 1.3px solid lightgray;
         display: grid;
         width: auto;
