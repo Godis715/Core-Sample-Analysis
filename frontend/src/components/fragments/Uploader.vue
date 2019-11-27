@@ -90,6 +90,7 @@
     .uploader-container span {
         word-wrap: break-word;
         margin: 0 calc(20px + var(--upload-cont-offset));
+        text-align: center;
     }
 </style>
 

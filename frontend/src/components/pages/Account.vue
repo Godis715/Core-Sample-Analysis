@@ -130,6 +130,7 @@
 
     #cs-cont {
         display: flex;
+        flex-basis: 100%;
         flex-wrap: wrap;
     }
 
@@ -177,12 +178,10 @@
 
     .cs-info {
         transition: 2s;
-        min-width: 13em;
-        min-height: 13em;
         margin: 0.4em;
+        width: 17em;
         border: 1.3px solid lightgray;
         display: grid;
-        width: auto;
         grid-template-columns: auto auto;
         grid-template-rows: auto 5fr;
         grid-template-areas: 
@@ -197,6 +196,7 @@
         justify-content: space-between;
         padding: 3px;
         border-bottom: 1px solid lightgray;
+        overflow: hidden;
     }
 
     .info-cont {

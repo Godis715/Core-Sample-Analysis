@@ -127,7 +127,7 @@ export default {
         return {
             markup: undefined,
             columns: [],
-            resolution: 15,
+            resolution: 25,
             settingToShow: -1,
             showMenu: false,
             colSettingToShow: undefined

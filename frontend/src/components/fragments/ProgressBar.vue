@@ -18,14 +18,16 @@
 
     .moving {
         transition: 250ms;
-        animation-duration: 1s;
+        animation-duration: 3s;
+        animation-timing-function: ease;
         animation-name: movement;
+        animation-fill-mode: forwards;
         height: 2px;
     }
 
     @keyframes movement {
         from { width: 0; }
-        to { width: 100%; }
+        to { width: 90%; }
     }
 
     .finishing { 
