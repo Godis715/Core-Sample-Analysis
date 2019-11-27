@@ -24,5 +24,7 @@ urlpatterns = [
     path('upload', views.cs_upload, name="cs_upload"),
     # PUT api/core_sample/status
     path('status', views.css_status, name="css_status"),
+    # PUT api/core_sample/statistics/
+    path('statistics/', views.css_statistics, name="css_statistics"),
 ]
 
