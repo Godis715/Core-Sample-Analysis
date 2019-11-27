@@ -34,58 +34,9 @@
 
             <div class="cs-stats-panel">
                 <multiple-pie-chart 
-                    v-if="info.status==='analysed'"
+                    v-if="info.status==='analysed' && !!info.stats"
                     v-bind:size="100"
-                    v-bind:chartData="[
-                        {
-                            slices: [
-                                { 
-                                    color: '#00fd13',
-                                    angle: 20 / 360 * 2 * Math.PI
-                                },
-                                {
-                                    color: '#15da48',
-                                    angle: 100 / 360 * 2 *Math.PI
-                                },
-                                { 
-                                    color: '#115a27',
-                                    angle: 240 / 360 * 2 *Math.PI
-                                }
-                            ]
-                        },
-                        {
-                            slices: [
-                                { 
-                                    color: '#ff4700',
-                                    angle: 50 / 360 * 2 *Math.PI
-                                },
-                                {
-                                    color: '#ffa500',
-                                    angle: 60 / 360 * 2 *Math.PI
-                                },
-                                {
-                                    color: '#671f09',
-                                    angle: 250 / 360 * 2 *Math.PI
-                                }
-                            ]
-                        },
-                        {
-                            slices: [
-                                {
-                                    color: 'black',
-                                    angle: 120 / 360 * 2 *Math.PI
-                                },
-                                {
-                                    color: 'gray',
-                                    angle: 120  / 360 * 2 *Math.PI
-                                },
-                                {
-                                    color: '#b3a590',
-                                    angle: 120 / 360 * 2 *Math.PI
-                                }
-                            ]
-                        }
-                    ]"
+                    v-bind:chartData="info.stats|convertStatsToChartData"
                 />
                 <div
                     v-else
@@ -212,13 +163,16 @@
     }
 
     .cs-title {
-        display: flex;
-        flex-direction: column;
+        padding: 0 0.5em;
+        display: block;
         justify-content: center;
         margin: auto;
         font-size: larger;
         font-weight: 600;
         color: rgb(99, 168, 52);
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
 
     .cs-info.analysed .cs-title:hover {
@@ -417,7 +371,22 @@
                 if (has_NotAnalysed) {
                     this.startRefresh();
                 }
+            }).then(() => {
+                let csIds = [];
+                this.samplesInfo.forEach(info => {
+                    if (info.status === "analysed")
+                        csIds.push(info.csId);
+                });
 
+                return this.$axios.put("api/core_sample/statistics/", csIds);
+            }).then(resp => {
+                console.log(resp);
+
+                for (let csId in resp.data) {
+                    let stats = resp.data[csId];
+                    let csInfo = this.samplesInfo.find(i => i.csId === csId);
+                    this.$set(csInfo, "stats", stats);
+                }
             }).catch(err => {
                 console.log(err);
             })
@@ -439,6 +408,46 @@
             getTime(date) {
                 let ts = date.toTimeString().slice(0, 5);
                 return ts;
+            },
+
+            convertStatsToChartData(stats) {
+                const pn = Object.freeze(["oil", "carbon", "rock"]);
+                const pl = Object.freeze({
+                    oil: {
+                        high: "#00fd13",
+                        low: "#15da48",
+                        notDefined: "#115a27"
+                    },
+                    carbon: {
+                        high: "#ff4700",
+                        low: "#ffa500",
+                        notDefined: "#671f09"
+                    },
+                    rock: {
+                        mudstone: "black", 
+                        sandstone: "#b3a590",
+                        siltstone: "gray"
+                    }
+                });
+
+                let chartData = [];
+                for (let i = 0; i < pn.length; ++i) {
+                    let paramName = pn[i];
+                    let pStats = stats[paramName];
+                    let classes = pl[paramName];
+                    let slices = [];
+                    for (let className in classes) {
+                        slices.push({
+                            angle: 2 * Math.PI * pStats[className],
+                            color: classes[className]
+                        });
+                    }
+                    chartData[i] = {
+                        slices: slices
+                    };
+                }
+                console.log(chartData);
+                return chartData;
             }
         }
     };

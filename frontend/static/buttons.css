@@ -34,8 +34,8 @@ button.red-alpha:hover {
 
 button.round {
     border-radius: 50%;
-    height: 1.5em;
-    width: 1.5em;
+    min-height: 1.5em;
+    min-width: 1.5em;
 }
 
 button.delete {

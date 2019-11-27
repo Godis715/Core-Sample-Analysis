@@ -10,7 +10,7 @@
             />
             <div>
                 <button
-                    v-bind:disabled="state !== State.fileAttached"
+                    v-bind:disabled="state !== State.fileAttached || csName===''"
                     v-on:click="startUploading"
                     class="usual upload-btn"
                 >Upload</button>
@@ -25,6 +25,7 @@
                 class="cs-name-input-block">
                 <input
                     type="text"
+                    required
                     id="cs-name-input"
                     ref="csNameInput"
                     v-model="csName"

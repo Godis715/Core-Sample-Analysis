@@ -79,6 +79,11 @@
             ctx() {
                 return this.$refs.chartCanvas.getContext("2d");
             }
+        },
+        watch: {
+            chartData() {
+                this.redraw();
+            }
         }
     };
 </script>

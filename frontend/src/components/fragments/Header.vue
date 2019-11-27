@@ -10,9 +10,9 @@
         >{{linkName}}
         </router-link>
     </div>
-    <div>
+    <div class="logout-cont">
         <div
-            class="nav-btn"
+            class="nav-btn logout"
             v-on:click="logout"
         >Logout</div>
     </div>
@@ -23,7 +23,6 @@
     header {
         display: flex;
         flex-direction: row;
-        justify-content: flex-start;
         background-color: rgb(245, 245, 245);
         width: 100%;
         font-size: 1.2em;
@@ -56,6 +55,27 @@
     .current-page > a {
         color: gray;
     }
+
+    .logout-cont {
+        align-self: flex-end;
+    }
+
+    .nav-btn.logout::before {
+        background: var(--logout-icon);
+        background-repeat: no-repeat;
+        background-size: 20px;
+        height: 25px;
+        width: 20px;
+        content: "";
+        display: block;
+        float: left;
+        margin-right: 10px;
+        opacity: 0.4;
+    }
+    .nav-btn.logout:hover::before {
+        opacity: 1;
+    }
+
 </style>
 
 <script>
@@ -68,7 +88,7 @@
                     "Upload",
                     "Search",
                     "FAQ",
-                    "Search"
+                    "About"
                 ]
             };
         },
