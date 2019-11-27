@@ -1,19 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Core-Sample-Analysis APIs</title>
 
-{#    <script src="https://unpkg.com/vue"></script>#}
-{#    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.4"></script>#}
+<!DOCTYPE html>
+<html>{% load staticfiles %}
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>cs-analyzing-frontend
+</title>
+<link href="{% static '/vue/css/app.1de70313d0870f49816d209968b14acc.css' %}" rel=stylesheet>
 </head>
 <body>
-    <h1>Core-Sample-Analysis APIs:</h1>
-    <ol>
-        <li>GET 'api/workstation' - get the list of information about all workstations</li>
-        <li>POST 'api/login' - authentification(getting token)</li>
-        <li>GET 'api/testLogin' - test of authentification(getting data by token)</li>
-    </ol>
-
+<div id=app>
+</div>
+<script type=text/javascript src="{% static '/vue/js/manifest.2ae2e69a05c33dfc65f8.js' %}">
+</script>
+<script type=text/javascript src="{% static '/vue/js/vendor.84b16434caf049f8962c.js' %}">
+</script>
+<script type=text/javascript src="{% static '/vue/js/app.5f54b869a75d45917a62.js' %}">
+</script>
 </body>
 </html>

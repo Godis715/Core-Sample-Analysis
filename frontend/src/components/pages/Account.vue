@@ -290,7 +290,7 @@
                     }
                 });
 
-                this.$axios.put('api/core_sample/status', csIds).then(resp => {
+                this.$axios.put('api/core_sample/status/', csIds).then(resp => {
                     this.samplesInfo.forEach((info, index) => {
                         console.log(resp.data.statuses);
                         if (resp.data.statuses[info.csId]) {
@@ -327,7 +327,7 @@
 
             deleteCoreSample(csId) {
                 this.samplesInfo = this.samplesInfo.filter(info => info.csId !== csId);
-                this.$axios.delete(`api/core_sample/${csId}/delete`).then(() => {
+                this.$axios.delete(`api/core_sample/${csId}/delete/`).then(() => {
                     console.log('Deleted');
                 }).catch(err => {
                     console.error(err);
@@ -339,7 +339,7 @@
             },
 
             analyseCoreSample(csId, index) {
-                this.$axios.put(`api/core_sample/${csId}/analyse`).then(resp => {
+                this.$axios.put(`api/core_sample/${csId}/analyse/`).then(resp => {
                     console.log("start analysing..");
 
                     let sample = this.samplesInfo[index];
@@ -358,7 +358,7 @@
         },
 
         created() {
-            this.$axios.get('api/core_sample').then(resp => {
+            this.$axios.get('api/core_sample/').then(resp => {
                 console.log(resp.data);
 
                 let samplesInfo = resp.data;
