@@ -168,4 +168,8 @@ typings/
 .next
 
 # static files
-backend/backend/static/
+mainService/mainService/static/
+
+# tests files
+
+deploy_local.sh
