@@ -433,7 +433,8 @@
                     rock: {
                         mudstone: "black", 
                         sandstone: "#b3a590",
-                        siltstone: "gray"
+                        siltstone: "gray",
+                        other: "pink"
                     }
                 });
 
