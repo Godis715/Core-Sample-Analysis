@@ -1,8 +1,11 @@
 from joblib import load
-from PIL import ImageStat
+from PIL import Image, ImageStat
 import numpy as np
 import cv2
-model = load('oil_pred/oil_rfc.joblib')
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+model = load(os.path.join(BASE_DIR, 'oil_rfc.joblib'))
+
 
 def predict(pil_img, ruin):
     img = np.array(pil_img)
@@ -19,11 +22,11 @@ def predict(pil_img, ruin):
     area = sum([sum([0 if pxl == 0 else 1 for pxl in row])for row in img_yel])
     feature = [
         area / size,
-        sum([sum(row) for row in img_yel]) / (area*mean_val),
+        sum([sum(row) for row in img_yel]) / (area*mean_val) if area != 0 else 0,
         mean_hue,
         mean_sat,
         mean_val,
         ruin
     ]
-    pred = 'нефтенасыщенные' if model.predict([feature])[0] == 1 else 'не опред.'
+    pred = 'high' if model.predict([feature])[0] == 1 else 'notDefined'
     return pred

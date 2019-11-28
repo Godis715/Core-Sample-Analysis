@@ -31,15 +31,15 @@
         </template>
     </draggable-menu>
 
-    <div id="main">
+    <div id="main-cont-viewer">
         <div
             v-for="(col, colIndex) in columns"
             v-bind:key="colIndex"
             class="column-wrapper"
         >
             <div class="column-wrapper-header">
-                <button class="show-settings-btn" v-on:click="showSettingList(colIndex)">...</button>
-                <button class="close-column-btn">x</button>
+                <button class="smooth-rect dark-alpha" v-on:click="showSettingList(colIndex)">...</button>
+                <button class="delete round dark-alpha"></button>
             </div>
             <!-- Component, which combines and draws layers. -->
             <multiple-layer-view
@@ -55,7 +55,7 @@
 </template>
 
 <style>
-    #main {
+    #main-cont-viewer {
         margin-left: 25px;
         margin-bottom: 500px;
         margin-top: 25px;
@@ -104,18 +104,6 @@
         margin: 5px;
         border-radius: 10%;
     }
-
-    .close-column-btn {
-        border: none;
-        border-radius: 50%;
-        outline: none;
-        cursor: pointer;
-        background: darkgray;
-        color: white;
-        text-align: center;
-        margin: 5px;
-        margin-left: 0;
-    }
 </style>
 
 <script>
@@ -139,7 +127,7 @@ export default {
         return {
             markup: undefined,
             columns: [],
-            resolution: 15,
+            resolution: 25,
             settingToShow: -1,
             showMenu: false,
             colSettingToShow: undefined
@@ -150,7 +138,7 @@ export default {
         let csId = this.$route.params.csId;
 
         // getting information to display
-        this.$axios.get(`api/core_sample/${csId}/markup`).then(resp => {
+        this.$axios.get(`api/core_sample/${csId}/markup/`).then(resp => {
             this.markup = resp.data;
             this.columns = [
                 {
@@ -227,7 +215,6 @@ export default {
                 if (currWidth > width)
                     width = currWidth;
             }
-            console.log("Abswidth is "+width);
             return width;
         },
         absWidthUV() {

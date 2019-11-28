@@ -7,6 +7,8 @@
 
 <script>
 import ProgressBar from './components/fragments/ProgressBar.vue';
+require('../static/buttons.css')
+require('../static/variables.css')
 
 export default {
   name: 'App',
@@ -35,6 +37,15 @@ export default {
 
 <style>
 #app {
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    color: rgb(85, 85, 85);
+}
+
+body {
+  margin: 0;
+}
+/*
+#app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -43,5 +54,5 @@ export default {
 
 body {
   margin: 0;
-}
+} */
 </style>

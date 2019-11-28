@@ -27,39 +27,37 @@ export const MarkupLayer = {
         let layers = data;
         let ctx = canvas.getContext("2d");
 
-        setTimeout(() => {
-            ctx.fillStyle = settings.fontColor;
-            ctx.strokeStyle = settings.lineColor;
+        ctx.fillStyle = settings.fontColor;
+        ctx.strokeStyle = settings.lineColor;
 
-            for (let i = 0; i < layers.length; ++i) {
-                let topPx = layers[i].top * res;
-                ctx.beginPath();
-                ctx.moveTo(0, topPx);
-                ctx.lineTo(width, topPx);
-                ctx.stroke();
+        for (let i = 0; i < layers.length; ++i) {
+            let topPx = layers[i].top * res;
+            ctx.beginPath();
+            ctx.moveTo(0, topPx);
+            ctx.lineTo(width, topPx);
+            ctx.stroke();
+        }
+        
+        if (!settings.showText) return;
+        for (let i = 0; i < layers.length; ++i) {
+            let topPx = layers[i].top * res;
+            let layerHeight = (layers[i].bottom - layers[i].top) * res;
+
+            let multiline = []
+            for (let cl in layers[i].classes) {
+                multiline.push(`${cl}: ${layers[i].classes[cl]}`);
             }
-            
-            if (!settings.showText) return;
-            for (let i = 0; i < layers.length; ++i) {
-                let topPx = layers[i].top * res;
-                let layerHeight = (layers[i].bottom - layers[i].top) * res;
 
-                let multiline = []
-                for (let cl in layers[i].classes) {
-                    multiline.push(`${cl}: ${layers[i].classes[cl]}`);
-                }
-
-                if (settings.hideOverflow) {
-                    let textHeight = getMultilineHeight(multiline, settings);
-                    if (textHeight < layerHeight) {
-                        drawMultilineText(ctx, multiline, 0, topPx, settings);
-                    }
-                } else {
+            if (settings.hideOverflow) {
+                let textHeight = getMultilineHeight(multiline, settings);
+                if (textHeight < layerHeight) {
                     drawMultilineText(ctx, multiline, 0, topPx, settings);
                 }
-
+            } else {
+                drawMultilineText(ctx, multiline, 0, topPx, settings);
             }
-        }, 1000);
+
+        }
     },
 
     mergeMarkup(markup) {

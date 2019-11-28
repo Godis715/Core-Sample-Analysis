@@ -19,10 +19,10 @@
 </template>
 
 <script>
-import RadioSetting from "./RadioSetting"
-import CheckboxSetting from "./CheckboxSetting"
-import ColorSetting from "./ColorSetting"
-import NumberSetting from "./NumberSetting"
+import RadioSetting from "../settingPanels/RadioSetting"
+import CheckboxSetting from "../settingPanels/CheckboxSetting"
+import ColorSetting from "../settingPanels/ColorSetting"
+import NumberSetting from "../settingPanels/NumberSetting"
 
 export default {
     name: "SettingGroup",

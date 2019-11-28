@@ -14,13 +14,13 @@ from rest_framework.status import (
     HTTP_200_OK
 )
 
-from rest_framework.response import Response
-
-from zipfile import ZipFile
+# Our packages
 from archiveDecoder import archiveDecode
 
+# This project's packages
 from django.conf import settings
 from . import models
+
 # Third party packages
 from zipfile import ZipFile
 import os
@@ -31,7 +31,7 @@ import requests
 import json
 
 # Path of fo;der with the static files
-ROOT_STATIC_APP = f'{settings.PROJECT_ROOT}\\static\\core_sample'
+ROOT_STATIC_APP = f'{settings.PROJECT_ROOT}/static/core_sample'
 
 # Response's messages
 ERROR_IS_NOT_ATTACHED = "{} is not attached!"
@@ -78,20 +78,20 @@ def _upload_on_server(csName, data, control_sum, user):
     )
     core_sample_db.save()
 
-    src_rel = f'user_{user.username}\\cs_{core_sample_db.global_id}'
-    src_abs = f'{ROOT_STATIC_APP}\\{src_rel}'
+    src_rel = f'user_{user.username}/cs_{core_sample_db.global_id}'
+    src_abs = f'{ROOT_STATIC_APP}/{src_rel}'
     os.makedirs(src_abs)
     for fragment in data['fragments']:
         # Loading: the fragment of core_sample in the local storage
         dlImg_name = fragment['dlImg'].filename
-        fragment['dlImg'].save(f'{src_abs}\\{dlImg_name}')
+        fragment['dlImg'].save(f'{src_abs}/{dlImg_name}')
         uvImg_name = fragment['uvImg'].filename
-        fragment['uvImg'].save(f'{src_abs}\\{uvImg_name}')
+        fragment['uvImg'].save(f'{src_abs}/{uvImg_name}')
         # Loading: the fragment of core_sample in database
         fragment_db = models.Fragment(
             cs=core_sample_db,
-            dl_src=f'{src_rel}\\{dlImg_name}',
-            uv_src=f'{src_rel}\\{uvImg_name}',
+            dl_src=f'{src_rel}/{dlImg_name}',
+            uv_src=f'{src_rel}/{uvImg_name}',
             dl_resolution=fragment['dlImg'].size[1] / (fragment['bottom'] - fragment['top']),
             uv_resolution=fragment['uvImg'].size[1] / (fragment['bottom'] - fragment['top']),
             top=fragment['top'],
@@ -166,9 +166,9 @@ def cs_delete(request, csId):
 
     # Checking (server error): [exist] - [folders and files in the local storage]
     if f'user_{request.user.username}' in os.listdir(ROOT_STATIC_APP):
-        if f'cs_{csId}' in os.listdir(f'{ROOT_STATIC_APP}\\user_{request.user.username}'):
+        if f'cs_{csId}' in os.listdir(f'{ROOT_STATIC_APP}/user_{request.user.username}'):
             # Deleting: in the local storage
-            shutil.rmtree(f'{ROOT_STATIC_APP}\\user_{request.user.username}\\cs_{csId}')
+            shutil.rmtree(f'{ROOT_STATIC_APP}/user_{request.user.username}/cs_{csId}')
             # Deleting: in database
             core_sample.delete()
             return Response(status=HTTP_200_OK)
@@ -266,8 +266,8 @@ def _analyse(core_sample, user):
 
     fragments = models.Fragment.objects.filter(cs_id=core_sample)
     for fragment in fragments:
-        dlImg = open(f'{ROOT_STATIC_APP}\\{fragment.dl_src}', 'rb')
-        uvImg = open(f'{ROOT_STATIC_APP}\\{fragment.uv_src}', 'rb')
+        dlImg = open(f'{ROOT_STATIC_APP}/{fragment.dl_src}', 'rb')
+        uvImg = open(f'{ROOT_STATIC_APP}/{fragment.uv_src}', 'rb')
         data['fragments'].append({
             'top': fragment.top,
             'bottom': fragment.bottom,
@@ -335,7 +335,7 @@ def cs_analyse(request, csId):
 def css_status(request):
     # Checking: [exist] - [data of request]
     try:
-        csIds = json.loads(QueryDict(request.body).get('csIds'))
+        csIds = json.loads(request.body)
     except:
         return Response({'message': ERROR_IS_NOT_ATTACHED.format('csIds')}, status=HTTP_400_BAD_REQUEST)
 
@@ -355,6 +355,65 @@ def css_status(request):
 
     return Response({'statuses': statuses}, status=HTTP_200_OK)
 
+@csrf_exempt
+@api_view(["PUT"])
+def css_statistics(request):
+    # Checking: [exist] - [data of request]
+    try:
+        csIds = json.loads(request.body)
+    except:
+        return Response({'message': ERROR_IS_NOT_ATTACHED.format('csIds')}, status=HTTP_400_BAD_REQUEST)
+
+    statistics = {}
+    for csId in csIds:
+        # Checking: [exist] - [the core sample]
+        try:
+            core_sample = models.Core_sample.objects.get(global_id=csId)
+        except:
+            return Response({'message': ERROR_INVALID_ID.format('core sample')},
+                            status=HTTP_404_NOT_FOUND)
+        # Checking: [access] - [request's user == author of core sample]
+        if request.user != core_sample.user:
+            return Response({'message': ERROR_NOT_AUTHOR.format('core sample')},
+                            status=HTTP_403_FORBIDDEN)
+        cs_length = core_sample.bottom - core_sample.top
+        statistics[csId] = {
+            'oil': {
+                models.Oil_layer.CLASS_LABELS_NAME[models.Oil_layer.HIGH]: 0,
+                models.Oil_layer.CLASS_LABELS_NAME[models.Oil_layer.LOW]: 0,
+                models.Oil_layer.CLASS_LABELS_NAME[models.Oil_layer.NOT_DEFINED]: 0
+            },
+            'rock': {
+                models.Rock_layer.CLASS_LABELS_NAME[models.Rock_layer.SANDSTONE]: 0,
+                models.Rock_layer.CLASS_LABELS_NAME[models.Rock_layer.SILTSTONE]: 0,
+                models.Rock_layer.CLASS_LABELS_NAME[models.Rock_layer.MUDSTONE]: 0
+            },
+            'carbon': {
+                models.Carbon_layer.CLASS_LABELS_NAME[models.Carbon_layer.HIGH]: 0,
+                models.Carbon_layer.CLASS_LABELS_NAME[models.Carbon_layer.LOW]: 0,
+                models.Carbon_layer.CLASS_LABELS_NAME[models.Carbon_layer.NOT_DEFINED]: 0
+            },
+            'ruin': {
+                models.Ruin_layer.CLASS_LABELS_NAME[models.Ruin_layer.HIGH]: 0,
+                models.Ruin_layer.CLASS_LABELS_NAME[models.Ruin_layer.LOW]: 0,
+                models.Ruin_layer.CLASS_LABELS_NAME[models.Ruin_layer.NONE]: 0
+            }
+        }
+        cs_markup = models.Markup.objects.filter(cs=core_sample).last()
+        oil_layers = models.Oil_layer.objects.filter(markup=cs_markup)
+        for oil_layer in oil_layers:
+            statistics[csId]['oil'][models.Oil_layer.CLASS_LABELS_NAME[oil_layer.class_label]] += (oil_layer.bottom - oil_layer.top) / cs_length
+        rock_layers = models.Rock_layer.objects.filter(markup=cs_markup)
+        for rock_layer in rock_layers:
+            statistics[csId]['rock'][models.Rock_layer.CLASS_LABELS_NAME[rock_layer.class_label]] += (rock_layer.bottom - rock_layer.top) / cs_length
+        carbon_layers = models.Carbon_layer.objects.filter(markup=cs_markup)
+        for carbon_layer in carbon_layers:
+            statistics[csId]['carbon'][models.Carbon_layer.CLASS_LABELS_NAME[carbon_layer.class_label]] += (carbon_layer.bottom - carbon_layer.top) / cs_length
+        ruin_layers = models.Ruin_layer.objects.filter(markup=cs_markup)
+        for ruin_layer in ruin_layers:
+            statistics[csId]['ruin'][models.Ruin_layer.CLASS_LABELS_NAME[ruin_layer.class_label]] += (ruin_layer.bottom - ruin_layer.top) / cs_length
+
+    return Response(statistics, status=HTTP_200_OK)
 
 @csrf_exempt
 @api_view(["GET"])
@@ -586,7 +645,3 @@ def cs_markup_put(request, csId):
         return Response(status=HTTP_200_OK)
     else:
         return response
-
-
-
-

@@ -171,3 +171,5 @@ typings/
 mainService/mainService/static/
 
 # tests files
+
+deploy_local.sh
