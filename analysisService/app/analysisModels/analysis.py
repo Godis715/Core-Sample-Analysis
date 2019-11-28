@@ -230,9 +230,10 @@ def _merge_windows(markup):
 
 def analyse(data):
     markup_fragments_rock = mock.analyse_param(data['fragments'], STEP_ROCK, 'rock', ROCK_CHANNEL)
-    markup_fragments_oil = _oil_model(data['fragments'])
-    #markup_fragments_oil = mock.analyse_param(data['fragments'], STEP_OIL, 'oil', OIL_CHANNEL)
-    markup_fragments_carbon = _carbon_model(data['fragments'])
+    #markup_fragments_oil = _oil_model(data['fragments'])
+    markup_fragments_oil = mock.analyse_param(data['fragments'], STEP_OIL, 'oil', OIL_CHANNEL)
+    #markup_fragments_carbon = _carbon_model(data['fragments'])
+    markup_fragments_carbon = mock.analyse_param(data['fragments'], STEP_CARBON, 'carbon', CARBON_CHANNEL)
     #markup_fragments_ruin = _ruin_model(data['fragments'])
     markup_fragments_ruin = mock.analyse_param(data['fragments'], STEP_RUIN, 'ruin', RUIN_CHANNEL)
 
