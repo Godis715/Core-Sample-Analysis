@@ -33,14 +33,15 @@
     }
 
     input[type="radio"].color:checked ~ label {
-        outline: 2px solid rgb(47, 66, 85);
-        outline-offset: -2px;
+        outline: 2px solid rgb(47, 55, 63);
+        transform: scale(1.1, 1.1)
     }
 
     .color-setting-cont {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
+        align-items: center;
     }
 </style>
 

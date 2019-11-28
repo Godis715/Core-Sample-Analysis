@@ -37,11 +37,20 @@ export default {
             isMounted: false
         }
     },
-    props: [
-        "title",
-        "settings",
-        "id"
-    ],
+    props: {
+        title: {
+            type: String,
+            required: true
+        },
+        settings: {
+            type: Array,
+            required: true
+        },
+        id: {
+            type: String,
+            required: true
+        }
+    },
     methods: {
         onchanged(ev, index) {
             this.$emit("setting-changed", {
