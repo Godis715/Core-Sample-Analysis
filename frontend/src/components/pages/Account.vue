@@ -377,7 +377,7 @@
                     if (info.status === "analysed")
                         csIds.push(info.csId);
                 });
-
+                console.log("getting stats");
                 return this.$axios.put("api/core_sample/statistics/", csIds);
             }).then(resp => {
                 console.log(resp);
