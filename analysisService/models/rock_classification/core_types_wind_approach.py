@@ -3,6 +3,8 @@ import torch
 from PIL import Image
 from torchvision import models, transforms
 import torch.nn as nn
+import os
+path = os.path.dirname(os.path.abspath(__file__))
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -19,7 +21,7 @@ def init_model(path):
                              nn.ReLU(),
                              nn.Linear(128, 3))
     model.to(device)
-    model.load_state_dict(torch.load(path))
+    model.load_state_dict(torch.load(path, map_location='cpu'))
     model.eval()
     return model
 
@@ -36,7 +38,7 @@ def img_preprocessing(image):
 def image_pass(image, wsize):
     heigth, width = np.shape(image)[0], np.shape(image)[1]
     k = heigth // wsize
-    model = init_model('resnet18_ft_v6.pt') #insert path here
+    model = init_model(path+'/resnet18_ft_v6.pt') #insert path here
     np_img = np.asarray(image)
     result = []
     for i in range(0, k):

@@ -2,6 +2,7 @@ from analysisModels import mock
 import carbon_6ch_model
 import oil_6ch_model
 import ruin_model_cpu
+import core_types_wind_approach
 
 
 STEP_ROCK = 20
@@ -185,6 +186,20 @@ def _ruin_model(fragments):
     return markup_fragments
 
 
+def _rock_model(fragments):
+    markup_fragments = []
+    for fragment in fragments:
+        size_step_fragment = int(STEP_ROCK * fragment[f'{ROCK_CHANNEL}_resolution'])
+        markup_fragment = list(map(lambda markup_window: {
+                'class': markup_window[2],
+                'top': markup_window[0],
+                'bottom': markup_window[1]
+            }, core_types_wind_approach.image_pass(fragment[f'{ROCK_CHANNEL}Img'], size_step_fragment)))
+        markup_fragments.append(markup_fragment)
+
+    return markup_fragments
+
+
 def _merge_markups(markup_fragments, fragments, channel):
     general_markup = []
     current_height = 0
@@ -229,7 +244,7 @@ def _merge_windows(markup):
 
 
 def analyse(data):
-    markup_fragments_rock = mock.analyse_param(data['fragments'], STEP_ROCK, 'rock', ROCK_CHANNEL)
+    markup_fragments_rock = _rock_model(data['fragments'])
     markup_fragments_oil = _oil_model(data['fragments'])
     #markup_fragments_oil = mock.analyse_param(data['fragments'], STEP_OIL, 'oil', OIL_CHANNEL)
     markup_fragments_carbon = _carbon_model(data['fragments'])
