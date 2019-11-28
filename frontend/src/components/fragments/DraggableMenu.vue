@@ -13,8 +13,8 @@
                 <span>{{title}}</span>
                 <button
                     v-on:click="onClose"
-                    class="close-btn"
-                >x</button>
+                    class="round delete dark-alpha"
+                ></button>
             </div>
 
             <div class="setting-cont">
@@ -56,16 +56,6 @@
         box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.2);
         border: 1.5px solid lightgray;
         overflow: hidden;
-    }
-
-    .close-btn {
-        border-radius: 50%;
-        background-color: gray;
-        color: white;
-        margin: 2px;
-        border: none;
-        outline: none;
-        cursor: pointer;
     }
 </style>
 

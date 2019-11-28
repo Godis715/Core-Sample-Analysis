@@ -1,9 +1,12 @@
 <template>
-    <div :class="getClass">
+    <div v-bind:class="getClass">
         <div>
             <span>{{msgData.text}}</span>
             <div>
-                <router-link v-if="msgData.link" :to="msgData.link.where">{{msgData.link.text}}</router-link>
+                <router-link
+                    v-if="msgData.link"
+                    v-bind:to="msgData.link.where"
+                >{{msgData.link.text}}</router-link>
             </div>
         </div>
     </div>
@@ -16,7 +19,12 @@
 <script>
     export default {
         name: 'Message',
-        props: ['msgData'],
+        props: {
+            msgData: {
+                type: Object,
+                required: true
+            }
+        },
         computed: {
             getClass() {
                 return 'msg ' + 

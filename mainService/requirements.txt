@@ -10,10 +10,7 @@ psycopg2==2.8.4
 pycryptodome==3.9.0
 pytz==2019.3
 requests==2.22.0
-<<<<<<< HEAD:backend/requirements.txt
-=======
 shellescape==3.4.1
->>>>>>> project:mainService/requirements.txt
 sqlparse==0.3.0
 urllib3==1.25.6
 xlrd==1.2.0
