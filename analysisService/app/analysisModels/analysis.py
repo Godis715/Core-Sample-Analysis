@@ -5,8 +5,8 @@ import ruin_model_cpu
 
 
 STEP_ROCK = 20
-STEP_OIL = 10
-STEP_CARBON = 10
+STEP_OIL = 2 #10
+STEP_CARBON = 2 #10
 STEP_RUIN = 5
 
 CLASSES = {
@@ -66,11 +66,11 @@ def _oil_model(fragments):
             uv_window = fragment[f'uvImg'].crop(
                         (0, (current_height - size_step_fragment) * fragment[f'uv_resolution'],
                          fragment[f'uvImg'].size[0], current_height * fragment[f'uv_resolution']))
-            uv_window = uv_window.resize((int(uv_window.size[0] * (100 / uv_window.size[1])), 100))
+            #uv_window = uv_window.resize((int(uv_window.size[0] * (100 / uv_window.size[1])), 100))
             dl_window = fragment[f'dlImg'].crop(
                         (0, (current_height - size_step_fragment) * fragment[f'dl_resolution'],
                          fragment[f'dlImg'].size[0], current_height * fragment[f'dl_resolution']))
-            dl_window = dl_window.resize((int(dl_window.size[0] * (100 / dl_window.size[1])), 100))
+            #dl_window = dl_window.resize((int(dl_window.size[0] * (100 / dl_window.size[1])), 100))
             fragment_windows.append((uv_window, dl_window))
             markup_fragment.append({
                 'class': None,
@@ -78,15 +78,15 @@ def _oil_model(fragments):
                 'bottom': current_height * fragment[f'{OIL_CHANNEL}_resolution']
             })
             current_height += size_step_fragment
-        if current_height * fragment[f'{OIL_CHANNEL}_resolution'] >= fragment[f'{OIL_CHANNEL}Img'].size[1]:
+        if fragment['top'] + current_height >= fragment['bottom']:
             uv_window = fragment[f'uvImg'].crop(
                         (0, (current_height - size_step_fragment) * fragment[f'uv_resolution'],
                          fragment[f'uvImg'].size[0], fragment[f'uvImg'].size[1]))
-            uv_window = uv_window.resize((int(uv_window.size[0] * (100 / uv_window.size[1])), 100))
+            #uv_window = uv_window.resize((int(uv_window.size[0] * (100 / uv_window.size[1])), 100))
             dl_window = fragment[f'dlImg'].crop(
                         (0, (current_height - size_step_fragment) * fragment[f'dl_resolution'],
                          fragment[f'dlImg'].size[0], fragment[f'dlImg'].size[1]))
-            dl_window = dl_window.resize((int(dl_window.size[0] * (100 / dl_window.size[1])), 100))
+            #dl_window = dl_window.resize((int(dl_window.size[0] * (100 / dl_window.size[1])), 100))
             fragment_windows.append((uv_window, dl_window))
             markup_fragment.append({
                 'class': None,
@@ -115,11 +115,11 @@ def _carbon_model(fragments):
             uv_window = fragment[f'uvImg'].crop(
                         (0, (current_height - size_step_fragment) * fragment[f'uv_resolution'],
                          fragment[f'uvImg'].size[0], current_height * fragment[f'uv_resolution']))
-            uv_window = uv_window.resize((int(uv_window.size[0] * (100 / uv_window.size[1])), 100))
+            #uv_window = uv_window.resize((int(uv_window.size[0] * (100 / uv_window.size[1])), 100))
             dl_window = fragment[f'dlImg'].crop(
                         (0, (current_height - size_step_fragment) * fragment[f'dl_resolution'],
                          fragment[f'dlImg'].size[0], current_height * fragment[f'dl_resolution']))
-            dl_window = dl_window.resize((int(dl_window.size[0] * (100 / dl_window.size[1])), 100))
+            #dl_window = dl_window.resize((int(dl_window.size[0] * (100 / dl_window.size[1])), 100))
             fragment_windows.append((uv_window, dl_window))
             markup_fragment.append({
                 'class': None,
@@ -127,15 +127,15 @@ def _carbon_model(fragments):
                 'bottom': current_height * fragment[f'{CARBON_CHANNEL}_resolution']
             })
             current_height += size_step_fragment
-        if current_height * fragment[f'{CARBON_CHANNEL}_resolution'] >= fragment[f'{CARBON_CHANNEL}Img'].size[1]:
+        if fragment['top'] + current_height >= fragment['bottom']:
             uv_window = fragment[f'uvImg'].crop(
                         (0, (current_height - size_step_fragment) * fragment[f'uv_resolution'],
                          fragment[f'uvImg'].size[0], fragment[f'uvImg'].size[1]))
-            uv_window = uv_window.resize((int(uv_window.size[0] * (100 / uv_window.size[1])), 100))
+            #uv_window = uv_window.resize((int(uv_window.size[0] * (100 / uv_window.size[1])), 100))
             dl_window = fragment[f'dlImg'].crop(
                         (0, (current_height - size_step_fragment) * fragment[f'dl_resolution'],
                          fragment[f'dlImg'].size[0], fragment[f'dlImg'].size[1]))
-            dl_window = dl_window.resize((int(dl_window.size[0] * (100 / dl_window.size[1])), 100))
+            #dl_window = dl_window.resize((int(dl_window.size[0] * (100 / dl_window.size[1])), 100))
             fragment_windows.append((uv_window, dl_window))
             markup_fragment.append({
                 'class': None,
