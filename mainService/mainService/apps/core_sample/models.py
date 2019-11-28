@@ -132,20 +132,24 @@ class Rock_layer(models.Model):
     SILTSTONE = 1
     SANDSTONE = 2
     MUDSTONE = 3
+    OTHER = 4
     CLASS_LABELS_NUMBER = {
         'siltstone': SILTSTONE,
         'sandstone': SANDSTONE,
-        'mudstone': MUDSTONE
+        'mudstone': MUDSTONE,
+        'other': OTHER
     }
     CLASS_LABELS_NAME = {
         SILTSTONE: 'siltstone',
         SANDSTONE: 'sandstone',
-        MUDSTONE: 'mudstone'
+        MUDSTONE: 'mudstone',
+        OTHER: 'other'
     }
     CLASS_LABELS_CHOICE = (
         (SILTSTONE, 'siltstone'),
         (SANDSTONE, 'sandstone'),
         (MUDSTONE, 'mudstone'),
+        (OTHER, 'other'),
     )
     class_label = models.IntegerField(verbose_name='Класс', choices=CLASS_LABELS_CHOICE)
 

@@ -11,7 +11,7 @@ STEP_CARBON = 2 #10
 STEP_RUIN = 5
 
 CLASSES = {
-    'rock': ['mudstone', 'siltstone', 'sandstone'],
+    'rock': ['mudstone', 'siltstone', 'sandstone', 'other'],
     'oil': ['notDefined', 'low', 'high'],
     'carbon': ['notDefined', 'low', 'high'],
     'ruin': ['none', 'low', 'high']

@@ -391,7 +391,8 @@ def css_statistics(request):
             'rock': {
                 models.Rock_layer.CLASS_LABELS_NAME[models.Rock_layer.SANDSTONE]: 0,
                 models.Rock_layer.CLASS_LABELS_NAME[models.Rock_layer.SILTSTONE]: 0,
-                models.Rock_layer.CLASS_LABELS_NAME[models.Rock_layer.MUDSTONE]: 0
+                models.Rock_layer.CLASS_LABELS_NAME[models.Rock_layer.MUDSTONE]: 0,
+                models.Rock_layer.CLASS_LABELS_NAME[models.Rock_layer.OTHER]: 0
             },
             'carbon': {
                 models.Carbon_layer.CLASS_LABELS_NAME[models.Carbon_layer.HIGH]: 0,
