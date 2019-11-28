@@ -173,3 +173,5 @@ mainService/mainService/static/
 # tests files
 
 deploy_local.sh
+
+tools/archiveGenerator/sample_archives
