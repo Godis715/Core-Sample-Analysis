@@ -221,7 +221,7 @@
                         headers: { 'Content-Type': 'multipart/form-data' }
                     };
 
-                this.$axios.post('api/core_sample/upload', formData, headers).then(resp => {
+                this.$axios.post('api/core_sample/upload/', formData, headers).then(resp => {
                     let result = resp.data;
                     console.log(result);
                     if (result.warnings.length > 0) {
