@@ -103,6 +103,55 @@ def _oil_model(fragments):
     return markup_fragments
 
 
+def _carbon_model(fragments):
+    markup_fragments = []
+    for fragment in fragments:
+        markup_fragment = []
+
+        size_step_fragment = STEP_CARBON
+        current_height = size_step_fragment
+        fragment_windows = []
+        while fragment['top'] + current_height < fragment['bottom']:
+            uv_window = fragment[f'uvImg'].crop(
+                        (0, (current_height - size_step_fragment) * fragment[f'uv_resolution'],
+                         fragment[f'uvImg'].size[0], current_height * fragment[f'uv_resolution']))
+            uv_window = uv_window.resize((int(uv_window.size[0] * (100 / uv_window.size[1])), 100))
+            dl_window = fragment[f'dlImg'].crop(
+                        (0, (current_height - size_step_fragment) * fragment[f'dl_resolution'],
+                         fragment[f'dlImg'].size[0], current_height * fragment[f'dl_resolution']))
+            dl_window = dl_window.resize((int(dl_window.size[0] * (100 / dl_window.size[1])), 100))
+            fragment_windows.append((uv_window, dl_window))
+            markup_fragment.append({
+                'class': None,
+                'top': (current_height - size_step_fragment) * fragment[f'{CARBON_CHANNEL}_resolution'],
+                'bottom': current_height * fragment[f'{CARBON_CHANNEL}_resolution']
+            })
+            current_height += size_step_fragment
+        if current_height * fragment[f'{CARBON_CHANNEL}_resolution'] >= fragment[f'{CARBON_CHANNEL}Img'].size[1]:
+            uv_window = fragment[f'uvImg'].crop(
+                        (0, (current_height - size_step_fragment) * fragment[f'uv_resolution'],
+                         fragment[f'uvImg'].size[0], fragment[f'uvImg'].size[1]))
+            uv_window = uv_window.resize((int(uv_window.size[0] * (100 / uv_window.size[1])), 100))
+            dl_window = fragment[f'dlImg'].crop(
+                        (0, (current_height - size_step_fragment) * fragment[f'dl_resolution'],
+                         fragment[f'dlImg'].size[0], fragment[f'dlImg'].size[1]))
+            dl_window = dl_window.resize((int(dl_window.size[0] * (100 / dl_window.size[1])), 100))
+            fragment_windows.append((uv_window, dl_window))
+            markup_fragment.append({
+                'class': None,
+                'top': (current_height - size_step_fragment) * fragment[f'{CARBON_CHANNEL}_resolution'],
+                'bottom': fragment[f'{CARBON_CHANNEL}Img'].size[1]
+            })
+
+        markup_windows_class = list(map(lambda pred: 'notDefined' if pred == 'no' else pred,
+                                   carbon_6ch_model.get_preds(fragment_windows)))
+        for i, markup_window in enumerate(markup_fragment):
+            markup_window['class'] = markup_windows_class[i]
+
+        markup_fragments.append(markup_fragment)
+    return markup_fragments
+
+
 def _ruin_model(fragments):
     markup_fragments = []
     for fragment in fragments:
@@ -183,7 +232,7 @@ def analyse(data):
     markup_fragments_rock = mock.analyse_param(data['fragments'], STEP_ROCK, 'rock', ROCK_CHANNEL)
     markup_fragments_oil = _oil_model(data['fragments'])
     #markup_fragments_oil = mock.analyse_param(data['fragments'], STEP_OIL, 'oil', OIL_CHANNEL)
-    markup_fragments_carbon = mock.analyse_param(data['fragments'], STEP_CARBON, 'carbon', CARBON_CHANNEL)
+    markup_fragments_carbon = _carbon_model(data['fragments'])
     #markup_fragments_ruin = _ruin_model(data['fragments'])
     markup_fragments_ruin = mock.analyse_param(data['fragments'], STEP_RUIN, 'ruin', RUIN_CHANNEL)
 
