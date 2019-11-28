@@ -138,7 +138,7 @@ def CREATE_CORE_SAMPLE():
 
 
 def DELETE_CORE_SAMPLE(csId):
-    client.delete(f'api/core_sample/{csId}/delete')
+    client.delete(f'api/core_sample/{csId}/delete/')
 
 
 class Delete_APITestCase(APITestCase):
@@ -146,7 +146,7 @@ class Delete_APITestCase(APITestCase):
     def setUp(self):
         self.main_user = User.objects.create_user(
             username="username_test", email="TestUser@test.com", password="password_test")
-        self.url = '/api/core_sample/{}/delete'
+        self.url = '/api/core_sample/{}/delete/'
         self.csId_not_exist = 'b664248e-09a2-4e2e-8934-dade9cf31946'
 
     def test_success(self):
