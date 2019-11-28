@@ -19,7 +19,7 @@ export const MarkupLayer = {
         fontSize: 20,
         hideOverflow: true,
         textMargin: 5,
-        font: "Arial",
+        font: "monospace",
         showText: true
     }),
 

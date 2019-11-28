@@ -191,6 +191,9 @@ export default {
                             type: "line",
                             data: {
                                 oil: this.markup.markup.oil,
+                                carbon: this.markup.markup.carbon,
+                                ruin: this.markup.markup.ruin,
+                                rock: this.markup.markup.rock
                             },
                             settings: { ...MarkupLayer.defaultSettings }
                         }

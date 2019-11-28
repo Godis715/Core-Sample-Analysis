@@ -10,8 +10,7 @@
 
     <transition-group
         name="cs-info-appearing"
-        id="cs-cont"
-    >
+        id="cs-cont">
         <div id="upload-cs" class="cs-info" key="upload">
             <div>Upload</div>
         </div>
@@ -305,7 +304,6 @@
                         }
                     });
                     if (this.samplesInfo.some(info => info.status === "inProcess")) {
-                        console.log('Wow');
                         this.startRefresh();
                     }
                 }).catch(err => {
@@ -380,8 +378,6 @@
                 console.log("getting stats");
                 return this.$axios.put("api/core_sample/statistics/", csIds);
             }).then(resp => {
-                console.log(resp);
-
                 for (let csId in resp.data) {
                     let stats = resp.data[csId];
                     let csInfo = this.samplesInfo.find(i => i.csId === csId);
