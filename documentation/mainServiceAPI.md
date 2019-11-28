@@ -77,10 +77,19 @@ All methods, except Login, returns **401** status code, if token wasn’t provid
 
     + **404**: core sample not found. 
 ---
-### (GET) core_sample/status 
+### (PUT) core_sample/status 
 
   - **csIds**: array of csId: string 
 
   - **returns**: [string] - array of core sample statuses. 
 
-    + **404**: core sample not found. 
+    + **404**: core sample not found.
+    
+---
+### (PUT) core_sample/statistics
+
+  - **csIds**: array of csId: string
+  
+  - **returns**: array of { oil: { high: float, low: float, notDefined: float }, carbon: { ... }, ... } - total propotion of each class of every parameter in core samples. 
+  
+     + **404**: core sample not found.

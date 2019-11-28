@@ -1,11 +1,21 @@
 <template>
 <header>
-    <div><router-link :to="{name:'Account'}">Account</router-link></div>
-    <div><router-link :to="{name:'Upload'}">Upload</router-link></div>
-    <div><router-link :to="{name:'Search'}">Search</router-link></div>
-    <div><router-link :to="{name:'FAQ'}">FAQ</router-link></div>
-    <div><router-link :to="{name:'Search'}">About</router-link></div>
-    <div><div class="nav-btn" v-on:click="logout">Logout</div></div>
+    <div
+        v-for="(linkName, li) in links"
+        v-bind:key="'link-' + li"
+        v-bind:class="parentComponentName === linkName ? 'current-page' : ''"
+    >
+        <router-link
+            v-bind:to="{ name: linkName }"
+        >{{linkName}}
+        </router-link>
+    </div>
+    <div class="logout-cont">
+        <div
+            class="nav-btn logout"
+            v-on:click="logout"
+        >Logout</div>
+    </div>
 </header>
 </template>
 
@@ -13,33 +23,75 @@
     header {
         display: flex;
         flex-direction: row;
-        justify-content: flex-start;
         background-color: rgb(245, 245, 245);
         width: 100%;
-        font-size: 0.8em;
+        font-size: 1.2em;
+        font-weight: 600;
     }
 
     header > div {
-        margin: 1em 1em;
+        margin: 0.5em;
+        padding: 0.5em 1em;
     }
 
     a {
         text-decoration: none;
     }
 
-    a:visited, .nav-btn {
-        color: rgb(173, 173, 173);
+    a:visited, a:not(:visited), .nav-btn {
+        color: rgb(160, 160, 160);
         cursor: pointer;
     }
 
     a:hover, .nav-btn:hover {
-        color: rgb(53, 53, 53);
+        color: gray;
     } 
+
+    .current-page {
+        background-color: lightgray;
+        height: 100%;
+    }
+
+    .current-page > a {
+        color: gray;
+    }
+
+    .logout-cont {
+        align-self: flex-end;
+    }
+
+    .nav-btn.logout::before {
+        background: var(--logout-icon);
+        background-repeat: no-repeat;
+        background-size: 20px;
+        height: 25px;
+        width: 20px;
+        content: "";
+        display: block;
+        float: left;
+        margin-right: 10px;
+        opacity: 0.4;
+    }
+    .nav-btn.logout:hover::before {
+        opacity: 1;
+    }
+
 </style>
 
 <script>
     export default {
         name: 'site-header',
+        data() {
+            return {
+                links: [
+                    "Account",
+                    "Upload",
+                    "Search",
+                    "FAQ",
+                    "About"
+                ]
+            };
+        },
         methods: {
             logout() {
                 let logoutProm = this.$store.dispatch('AUTH_LOGOUT').then(() => {
@@ -49,6 +101,11 @@
                 });
 
                 this.$root.$emit('start-loading', logoutProm);
+            }
+        },
+        computed: {
+            parentComponentName() {
+                return this.$parent.$options.name;
             }
         }
     };

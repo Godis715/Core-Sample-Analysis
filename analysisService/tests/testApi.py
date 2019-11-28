@@ -1,9 +1,10 @@
 import json
 import os
 import requests
+import time
 
 
-url = 'http://127.0.0.1:5050/api/data_analysis/'
+url = 'http://127.0.0.1:5050/api/analyse/'
 
 TESTDIR = f'{os.path.dirname(os.path.dirname(os.path.abspath(__file__)))}/tests'
 
@@ -57,8 +58,10 @@ files = {
     f"{data['fragments'][3]['dlImg']}": open(f"{data['fragments'][3]['dlImg']}", 'rb'),
     f"{data['fragments'][3]['uvImg']}": open(f"{data['fragments'][3]['uvImg']}", 'rb'),
 }
-
+start = time.time()
 response_markup = requests.post(url, data={'data': json.dumps(data)}, files=files)
+end = time.time()
+print(end - start)
 
 print(response_markup.status_code)
 print(response_markup.text)

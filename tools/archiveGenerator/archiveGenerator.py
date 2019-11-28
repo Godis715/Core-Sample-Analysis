@@ -4,6 +4,7 @@ import random as rnd
 import re
 import json
 import os
+import sys
 
 MY_PATH_IMPORT = 'H:/Data'
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -22,11 +23,12 @@ def archiveGenerate(path_import, path_export, count_archives, isRand=False, step
     index_archive = -1
     count_gen_archives = 0
     description = None
+    last_top = sys.maxsize
     for i in range(0, data.shape[0] - 1, 2):
         dl_row = dict(data.iloc[i])
         uv_row = dict(data.iloc[i + 1])
         # New sample
-        if dl_row['PhotoTop'] == 0.00 or uv_row['PhotoTop'] == 0.00:
+        if dl_row['PhotoTop'] < last_top or uv_row['PhotoTop'] < last_top:
             # Finish generate
             if is_allow_gen_archive and index_archive % step == 0 and i != 0:
                 # Export description to .json file (temporarily)
@@ -70,6 +72,7 @@ def archiveGenerate(path_import, path_export, count_archives, isRand=False, step
                 'top': int(dl_row['PhotoTop'] * 100),
                 'bottom': int(uv_row['PhotoDown'] * 100)
             })
+        last_top = dl_row['PhotoTop']
 
 
 def main():
