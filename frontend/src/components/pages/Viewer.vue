@@ -10,65 +10,103 @@
         Each layer has its own properties (they are named as settings in code).
         This properties can be changed in setting panel.
     -->
-
-    <draggable-menu
-        v-if="settingToShow > -1"
-        v-show="showMenu"
-        v-bind:title="`Column ${settingToShow+1}`"
-        v-on:close-menu="closeMenu"
-    >
-        <template>
-            <div>
-            <setting-group
-                v-for="(layer, layerIndex) in columns[settingToShow].layers"
-                v-on:setting-changed="settingChanged($event, settingToShow, layerIndex)"
-                v-bind:settings="layer.settings | createSettingList"
-                v-bind:key="layer.id"
-                v-bind:id="layer.id"
-                class="setting-group"
-            />
+    <div id="viewer-root">
+        <div id="main-cont-viewer">
+            <div
+                v-for="(col, colIndex) in columns"
+                v-bind:key="colIndex"
+                v-bind:class="'column-wrapper '+((settingToShow === colIndex)?'selected':'')">
+                <div class="column-wrapper-header">
+                    <button class="show-settings-btn smooth-rect dark-alpha" v-on:click="showSettingList(colIndex)">...</button>
+                    <button class="delete round dark-alpha"></button>
+                </div>
+                <!-- Component, which combines and draws layers. -->
+                <multiple-layer-view
+                    v-bind:layers="col.layers"
+                    v-bind:res="resolution"
+                    v-bind:absHeight="absHeight"
+                    v-bind:absWidth="absWidthDL"
+                    class="column" />
             </div>
-        </template>
-    </draggable-menu>
-
-    <div id="main-cont-viewer">
-        <div
-            v-for="(col, colIndex) in columns"
-            v-bind:key="colIndex"
-            class="column-wrapper"
-        >
-            <div class="column-wrapper-header">
-                <button class="smooth-rect dark-alpha" v-on:click="showSettingList(colIndex)">...</button>
-                <button class="delete round dark-alpha"></button>
+        </div>
+        <div 
+            id="setting-menu"
+            ref="settingMenu"
+            >
+            <div
+                v-on:close-menu="closeMenu">
+                <div>
+                    <h2>Global settings</h2>
+                    <setting-group
+                        v-on:setting-changed="settingChanged($event, settingToShow, layerIndex)"
+                        v-bind:settings="[
+                            {
+                                settingName: 'resolution',
+                                value: 30,
+                                title: 'Resolution',
+                                type: 'number',
+                                default: 30,
+                                min: 5,
+                                max: 50,
+                            }
+                        ]"
+                        v-bind:key="'global-settings'"
+                        id="global-settings"
+                        class="setting-group"
+                    />
+                </div>
+                <div 
+                    v-if="settingToShow > -1"
+                    v-show="showMenu">
+                    <h2>{{`Column ${settingToShow+1}`}}</h2>
+                    <setting-group
+                        v-for="(layer, layerIndex) in columns[settingToShow].layers"
+                        v-on:setting-changed="settingChanged($event, settingToShow, layerIndex)"
+                        v-bind:settings="layer.settings | createSettingList"
+                        v-bind:title="layer.id"
+                        v-bind:key="layer.id"
+                        v-bind:id="layer.id"
+                        class="setting-group"
+                    />
+                </div>
+                
             </div>
-            <!-- Component, which combines and draws layers. -->
-            <multiple-layer-view
-                v-bind:layers="col.layers"
-                v-bind:res="resolution"
-                v-bind:absHeight="absHeight"
-                v-bind:absWidth="absWidthDL"
-                class="column"
-            />
         </div>
     </div>
 </div>
 </template>
 
 <style>
+    #viewer-root {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
     #main-cont-viewer {
-        margin-left: 25px;
-        margin-bottom: 500px;
-        margin-top: 25px;
         display: flex;
         flex-direction: row;
     }
 
+    #setting-menu {
+        min-width: 15em;
+        max-height: 500px;
+        border: 1.3px solid lightgray;
+        height: fit-content;
+        padding: 0 1em 5em 1em;
+        margin: 5px;
+        overflow-y: auto;
+        position: sticky;
+        top: 5px;
+    }
+
     .setting-group {
-        background-color: white;
-        padding: 5px;
-        padding-right: 2em;
-        padding-bottom: 1em;
-        margin: 5px 5px 0 5px;
+        border: 1.3px solid lightgray;
+        padding: 0 0.8em 0.8em 0.8em;
+    }
+
+    .setting-group:not(:last-child) {
+        margin-bottom: 1em;
     }
 
     .setting-group:first-child {
@@ -82,27 +120,25 @@
         margin: 5px;
     }
 
+    .column-wrapper.selected {
+        border: 1.3px solid rgb(17, 187, 17);
+        outline: 1px solid rgb(17, 187, 17);
+    }
+
     .column-wrapper-header {
-        background-color: lightgray;
         display: flex;
         flex-direction: row;
         justify-content: flex-end;
     }
 
     .column {
-        margin: 10px;
-        outline: 2px solid gray;
+        margin: 0 10px 10px 10px;
+        outline: 2px solid rgb(128, 128, 128);
     }
 
     .show-settings-btn {
-        border: none;
-        outline: none;
-        cursor: pointer;
-        background: darkgray;
-        color: white;
-        text-align: center;
+        height: 20px;
         margin: 5px;
-        border-radius: 10%;
     }
 </style>
 
@@ -155,6 +191,9 @@ export default {
                             type: "line",
                             data: {
                                 oil: this.markup.markup.oil,
+                                carbon: this.markup.markup.carbon,
+                                ruin: this.markup.markup.ruin,
+                                rock: this.markup.markup.rock
                             },
                             settings: { ...MarkupLayer.defaultSettings }
                         }
@@ -235,6 +274,7 @@ export default {
 
         showSettingList(colIndex) {
             if (this.showMenu && this.settingToShow === colIndex) {
+                this.settingToShow = -1;
                 this.showMenu = false;
             } else {
                 this.settingToShow = colIndex;
@@ -245,6 +285,9 @@ export default {
         closeMenu() {
             this.showMenu = false;
         }
+    },
+    mounted() {
+        
     },
     filters: {
         createSettingList(settings) {

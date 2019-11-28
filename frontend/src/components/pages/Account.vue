@@ -10,8 +10,7 @@
 
     <transition-group
         name="cs-info-appearing"
-        id="cs-cont"
-    >
+        id="cs-cont">
         <div id="upload-cs" class="cs-info" key="upload">
             <div>Upload</div>
         </div>
@@ -282,6 +281,16 @@
                 this.$router.push(`view/${info.csId}`);
             },
 
+            refreshChartData(csIds) {
+                return this.$axios.put("api/core_sample/statistics/", csIds).then(resp => {
+                    for (let csId in resp.data) {
+                        let stats = resp.data[csId];
+                        let csInfo = this.samplesInfo.find(i => i.csId === csId);
+                        this.$set(csInfo, "stats", stats);
+                    }
+                });
+            },
+
             refreshInProcess() {                
                 let csIds = [];
                 this.samplesInfo.forEach(info => {
@@ -291,22 +300,27 @@
                 });
 
                 this.$axios.put('api/core_sample/status/', csIds).then(resp => {
+                    let analysed = [];
                     this.samplesInfo.forEach((info, index) => {
-                        console.log(resp.data.statuses);
                         if (resp.data.statuses[info.csId]) {
-                            console.log("Before: " + JSON.stringify(this.samplesInfo));
-
                             let sample = this.samplesInfo[index];
                             sample.status = resp.data.statuses[info.csId];
                             sample.date = new Date(sample.date);
 
                             this.$set(this.samplesInfo, index, sample);
-                            console.log("After: " + JSON.stringify(this.samplesInfo));
+
+                            if (resp.data.statuses[info.csId] === "analysed") {
+                                analysed.push(info.csId);
+                            }
                         }
                     });
                     if (this.samplesInfo.some(info => info.status === "inProcess")) {
-                        console.log('Wow');
                         this.startRefresh();
+                    }
+                    if (analysed.length > 0) {
+                        this.refreshChartData(analysed).catch(err => {
+                            console.error(err);
+                        });
                     }
                 }).catch(err => {
                     console.error(err.response);
@@ -354,13 +368,15 @@
                     sample.status = 'error';
                     this.$set(this.samplesInfo, index, sample);
                 });
+            },
+
+            refreshStatsFor(samplesInfo) {
+
             }
         },
 
         created() {
             this.$axios.get('api/core_sample/').then(resp => {
-                console.log(resp.data);
-
                 let samplesInfo = resp.data;
                 for (let i = 0; i < samplesInfo.length; ++i) {
                     samplesInfo[i].date = new Date(samplesInfo[i].date);
@@ -378,15 +394,7 @@
                         csIds.push(info.csId);
                 });
                 console.log("getting stats");
-                return this.$axios.put("api/core_sample/statistics/", csIds);
-            }).then(resp => {
-                console.log(resp);
-
-                for (let csId in resp.data) {
-                    let stats = resp.data[csId];
-                    let csInfo = this.samplesInfo.find(i => i.csId === csId);
-                    this.$set(csInfo, "stats", stats);
-                }
+                return this.refreshChartData(csIds);
             }).catch(err => {
                 console.log(err);
             })
@@ -399,7 +407,6 @@
 
         filters: {
             getDate(date) {
-                console.log(date);
                 let ds = date.toDateString().split(" ");
                 let d = `${ds[2]} ${ds[1]} ${ds[3]}`;
                 return d;
@@ -446,7 +453,6 @@
                         slices: slices
                     };
                 }
-                console.log(chartData);
                 return chartData;
             }
         }
