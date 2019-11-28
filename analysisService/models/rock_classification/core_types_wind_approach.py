@@ -54,17 +54,17 @@ def image_pass(image, wsize):
             else:
                 pred = labels_dict[3]
         result.append((bottom, top, pred))
-
-    last_frame = np_img[k * wsize : heigth, :, :]
-    prepr_frame = img_preprocessing(last_frame)
-    with torch.no_grad():
-        temp = torch.log(model(prepr_frame))
-        temp[temp != temp] = 0
-        if torch.sum(temp).item() > 0.3:
-            pred = labels_dict[torch.argmax(model(prepr_frame)).item()]
-        else:
-            pred = labels_dict[3]
-    result.append((k * wsize, heigth, pred))
+    if k * wsize != heigth:
+        last_frame = np_img[k * wsize : heigth, :, :]
+        prepr_frame = img_preprocessing(last_frame)
+        with torch.no_grad():
+            temp = torch.log(model(prepr_frame))
+            temp[temp != temp] = 0
+            if torch.sum(temp).item() > 0.3:
+                pred = labels_dict[torch.argmax(model(prepr_frame)).item()]
+            else:
+                pred = labels_dict[3]
+        result.append((k * wsize, heigth, pred))
     return result
 
 
