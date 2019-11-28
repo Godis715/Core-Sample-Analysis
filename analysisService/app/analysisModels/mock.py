@@ -13,24 +13,24 @@ CLASSES = {
 }
 
 
-def analyse_param(fragments, size_step, name_param):
+def analyse_param(fragments, size_step, name_param, channel):
     markup_fragments = []
     for fragment in fragments:
         markup_fragment = []
-        size_step_fragment = size_step * fragment['dl_resolution']
+        size_step_fragment = size_step * fragment[f'{channel}_resolution']
         current_height = size_step_fragment
-        while current_height < fragment['dlImg'].size[1]:
+        while current_height < fragment[f'{channel}Img'].size[1]:
             markup_fragment.append({
                 'class': CLASSES[name_param][random.randint(0, len(CLASSES[name_param]) - 1)],
                 'top': current_height - size_step_fragment,
                 'bottom': current_height
             })
             current_height += size_step_fragment
-        if current_height > fragment['dlImg'].size[1]:
+        if current_height >= fragment[f'{channel}Img'].size[1]:
             markup_fragment.append({
                 'class': CLASSES[name_param][random.randint(0, len(CLASSES[name_param]) - 1)],
                 'top': current_height - size_step_fragment,
-                'bottom': fragment['dlImg'].size[1]
+                'bottom': fragment[f'{channel}Img'].size[1]
             })
         markup_fragments.append(markup_fragment)
 

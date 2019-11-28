@@ -4,7 +4,7 @@ import requests
 import time
 
 
-url = 'http://127.0.0.1:5050/api/data_analysis/'
+url = 'http://127.0.0.1:5050/api/analyse/'
 
 TESTDIR = f'{os.path.dirname(os.path.dirname(os.path.abspath(__file__)))}/tests'
 

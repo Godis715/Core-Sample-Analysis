@@ -288,20 +288,25 @@ def _analyse(core_sample, user):
         core_sample.status = models.Core_sample.ERROR
         core_sample.save()
     else:
-        # Success
-        markup_data = json.loads(response_markup.text)['markup']
+        if response_markup.status_code == 200:
+            # Success
+            markup_data = json.loads(response_markup.text)['markup']
 
-        markup_db = models.Markup(
-            cs=core_sample,
-            user=user
-        )
-        markup_db.save()
+            markup_db = models.Markup(
+                cs=core_sample,
+                user=user
+            )
+            markup_db.save()
 
-        # Loading: markup in database
-        _load_markup_on_server(markup_db, markup_data)
+            # Loading: markup in database
+            _load_markup_on_server(markup_db, markup_data)
 
-        core_sample.status = models.Core_sample.ANALYSED
-        core_sample.save()
+            core_sample.status = models.Core_sample.ANALYSED
+            core_sample.save()
+        else:
+            # Error
+            core_sample.status = models.Core_sample.ERROR
+            core_sample.save()
 
 
 @csrf_exempt
