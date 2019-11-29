@@ -156,17 +156,15 @@ def _carbon_model(fragments):
 def _ruin_model(fragments):
     markup_fragments = []
     for fragment in fragments:
-        # markup_fragment = [{
-        #     'class': oil_model.predict(fragment['uvImg'], False),
-        #     'top': 0,
-        #     'bottom': fragment['uvImg'].size[1]
-        # }]
         markup_fragment = []
         size_step_fragment = STEP_RUIN * fragment[f'{RUIN_CHANNEL}_resolution']
         current_height = size_step_fragment
         while current_height < fragment[f'{RUIN_CHANNEL}Img'].size[1]:
-            windowImg = fragment[f'{RUIN_CHANNEL}Img'].crop((0, current_height - size_step_fragment,
-                                                fragment[f'{RUIN_CHANNEL}Img'].size[0], current_height))
+            cut_border = (fragment[f'{RUIN_CHANNEL}Img'].size[0] - 224) / 2
+            left_cut = cut_border if cut_border > 0 else 0
+            right_cut = fragment[f'{RUIN_CHANNEL}Img'].size[0] - cut_border if cut_border > 0 else fragment[f'{RUIN_CHANNEL}Img'].size[0]
+            windowImg = fragment[f'{RUIN_CHANNEL}Img'].crop((left_cut, current_height - size_step_fragment,
+                                                				right_cut, current_height))
             markup_fragment.append({
                 'class': ruin_model_cpu.predict(windowImg),
                 'top': current_height - size_step_fragment,
@@ -174,15 +172,20 @@ def _ruin_model(fragments):
             })
             current_height += size_step_fragment
         if current_height >= fragment[f'{RUIN_CHANNEL}Img'].size[1]:
-            windowImg = fragment[f'{RUIN_CHANNEL}Img'].crop((0, current_height - size_step_fragment,
-                                                fragment[f'{RUIN_CHANNEL}Img'].size[0], fragment[f'{RUIN_CHANNEL}Img'].size[1]))
-            markup_fragment.append({
-                'class': ruin_model_cpu.predict(windowImg),
-                'top': current_height - size_step_fragment,
-                'bottom': fragment[f'{RUIN_CHANNEL}Img'].size[1]
-            })
+            if fragment[f'{RUIN_CHANNEL}Img'].size[1] - (current_height - size_step_fragment) >= 1:
+                cut_border = (fragment[f'{RUIN_CHANNEL}Img'].size[0] - 224) / 2
+                left_cut = cut_border if cut_border > 0 else 0
+                right_cut = fragment[f'{RUIN_CHANNEL}Img'].size[0] - cut_border if cut_border > 0 else fragment[f'{RUIN_CHANNEL}Img'].size[0]
+                windowImg = fragment[f'{RUIN_CHANNEL}Img'].crop((left_cut, current_height - size_step_fragment,
+                                                    right_cut, fragment[f'{RUIN_CHANNEL}Img'].size[1]))
+                markup_fragment.append({
+	                'class': ruin_model_cpu.predict(windowImg),
+	                'top': current_height - size_step_fragment,
+	                'bottom': fragment[f'{RUIN_CHANNEL}Img'].size[1]
+	            })
+            else:
+                markup_fragment[-1]['bottom'] = fragment[f'{RUIN_CHANNEL}Img'].size[1]
         markup_fragments.append(markup_fragment)
-
     return markup_fragments
 
 
@@ -246,10 +249,9 @@ def _merge_windows(markup):
 def analyse(data):
     markup_fragments_rock = _rock_model(data['fragments'])
     markup_fragments_oil = _oil_model(data['fragments'])
-    #markup_fragments_oil = mock.analyse_param(data['fragments'], STEP_OIL, 'oil', OIL_CHANNEL)
     markup_fragments_carbon = _carbon_model(data['fragments'])
-    #markup_fragments_ruin = _ruin_model(data['fragments'])
-    markup_fragments_ruin = mock.analyse_param(data['fragments'], STEP_RUIN, 'ruin', RUIN_CHANNEL)
+    markup_fragments_ruin = _ruin_model(data['fragments'])
+    #markup_fragments_ruin = mock.analyse_param(data['fragments'], STEP_RUIN, 'ruin', RUIN_CHANNEL)
 
     markup_rock = _merge_markups(markup_fragments_rock, data['fragments'], ROCK_CHANNEL)
     markup_oil = _merge_markups(markup_fragments_oil, data['fragments'], OIL_CHANNEL)

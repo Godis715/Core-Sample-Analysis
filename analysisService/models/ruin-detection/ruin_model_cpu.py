@@ -13,5 +13,5 @@ transform = transforms.Compose([
 
 def predict(pil_img):
     inp = transform(pil_img).unsqueeze(0)
-    pred = 'not ruined' if model(inp).data.numpy().argmax() == 0 else 'ruined'
+    pred = 'none' if model(inp).data.numpy().argmax() == 0 else 'high'
     return pred
