@@ -1,21 +1,26 @@
-from app import app
 from flask import jsonify, abort, make_response, request
+from flask import Blueprint
+
+from app.analysisModels.analysis import analyse
 
 import json
 import io
-
 from PIL import Image
-from time import sleep
-
-from analysisModels.analysis import analyse
 
 
-@app.errorhandler(404)
+bp = Blueprint('api', __name__)
+
+
+@bp.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
-@app.route('/api/analyse/', methods=['POST'])
+@bp.route("/")
+def hello():
+    return "Main page of api Service analysis!"
+
+@bp.route('/analyse/', methods=['POST'])
 def data_analysis():
     data = json.loads(request.form['data'])
 

@@ -11,6 +11,8 @@ EXCLUDE_FILES_BY_PATH = {}
 EXCLUDE_FOLDERS_BY_NAME = {'venv', 'tests', '__pycache__', '.idea'}
 EXCLUDE_FOLDERS_BY_PATH = {f'{BASE_DIR_CLIENT}/mainService/mainService/static/core_sample'}
 
+NOT_REMOVE_BY_PATH = {('/mainService-site/mainService/mainService/static', 'core_sample')}
+
 ftp = ftplib.FTP()
 
 
@@ -167,8 +169,9 @@ if __name__ == '__main__':
 
 	print('')
 
+
 	print('Remove needless files and folders')
-	for remove_obj_on_server in remove_content_on_server:
+	for remove_obj_on_server in list(set(remove_content_on_server) - NOT_REMOVE_BY_PATH):
 		if server_isDir(remove_obj_on_server[1], remove_obj_on_server[0]):
 			remove_folder(remove_obj_on_server[1], remove_obj_on_server[0])
 		else:

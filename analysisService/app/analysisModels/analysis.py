@@ -1,4 +1,4 @@
-from analysisModels import mock
+from app.analysisModels import mock
 import carbon_6ch_model
 import oil_6ch_model
 import ruin_model_cpu
