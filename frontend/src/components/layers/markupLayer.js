@@ -14,8 +14,8 @@ function getMultilineHeight(lines, settings) {
 
 export const MarkupLayer = {
     defaultSettings: Object.freeze({
-        fontColor: "black",
-        lineColor: "black",
+        fontColor: "yellow",
+        lineColor: "yellow",
         fontSize: 20,
         hideOverflow: true,
         textMargin: 5,

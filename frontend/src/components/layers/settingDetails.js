@@ -22,7 +22,7 @@ export const SettingDetails = Object.freeze({
     lineColor: {
         title: "Line color",
         type: "color",
-        default: "black",
+        default: "yellow",
         options: [
             {
                 name: "black",
@@ -50,7 +50,7 @@ export const SettingDetails = Object.freeze({
     fontColor: {
         title: "Font color",
         type: "color",
-        default: "black",
+        default: "yellow",
         options: [
             {
                 name: "black",

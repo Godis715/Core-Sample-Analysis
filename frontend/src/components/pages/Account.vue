@@ -45,11 +45,10 @@
             <div class="info-cont">
                 <div>{{info.date|getDate}}</div>
                 <div>{{info.date|getTime}}</div>
-                <div>Author</div>
 
                 <div
-                    v-if="info.status==='notAnalysed'"
-                    class="not-analysed-sign"
+                    v-if="info.status==='notAnalysed' || info.status === 'error'"
+                    v-bind:class="info.status==='notAnalysed' ? 'not-analysed-sign' : 'error-sign'"
                     v-on:click="analyseCoreSample(info.csId, index)"
                 >Start analysis</div>
 
@@ -64,7 +63,7 @@
                     <span class="oil">Oil</span>
                     <span class="carbon">Carbon</span>
                     <span class="rock">Rock</span>
-                    <span class="ruin">Ruin</span>
+                    <span class="ruin">Ruined: {{  info | ruinPercentageString }} </span>
                 </div>
             </div>
         </div>
@@ -95,6 +94,7 @@
         margin: auto;
     }
 
+    .error-sign:hover,
     .not-analysed-sign:hover {
         cursor: pointer;
         text-decoration: underline;
@@ -108,6 +108,17 @@
         float: left;
         margin-right: 5px;
         background: var(--warning-icon);
+        background-size: 20px 20px;
+    }
+
+    .error-sign:before {
+        content: "";
+        display: block;
+        width: 20px;
+        height: 20px;
+        float: left;
+        margin-right: 5px;
+        background: var(--error-icon);
         background-size: 20px 20px;
     }
 
@@ -224,10 +235,6 @@
 
     .legend > .carbon::after {
         background-color: orange;
-    }
-
-    .legend > .ruin::after {
-        background-color: black;
     }
 
     .cs-info-appearing-enter-active, .cs-info-appearing-leave-active {
@@ -455,6 +462,12 @@
                     };
                 }
                 return chartData;
+            },
+
+            ruinPercentageString(info) {
+                if (!info.stats) return "--";
+
+                return Math.round(100 * info.stats.ruin["high"]) + "%"
             }
         }
     };

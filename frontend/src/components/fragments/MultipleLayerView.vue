@@ -1,5 +1,7 @@
 <template>
-<div>
+<div
+    v-on:mousemove="mouseMoveHandler($event)"
+    v-on:mouseleave="mouseLeaveHandler">
     <canvas
         ref="canvas"
         v-bind:width="width"
@@ -43,8 +45,17 @@ export default {
                 });
             });
 
+        },
+
+        mouseMoveHandler(ev) {
+            ev.canvas = this.$refs.canvas;
+            this.$emit("canvasmousemove", ev);
+        },
+
+        mouseLeaveHandler() {
+            this.$emit("mouseleave");
         }
-    },
+    }, 
     computed: {
         width() {
             return this.res * this.absWidth;
