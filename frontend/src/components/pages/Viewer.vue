@@ -98,6 +98,7 @@
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+        margin: 2em 0 10em 2em;
     }
 
     #main-cont-viewer {
@@ -180,7 +181,7 @@ export default {
         return {
             markup: undefined,
             columns: [],
-            resolution: 25,
+            resolution: 15,
             settingToShow: -1,
             showMenu: false,
             colSettingToShow: undefined,
