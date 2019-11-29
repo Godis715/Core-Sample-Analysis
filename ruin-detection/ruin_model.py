@@ -1,8 +1,8 @@
-import os
 import torch
 from torchvision import transforms
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-model = torch.load(os.path.join(BASE_DIR, 'ruin_squeeze.pth'), map_location='cpu')
+import os
+path = os.path.dirname(os.path.abspath(__file__))
+model = torch.load(path+'/squeeze5.pth')
 
 transform = transforms.Compose([
     transforms.Resize(224),
@@ -13,5 +13,6 @@ transform = transforms.Compose([
 
 def predict(pil_img):
     inp = transform(pil_img).unsqueeze(0)
-    pred = 'none' if model(inp).data.numpy().argmax() == 0 else 'high'
+    inp = inp.to(torch.device('cuda:0'))
+    pred = 'не разрушен' if model(inp).cpu().data.numpy().argmax() == 0 else 'разрушен'
     return pred
