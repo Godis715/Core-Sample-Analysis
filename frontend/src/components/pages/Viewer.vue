@@ -26,6 +26,8 @@
                     v-bind:res="resolution"
                     v-bind:absHeight="absHeight"
                     v-bind:absWidth="absWidthDL"
+                    v-on:canvasmousemove="showMarkupTooltip($event, colIndex)"
+                    v-on:mouseleave="hideTooltip"
                     class="column" />
             </div>
         </div>
@@ -73,10 +75,25 @@
             </div>
         </div>
     </div>
+
+    <div id="tooltip"
+        v-if="!!tooltipInfo"
+        v-bind:style="`top:${tooltipInfo.top}px; left:${tooltipInfo.left}px`">
+        <div v-for="(data, index) in tooltipInfo.data" v-bind:key="'tooltip'+index">
+            {{data.param}}: {{data.class}}
+        </div>
+    </div>
 </div>
 </template>
 
 <style>
+    #tooltip {
+        position: absolute;
+        background-color: white;
+        padding: 1em;
+        border: 1px solid lightgray;
+    }
+
     #viewer-root {
         display: flex;
         flex-direction: row;
@@ -166,7 +183,8 @@ export default {
             resolution: 25,
             settingToShow: -1,
             showMenu: false,
-            colSettingToShow: undefined
+            colSettingToShow: undefined,
+            tooltipInfo: undefined
         }
     },
     created() {
@@ -180,43 +198,41 @@ export default {
                 {
                     layers: [
                         {
-                            id: "layer-1",
+                            id: "Day-light-layer",
                             type: "img",
                             data: this.markup.dlImages,
                             settings: { ...ImageLayer.defaultSettings },
                         },
-
-                        {
-                            id: "layer-2",
-                            type: "line",
-                            data: {
-                                oil: this.markup.markup.oil,
-                                carbon: this.markup.markup.carbon,
-                                ruin: this.markup.markup.ruin,
-                                rock: this.markup.markup.rock
-                            },
-                            settings: { ...MarkupLayer.defaultSettings }
-                        }
                     ]
                 },
 
                 {
                     layers: [
                         {
-                            id: "layer-1",
+                            id: "UV-layer",
                             type: "img",
                             data: this.markup.uvImages,
                             settings: { ...ImageLayer.defaultSettings },
                         },
+                    ]
+                },
 
+                {
+                    layers: [
                         {
-                            id: "layer-2",
+                            id: "Markup-layer",
                             type: "line",
                             data: {
+                                rock: this.markup.markup.rock,
                                 oil: this.markup.markup.oil,
-                                carbon: this.markup.markup.carbon
+                                carbon: this.markup.markup.carbon,
+                                ruin: this.markup.markup.ruin
                             },
-                            settings: { ...MarkupLayer.defaultSettings }
+                            settings: { 
+                                ...MarkupLayer.defaultSettings,
+                                fontColor: "black",
+                                lineColor: "black"
+                            }
                         }
                     ]
                 },
@@ -224,11 +240,19 @@ export default {
                 {
                     layers: [
                         {
-                            id: "layer-1",
+                            id: "Day-light-layer",
+                            type: "img",
+                            data: this.markup.dlImages,
+                            settings: { ...ImageLayer.defaultSettings },
+                        },
+                        {
+                            id: "Markup-layer",
                             type: "line",
                             data: {
+                                rock: this.markup.markup.rock,
                                 oil: this.markup.markup.oil,
-                                carbon: this.markup.markup.carbon
+                                carbon: this.markup.markup.carbon,
+                                ruin: this.markup.markup.ruin
                             },
                             settings: { ...MarkupLayer.defaultSettings }
                         }
@@ -284,6 +308,50 @@ export default {
 
         closeMenu() {
             this.showMenu = false;
+        },
+
+        showMarkupTooltip(ev, colIndex) {
+            let layers = this.columns[colIndex].layers;
+
+            let markup = layers.find(l => l.type === "line");
+            if (!markup) return;
+
+            let data = markup.data;
+
+            let canvasRect = ev.canvas.getBoundingClientRect();
+            let rightPx = canvasRect.right;
+            let topPx = ev.pageY;
+
+            let markupY = (topPx - ev.canvas.offsetTop) / this.resolution;
+
+            let toShow = [];
+
+            for (let pName in data) {
+                let depthLayers = data[pName];
+                let dl;
+                for (let i = 0; i < depthLayers.length; ++i) {
+                    let _dl = depthLayers[i];
+                    if (_dl.top <= markupY && _dl.bottom > markupY) {
+                        dl = _dl;
+                        break;
+                    }
+                }
+
+                toShow.push({
+                    param: pName,
+                    class: dl.class
+                });
+            }
+
+            this.tooltipInfo = {
+                top: topPx,
+                left: rightPx + 10,
+                data: toShow
+            };
+        },
+
+        hideTooltip() {
+            this.tooltipInfo = undefined;
         }
     },
     mounted() {
