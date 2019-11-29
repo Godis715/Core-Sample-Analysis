@@ -1,6 +1,8 @@
 import torch
 from torchvision import transforms
-model = torch.load('ruin_squeeze.pth')
+import os
+path = os.path.dirname(os.path.abspath(__file__))
+model = torch.load(path+'/squeeze5.pth')
 
 transform = transforms.Compose([
     transforms.Resize(224),
