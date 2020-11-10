@@ -1,13 +1,13 @@
 <template>
 <div>
-    <site-header></site-header>
+    <site-header />
 
     <div id="cs-cont">
         <div id="upload-cs" class="cs-info">Upload</div>
         <div
             v-for="(info, index) in samplesInfo"
-            v-bind:key="index"
-            v-bind:class="'cs-info '+getClassByStatus(info.status)"
+            v-bind:key="'cs-' + index"
+            v-bind:class="'cs-info ' + getClassByStatus(info.status)"
         >
             <div class="cs-name">{{info.csName}}</div>
             <div class="cs-date">{{info.date}}</div>
