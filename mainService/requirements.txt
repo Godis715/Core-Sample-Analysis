@@ -7,7 +7,7 @@ django-cors-headers==3.1.1
 djangorestframework==3.10.3
 idna==2.8
 Naked==0.1.31
-Pillow==6.2.0
+Pillow==9.0.1
 psycopg2==2.8.3
 pycparser==2.19
 pycryptodome==3.9.0
